@@ -16,3 +16,6 @@
 [submodule "modules/manakai"]
 	path = modules/manakai
 	url = git://github.com/wakaba/manakai.git
+[submodule "modules/perl-test-moremore"]
+	path = modules/perl-test-moremore
+	url = git://github.com/wakaba/perl-test-moremore.git
