@@ -184,6 +184,17 @@ sub _original_url_from_server : Test(4) {
      SCRIPT_NAME => '', PATH_INFO => '/'};
 } # _original_url_from_server
 
+sub _original_url_from_server_https : Test(4) {
+  with_cgi_env {
+    my $cgi = Wanage::Interface::CGI->new_from_main;
+    isa_ok $cgi->original_url, 'Wanage::URL';
+    isa_ok $cgi->canon_url, 'Wanage::URL';
+    is $cgi->original_url->stringify, 'https://hoge.Fuga:80';
+    is $cgi->canon_url->stringify, 'https://hoge.fuga:80/';
+  } {SERVER_NAME => 'hoge.Fuga', SERVER_PORT => 80,
+     SCRIPT_NAME => '', PATH_INFO => '/', HTTPS => 1};
+} # _original_url_from_server_https
+
 sub _original_url_from_server_script_name : Test(4) {
   with_cgi_env {
     my $cgi = Wanage::Interface::CGI->new_from_main;
@@ -231,7 +242,20 @@ sub _original_url_from_request_uri_abs : Test(4) {
      SCRIPT_NAME => '', PATH_INFO => '/',
      HTTP_HOST => 'fuga:80',
      REQUEST_URI => 'http://hogehoge:/hoge<script>/fuga'};
-} # _original_url_from_http_host_request_uri
+} # _original_url_from_request_uri_abs
+
+sub _original_url_from_request_uri_abs_non_http : Test(4) {
+  with_cgi_env {
+    my $cgi = Wanage::Interface::CGI->new_from_main;
+    isa_ok $cgi->original_url, 'Wanage::URL';
+    isa_ok $cgi->canon_url, 'Wanage::URL';
+    is $cgi->original_url->stringify, 'ftp://hogehoge:/hoge<script>/fuga';
+    is $cgi->canon_url->stringify, 'ftp://hogehoge/hoge%3Cscript%3E/fuga';
+  } {SERVER_NAME => 'hoge.Fuga', SERVER_PORT => 190,
+     SCRIPT_NAME => '', PATH_INFO => '/',
+     HTTP_HOST => 'fuga:80',
+     REQUEST_URI => 'ftp://hogehoge:/hoge<script>/fuga'};
+} # _original_url_from_request_uri_abs_non_http
 
 # ------ Response ------
 
