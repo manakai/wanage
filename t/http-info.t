@@ -7,6 +7,10 @@ use Wanage::HTTP::Info;
 use base qw(Test::Class);
 use Test::More;
 
+sub _version : Test(1) {
+  ok $Wanage::HTTP::Info::VERSION;
+} # _version
+
 sub _reason_phrases : Tests {
   for my $status (keys %$Wanage::HTTP::Info::ReasonPhrases) {
     ok defined $Wanage::HTTP::Info::ReasonPhrases->{$status};
