@@ -1,0 +1,36 @@
+=head1 NAME
+
+Wanage::Interface::CGI - Wanage interface module for CGI
+
+=head1 DESCRIPTION
+
+The C<Wanage::Interface::CGI> module defines an adaptor to use CGI
+interface within the Wanage abstraction.  It supports CGI in Unix
+environments.
+
+The CGI server must support CGI/1.1 for HTTP protocol in Unix systems.
+It must also support the C<REQUEST_URI> meta-variable.  If the server
+implements the C<https:> URL scheme, it must set the C<HTTPS>
+meta-variable either C<ON>, C<on>, or C<1>.  (The last requirement is
+a willful violation to RFC 3875 for compatibility with real-world CGI
+server implementations.)
+
+=head1 SEE ALSO
+
+RFC 3875 The Common Gateway Interface (CGI) Version 1.1
+<http://tools.ietf.org/html/rfc3875>.
+
+SuikaWiki:CGI <http://suika.fam.cx/~wakaba/wiki/sw/n/CGI>.
+
+=head1 AUTHOR
+
+Wakaba <w@suika.fam.cx>.
+
+=head1 LICENSE
+
+Copyright 2012 Wakaba <w@suika.fam.cx>.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut

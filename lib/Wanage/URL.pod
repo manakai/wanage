@@ -1,0 +1,76 @@
+=head1 NAME
+
+Wanage::URL - URL object used in Wanage
+
+=head1 SYNOPSIS
+
+  use Wanage::URL;
+  my $url = Wanage::URL->new_from_string ($absolute_url_as_string);
+  my $canon_url = $url->get_canon_url;
+  print $canon_url->stringify;
+  my $url2 = $canon_url->resolve_url ($relative_url_as_string);
+  print $url2->get_canon_url->stringify;
+
+=head1 DESCRIPTION
+
+The C<Wanage::URL> object represents a URL in Wanage modules.  It is a
+simple object-orient wrapper for the L<Web::URL::Canonicalize>
+functions.  It handles URLs in a similar way to Web browsers.
+
+=head1 METHODS
+
+=over 4
+
+=item $url = Wanage::URL->new_from_string ($url_as_string)
+
+Parse a string as an absolute URL and return the result object.  Note
+that this method does not resolve or canonicalize the URL.  Relative
+URLs are marked as invalid by this method, as they are not valid
+absolute URLs.
+
+=item $url = Wanage::URL->new_from_parsed_url ($parsed_url)
+
+Return the URL object for the parsed URL structure, as used in
+L<Web::URL::Canonicalize> module.  It simply blesses the argument.
+
+=item $Wanage::URL::AboutBlank
+
+A URL object representing the C<about:blank> URL.
+
+=item $url = $url->get_canon_url
+
+Resolve the URL against C<about:blank> and then canonicalize the URL.
+This method return a new copy of the URL object and does not modify
+the original URL object.
+
+=item $url = $url->resolve_string ($relative_url_as_string)
+
+Resolve a relative URL against the base URL.  The base URL must be a
+canonical URL; otherwise the result is undefined.  This method return
+a new URL object.
+
+=item $url_as_string = $url->stringify
+
+Return the string representation of the URL.  If the URL is invalid,
+an C<undef> value is returned.  Please note that the returned URL
+might contain utf8 flagged characters, if the URL contains non-ASCII
+characters.
+
+=back
+
+=head1 SEE ALSO
+
+L<Web::URL::Canonicalize>.
+
+=head1 AUTHOR
+
+Wakaba <w@suika.fam.cx>.
+
+=head1 LICENSE
+
+Copyright 2012 Wakaba <w@suika.fam.cx>.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
