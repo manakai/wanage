@@ -435,7 +435,7 @@ sub _done_send_response_headers : Test(2) {
       $cgi->send_response_headers;
     };
   } {}, undef, $out;
-  eq_or_diff $out, undef;
+  eq_or_diff $out, qq{Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\n};
 } # _done_send_response_body
 
 sub _done_send_response_body : Test(3) {
@@ -451,7 +451,7 @@ sub _done_send_response_body : Test(3) {
     };
     ng $writer;
   } {}, undef, $out;
-  eq_or_diff $out, undef;
+  eq_or_diff $out, qq{Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\n};
 } # _done_send_response_body
 
 sub _done_send_response_body_writer : Test(3) {

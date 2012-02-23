@@ -95,6 +95,7 @@ sub send_response_body ($;$) {
 } # send_response_body
 
 sub done ($) {
+  $_[0]->send_response_headers;
   $_[0]->{writer}->close if $_[0]->{writer};
   $_[0]->{done} = 1;
 } # done
