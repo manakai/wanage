@@ -13,8 +13,8 @@ push our @ISA, qw(Wanage::Interface::Base);
 sub new_from_main ($) {
   return bless {
     env => \%ENV,
-    request_body_handle => \*STDIN,
-    response_handle => \*STDOUT,
+    request_body_handle => *STDIN{IO},
+    response_handle => *STDOUT{IO},
   }, $_[0];
 } # new_from_main
 
@@ -45,18 +45,19 @@ sub get_request_body_as_ref ($) {
 # ------ Response ------
 
 sub set_status ($$;$) {
-  croak "No longer set status" if $_[0]->{response_headers_sent};
+  croak "You can no longer set status" if $_[0]->{response_headers_sent};
   $_[0]->{status} = $_[1];
   $_[0]->{status_text} = $_[2];
 } # set_status
 
 sub set_response_headers ($$) {
-  croak "No longer set response headers" if $_[0]->{response_headers_sent};
+  croak "You can no longer set response headers"
+      if $_[0]->{response_headers_sent};
   $_[0]->{response_headers} = $_[1];
 } # set_response_headers
 
 sub send_response_headers ($) {
-  croak "No longer send data" if $_[0]->{done};
+  croak "You can no longer send data" if $_[0]->{done};
   return if $_[0]->{response_headers_sent};
   my $handle = $_[0]->{response_handle};
 
