@@ -102,7 +102,9 @@ sub close_response_body ($) {
   my $self = shift;
   croak "Response body is already closed" if $self->{response_body_closed};
   $self->send_response_headers;
-  $self->{response_handle}->close or die $!;
+  ## Don't close filehandle since closing the STDOUT would cause the
+  ## CGI script terminated in some system.
+  #$self->{response_handle}->close or die $!;
   $self->{response_body_closed} = 1;
 } # close_response_body
 
