@@ -71,17 +71,12 @@ sub send_response_headers ($) {
   $status_text =~ s/\s+/ /g;
 
   print $handle "Status: $status $status_text\n";
-  my $has_ct_or_location;
   for (@{$self->{response_headers} or []}) {
     my $name = $_->[0];
-    $has_ct_or_location = 1 if $name =~ /\A(?:Content-Type|Location)\z/i;
     my $value = $_->[1];
     $name =~ s/[^0-9A-Za-z_-]/_/g; ## Far more restrictive than RFC 3875
     $value =~ s/[\x0D\x0A]+[\x09\x20]*/ /g;
     print $handle "$name: $value\n";
-  }
-  unless ($has_ct_or_location) {
-    print $handle "Content-Type: text/plain; charset=utf-8\n";
   }
   print $handle "\n";
   

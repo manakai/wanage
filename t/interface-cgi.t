@@ -262,7 +262,7 @@ sub _set_status : Test(4) {
     } {}, undef, $out;
     $cgi->set_status (400, $input);
     $cgi->send_response_headers;
-    eq_or_diff $out, qq{Status: 400 $expected\nContent-Type: text/plain; charset=utf-8\n\n};
+    eq_or_diff $out, qq{Status: 400 $expected\n\n};
   }
 } # _set_status
 
@@ -276,18 +276,18 @@ sub _set_status_twice : Test(2) {
   $cgi->send_response_headers;
   dies_here_ok { $cgi->set_status (404) };
   $cgi->send_response_headers;
-  eq_or_diff $out, qq{Status: 402 Payment Required\nContent-Type: text/plain; charset=utf-8\n\n};
+  eq_or_diff $out, qq{Status: 402 Payment Required\n\n};
 } # _set_status_twice
 
 sub _set_response_headers : Test(8) {
   for (
-    [[] => qq{Content-Type: text/plain; charset=utf-8\n}],
-    [[['Title' => 'HOge Fuga']] => qq{Title: HOge Fuga\nContent-Type: text/plain; charset=utf-8\n}],
-    [[['Title' => 'HOge Fuga'], [Title => "\x{500}\x{2000}a"]] => qq{Title: HOge Fuga\nTitle: \xd4\x80\xe2\x80\x80a\nContent-Type: text/plain; charset=utf-8\n}],
+    [[] => qq{}],
+    [[['Title' => 'HOge Fuga']] => qq{Title: HOge Fuga\n}],
+    [[['Title' => 'HOge Fuga'], [Title => "\x{500}\x{2000}a"]] => qq{Title: HOge Fuga\nTitle: \xd4\x80\xe2\x80\x80a\n}],
     [[['Content-Type' => 'text/html; charset=euc-jp']] => qq{Content-Type: text/html; charset=euc-jp\n}],
-    [[['Hoge' => "Fu\x0D\x0Aga"]] => qq{Hoge: Fu ga\nContent-Type: text/plain; charset=utf-8\n}],
-    [[["Hoge\x00\x0A" => "Fu\x0D\x0Aga"]] => qq{Hoge__: Fu ga\nContent-Type: text/plain; charset=utf-8\n}],
-    [[["Hog\x{1000}" => "Fu\x0D\x0Aga"]] => qq{Hog_: Fu ga\nContent-Type: text/plain; charset=utf-8\n}],
+    [[['Hoge' => "Fu\x0D\x0Aga"]] => qq{Hoge: Fu ga\n}],
+    [[["Hoge\x00\x0A" => "Fu\x0D\x0Aga"]] => qq{Hoge__: Fu ga\n}],
+    [[["Hog\x{1000}" => "Fu\x0D\x0Aga"]] => qq{Hog_: Fu ga\n}],
     [[['Content-TYPE' => '']] => qq{Content-TYPE: \n}],
   ) {
     my ($input, $expected) = @$_;
@@ -311,7 +311,7 @@ sub _set_response_headers_twice : Test(2) {
   $cgi->send_response_headers;
   dies_here_ok { $cgi->set_response_headers ([['Hoge' => 'Abc']]) };
   $cgi->send_response_headers;
-  eq_or_diff $out, qq{Status: 200 OK\nHoge: Hoe\nContent-Type: text/plain; charset=utf-8\n\n};
+  eq_or_diff $out, qq{Status: 200 OK\nHoge: Hoe\n\n};
 } # _set_response_headers_twice
 
 sub _send_response_headers_empty : Test(1) {
@@ -320,7 +320,7 @@ sub _send_response_headers_empty : Test(1) {
     Wanage::Interface::CGI->new_from_main;
   } {}, undef, $out;
   $cgi->send_response_headers;
-  eq_or_diff $out, qq{Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\n};
+  eq_or_diff $out, qq{Status: 200 OK\n\n};
 } # _send_response_headers_empty
 
 sub _send_response_body : Test(2) {
@@ -332,7 +332,7 @@ sub _send_response_body : Test(2) {
   $cgi->send_response_body ('Hello, ');
   $cgi->send_response_body ('World.');
   $cgi->close_response_body;
-  eq_or_diff $out, qq{Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\nHello, World.};
+  eq_or_diff $out, qq{Status: 200 OK\n\nHello, World.};
 } # _send_response_body
 
 sub _send_response_body_no_close : Test(2) {
@@ -343,7 +343,7 @@ sub _send_response_body_no_close : Test(2) {
   my $writer;
   $cgi->send_response_body ("Hello, ");
   $cgi->send_response_body ("World.");
-  eq_or_diff $out, qq{Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\nHello, World.};
+  eq_or_diff $out, qq{Status: 200 OK\n\nHello, World.};
 } # _send_response_body_no_close
 
 sub _send_response_body_print_after_close : Test(4) {
@@ -360,7 +360,7 @@ sub _send_response_body_print_after_close : Test(4) {
   dies_here_ok {
     $cgi->close_response_body;
   };
-  eq_or_diff $out, qq{Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\nHello, };
+  eq_or_diff $out, qq{Status: 200 OK\n\nHello, };
 } # _send_response_body_no_close
 
 sub _send_response_body_header : Test(2) {
@@ -373,7 +373,7 @@ sub _send_response_body_header : Test(2) {
   $cgi->send_response_body ("World.");
   $cgi->close_response_body;
   dies_here_ok { $cgi->send_response_headers };
-  eq_or_diff $out, qq{Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\nHello, World.};
+  eq_or_diff $out, qq{Status: 200 OK\n\nHello, World.};
 } # _send_response_body_header
 
 sub _send_response_send_response_headers : Test(2) {
@@ -386,7 +386,7 @@ sub _send_response_send_response_headers : Test(2) {
   lives_ok {
     $cgi->send_response_headers;
   };
-  eq_or_diff $out, qq{Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\n};
+  eq_or_diff $out, qq{Status: 200 OK\n\n};
 } # _send_response_send_response_body
 
 sub _send_response_send_response_body : Test(2) {
@@ -398,7 +398,7 @@ sub _send_response_send_response_body : Test(2) {
   lives_ok {
     $cgi->send_response_body ('abc');
   };
-  eq_or_diff $out, qq{Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\nabc};
+  eq_or_diff $out, qq{Status: 200 OK\n\nabc};
 } # _send_response_send_response_body
 
 sub _send_response_send_first : Test(2) {
@@ -409,7 +409,7 @@ sub _send_response_send_first : Test(2) {
   $cgi->send_response (onready => sub {
     $cgi->send_response_body ('abc');
   });
-  eq_or_diff $out, qq{Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\nabc};
+  eq_or_diff $out, qq{Status: 200 OK\n\nabc};
 } # _send_response_send_first
 
 sub _send_response_send_first_2 : Test(2) {
@@ -421,7 +421,7 @@ sub _send_response_send_first_2 : Test(2) {
     $cgi->set_response_headers ([['abc' => 12]]);
     $cgi->send_response_body ('abc');
   });
-  eq_or_diff $out, qq{Status: 200 OK\nabc: 12\nContent-Type: text/plain; charset=utf-8\n\nabc};
+  eq_or_diff $out, qq{Status: 200 OK\nabc: 12\n\nabc};
 } # _send_response_send_first_2
 
 sub _send_response_send_first_then_send : Test(8) {
@@ -439,7 +439,7 @@ sub _send_response_send_first_then_send : Test(8) {
   dies_here_ok { $cgi->send_response_headers };
   dies_here_ok { $cgi->send_response_body (120) };
   dies_here_ok { $cgi->close_response_body };
-  eq_or_diff $out, qq{Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\nabc120};
+  eq_or_diff $out, qq{Status: 200 OK\n\nabc120};
 } # _send_response_send_first_then_send
 
 sub _send_response_return : Test(1) {
