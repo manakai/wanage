@@ -4,19 +4,11 @@ use warnings;
 use Path::Class;
 use lib file (__FILE__)->dir->parent->subdir ('lib')->stringify;
 use lib glob file (__FILE__)->dir->parent->subdir ('modules', '*', 'lib')->stringify;
+use lib file (__FILE__)->dir->parent->subdir ('t', 'lib')->stringify;
 use base qw(Test::Class);
 use Wanage::Interface::CGI;
 use Test::MoreMore;
-
-sub with_cgi_env (&;$$$) {
-  my ($code, $env, $stdin_data, $stdout_data) = @_;
-  local %ENV = %{$env or {}};
-  local *STDIN;
-  local *STDOUT;
-  open STDIN, '<', \($_[2]) if defined $stdin_data;
-  open STDOUT, '>', \($_[3]) if defined $stdout_data;
-  return $code->();
-} # with_cgi_env
+use Test::Wanage::Envs;
 
 sub _version : Test(1) {
   ok $Wanage::Interface::CGI::VERSION;

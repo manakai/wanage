@@ -4,36 +4,11 @@ use warnings;
 use Path::Class;
 use lib file (__FILE__)->dir->parent->subdir ('lib')->stringify;
 use lib glob file (__FILE__)->dir->parent->subdir ('modules', '*', 'lib')->stringify;
+use lib file (__FILE__)->dir->parent->subdir ('t', 'lib')->stringify;
 use base qw(Test::Class);
 use Wanage::Interface::PSGI;
 use Test::MoreMore;
-
-sub new_psgi_env (;$%) {
-  my ($env, %args) = @_;
-  $env ||= {};
-  open $env->{'psgi.input'}, '<', \($args{input_data})
-    if defined $args{input_data};
-  return $env;
-} # new_psgi_env
-
-{
-  package test::Writer;
-
-  sub new {
-    return bless {data => []}, $_[0];
-  }
-  
-  sub write {
-    push @{$_[0]->{data}}, $_[1];
-  }
-
-  sub close {
-    $_[0]->{closed}++;
-  }
-
-  sub data { $_[0]->{data} }
-  sub closed { $_[0]->{closed} }
-}
+use Test::Wanage::Envs;
 
 sub _version : Test(1) {
   ok $Wanage::Interface::PSGI::VERSION;
@@ -252,7 +227,7 @@ sub _set_status_streamable_send_response_first : Test(6) {
     $psgi->set_status (400, 'Bad input');
   });
   my $res;
-  my $writer = test::Writer->new;
+  my $writer = Test::Wanage::Envs::PSGI::Writer->new;
   $result->(sub { $res = shift; return $writer });
   eq_or_diff $res, undef;
   eq_or_diff $writer->data, [];
@@ -271,7 +246,7 @@ sub _set_status_streamable_send_response_last : Test(6) {
   $psgi->set_status (400, 'Bad input');
   my $result = $psgi->send_response;
   my $res;
-  my $writer = test::Writer->new;
+  my $writer = Test::Wanage::Envs::PSGI::Writer->new;
   $result->(sub { $res = shift; return $writer });
   eq_or_diff $res, undef;
   eq_or_diff $writer->data, [];
@@ -319,7 +294,7 @@ sub _set_response_headers_streamable : Test(3) {
   $psgi->send_response_headers;
   
   my $result = $psgi->send_response;
-  my $writer = test::Writer->new;
+  my $writer = Test::Wanage::Envs::PSGI::Writer->new;
   my $res;
   $result->(sub { $res = shift; return $writer });
   eq_or_diff $res, [200, [Hoge => 'Fuga']];
@@ -334,7 +309,7 @@ sub _set_response_headers_streamable_send_first : Test(3) {
     $psgi->set_response_headers ([['Hoge' => 'Fuga']]);
     $psgi->send_response_headers;
   });
-  my $writer = test::Writer->new;
+  my $writer = Test::Wanage::Envs::PSGI::Writer->new;
   my $res;
   $result->(sub { $res = shift; return $writer });
   eq_or_diff $res, [200, [Hoge => 'Fuga']];
@@ -364,7 +339,7 @@ sub _set_response_headers_streamable_twice : Test(4) {
   dies_here_ok { $psgi->set_response_headers ([['Hoge' => 'Abc']]) };
   $psgi->send_response_headers;
   my $result = $psgi->send_response;
-  my $writer = test::Writer->new;
+  my $writer = Test::Wanage::Envs::PSGI::Writer->new;
   my $res;
   $result->(sub { $res = shift; return $writer });
   eq_or_diff $res, [200, ['Hoge' => 'Hoe']];
@@ -384,7 +359,7 @@ sub _send_response_headers_streamable_empty : Test(3) {
       ({'psgi.streaming' => 1});
   $psgi->send_response_headers;
   my $result = $psgi->send_response;
-  my $writer = test::Writer->new;
+  my $writer = Test::Wanage::Envs::PSGI::Writer->new;
   my $res;
   $result->(sub { $res = shift; return $writer });
   eq_or_diff $res, [200, []];
@@ -412,7 +387,7 @@ sub _send_response_body_streamable : Test(3) {
       ({'psgi.streaming' => 1});
   $psgi->send_response_body ('abc');
   my $result = $psgi->send_response;
-  my $writer = test::Writer->new;
+  my $writer = Test::Wanage::Envs::PSGI::Writer->new;
   my $res;
   $result->(sub { $res = shift; return $writer });
   eq_or_diff $res, [200, []];
@@ -426,7 +401,7 @@ sub _send_response_body_streamable_send_first : Test(3) {
   my $result = $psgi->send_response (onready => sub {
     $psgi->send_response_body ('abc');
   });
-  my $writer = test::Writer->new;
+  my $writer = Test::Wanage::Envs::PSGI::Writer->new;
   my $res;
   $result->(sub { $res = shift; return $writer });
   eq_or_diff $res, [200, []];
@@ -460,7 +435,7 @@ sub _send_response_body_then_response_headers_streamable : Test(4) {
   dies_here_ok { $psgi->set_response_headers (['Foo' => 1]) };
   $psgi->send_response_headers;
   my $result = $psgi->send_response;
-  my $writer = test::Writer->new;
+  my $writer = Test::Wanage::Envs::PSGI::Writer->new;
   my $res;
   $result->(sub { $res = shift; return $writer });
   eq_or_diff $res, [200, []];
@@ -476,7 +451,7 @@ sub _send_response_body_then_response_headers_streamable_send_first : Test(4) {
     dies_here_ok { $psgi->set_response_headers (['Foo' => 1]) };
     $psgi->send_response_headers;
   });
-  my $writer = test::Writer->new;
+  my $writer = Test::Wanage::Envs::PSGI::Writer->new;
   my $res;
   $result->(sub { $res = shift; return $writer });
   eq_or_diff $res, [200, []];
@@ -507,7 +482,7 @@ sub _send_response_body_twice_streamable : Test(3) {
   $psgi->send_response_body ('abc');
   $psgi->send_response_body ('xyz');
   my $result = $psgi->send_response;
-  my $writer = test::Writer->new;
+  my $writer = Test::Wanage::Envs::PSGI::Writer->new;
   my $res;
   $result->(sub { $res = shift; return $writer });
   eq_or_diff $res, [200, []];
@@ -522,7 +497,7 @@ sub _send_response_body_twice_streamable_send_first : Test(3) {
     $psgi->send_response_body ('abc');
     $psgi->send_response_body ('xyz');
   });
-  my $writer = test::Writer->new;
+  my $writer = Test::Wanage::Envs::PSGI::Writer->new;
   my $res;
   $result->(sub { $res = shift; return $writer });
   eq_or_diff $res, [200, []];
@@ -555,7 +530,7 @@ sub _close_response_body_then_send_streamable : Test(3) {
       ({'psgi.streaming' => 1});
   $psgi->close_response_body;
   my $result = $psgi->send_response;
-  my $writer = test::Writer->new;
+  my $writer = Test::Wanage::Envs::PSGI::Writer->new;
   my $res;
   $result->(sub { $res = shift; return $writer });
   eq_or_diff $res, [200, []];
@@ -569,7 +544,7 @@ sub _close_response_body_send_first_streamable : Test(3) {
   my $result = $psgi->send_response (onready => sub {
     $psgi->close_response_body;
   });
-  my $writer = test::Writer->new;
+  my $writer = Test::Wanage::Envs::PSGI::Writer->new;
   my $res;
   $result->(sub { $res = shift; return $writer });
   eq_or_diff $res, [200, []];
@@ -611,7 +586,7 @@ sub _close_response_body_then_send_body_streamable : Test(4) {
   $psgi->close_response_body;
   dies_here_ok { $psgi->send_response_body ('abc') };
   my $result = $psgi->send_response;
-  my $writer = test::Writer->new;
+  my $writer = Test::Wanage::Envs::PSGI::Writer->new;
   my $res;
   $result->(sub { $res = shift; return $writer });
   eq_or_diff $res, [200, []];
@@ -629,7 +604,7 @@ sub _send_response_empty_streamable : Test(3) {
   my $psgi = Wanage::Interface::PSGI->new_from_psgi_env
       ({'psgi.streaming' => 1});
   my $result = $psgi->send_response;
-  my $writer = test::Writer->new;
+  my $writer = Test::Wanage::Envs::PSGI::Writer->new;
   my $res;
   $result->(sub { $res = shift; return $writer });
   is $res, undef;
@@ -666,7 +641,7 @@ sub _send_response_send_first_streamable : Test(3) {
     $psgi->send_response_body ('xyz');
     $psgi->send_response_body ('abcx');
   });
-  my $writer = test::Writer->new;
+  my $writer = Test::Wanage::Envs::PSGI::Writer->new;
   my $res;
   $result->(sub { $res = shift; return $writer });
   eq_or_diff $res, [501, [Foo => 12, Bar => 3111]];
@@ -712,7 +687,7 @@ sub _send_response_send_first_streamable_closed : Test(7) {
     dies_here_ok { $psgi->send_response_body ('123') };
     dies_here_ok { $psgi->close_response_body };
   });
-  my $writer = test::Writer->new;
+  my $writer = Test::Wanage::Envs::PSGI::Writer->new;
   my $res;
   $result->(sub { $res = shift; return $writer });
   eq_or_diff $res, [501, [Foo => 12, Bar => 3111]];
@@ -737,7 +712,7 @@ sub _send_response_send_first_streamable_closed_2 : Test(9) {
   $psgi->set_status (300);
   $psgi->send_response_body ('661');
   $psgi->close_response_body;
-  my $writer = test::Writer->new;
+  my $writer = Test::Wanage::Envs::PSGI::Writer->new;
   my $res;
   $result->(sub { $res = shift; return $writer });
   eq_or_diff $res, [300, []];
