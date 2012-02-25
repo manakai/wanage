@@ -117,6 +117,13 @@ sub send_response ($;%) {
   return;
 } # send_response
 
+sub DESTROY {
+  my $self = shift;
+  if ($self->{response_sent} and not $self->{response_headers_sent}) {
+    warn "Response is discarded before it is sent\n";
+  }
+} # DESTROY
+
 1;
 
 =head1 LICENSE
