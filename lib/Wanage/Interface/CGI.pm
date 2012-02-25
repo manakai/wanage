@@ -56,14 +56,22 @@ sub set_response_headers ($$) {
   $_[0]->{response_headers} = $_[1];
 } # set_response_headers
 
-sub send_response_headers ($) {
-  my $self = $_[0];
+sub send_response_headers ($;%) {
+  my ($self, %args) = @_;
   croak "Response body is already closed" if $self->{response_body_closed};
-  return if $self->{response_headers_sent};
+  if ($self->{response_headers_sent}) {
+    if (defined $args{status} or
+        defined $args{status_text} or
+        $args{headers}) {
+      croak "You can no longer set response headers";
+    }
+    return;
+  }
   my $handle = $self->{response_handle};
 
-  my $status = ($self->{status} || 200) + 0;
-  my $status_text = $self->{status_text};
+  my $status = $args{status};
+  $status = 200 if not defined $status;
+  my $status_text = $args{status_text};
   $status_text = do {
     require Wanage::HTTP::Info;
     $Wanage::HTTP::Info::ReasonPhrases->{$status} || '';
@@ -71,7 +79,7 @@ sub send_response_headers ($) {
   $status_text =~ s/\s+/ /g;
 
   print $handle "Status: $status $status_text\n";
-  for (@{$self->{response_headers} or []}) {
+  for (@{$args{headers} or []}) {
     my $name = $_->[0];
     my $value = $_->[1];
     $name =~ s/[^0-9A-Za-z_-]/_/g; ## Far more restrictive than RFC 3875

@@ -207,14 +207,14 @@ sub _original_url_from_request_uri_abs_non_http : Test(4) {
 sub _set_status_nonstreamable_send_response_first : Test(1) {
   my $psgi = Wanage::Interface::PSGI->new_from_psgi_env;
   my $result = $psgi->send_response (onready => sub {
-    $psgi->set_status (400, 'Bad input');
+    $psgi->send_response_headers (status => 400, status_text => 'Bad input');
   });
   eq_or_diff $result, [400, [], []];
 } # _set_status_nonstreamable_send_response_first
 
 sub _set_status_nonstreamable_send_response_last : Test(1) {
   my $psgi = Wanage::Interface::PSGI->new_from_psgi_env;
-  $psgi->set_status (400, 'Bad input');
+  $psgi->send_response_headers (status => 400, status_text => 'Bad input');
   my $result = $psgi->send_response;
   eq_or_diff $result, [400, [], []];
 } # _set_status_nonstreamable_send_response_last
@@ -224,12 +224,12 @@ sub _set_status_streamable_send_response_first : Test(6) {
     'psgi.streaming' => 1,
   });
   my $result = $psgi->send_response (onready => sub {
-    $psgi->set_status (400, 'Bad input');
+    $psgi->send_response_headers (status => 400, status_text => 'Bad input');
   });
   my $res;
   my $writer = Test::Wanage::Envs::PSGI::Writer->new;
   $result->(sub { $res = shift; return $writer });
-  eq_or_diff $res, undef;
+  eq_or_diff $res, [400, []];
   eq_or_diff $writer->data, [];
   ng $writer->closed;
   
@@ -243,12 +243,12 @@ sub _set_status_streamable_send_response_last : Test(6) {
   my $psgi = Wanage::Interface::PSGI->new_from_psgi_env ({
     'psgi.streaming' => 1,
   });
-  $psgi->set_status (400, 'Bad input');
+  $psgi->send_response_headers (status => 400, status_text => 'Bad input');
   my $result = $psgi->send_response;
   my $res;
   my $writer = Test::Wanage::Envs::PSGI::Writer->new;
   $result->(sub { $res = shift; return $writer });
-  eq_or_diff $res, undef;
+  eq_or_diff $res, [400, []];
   eq_or_diff $writer->data, [];
   ng $writer->closed;
   
@@ -260,12 +260,13 @@ sub _set_status_streamable_send_response_last : Test(6) {
 
 sub _set_status_nonstreamable_twice : Test(2) {
   my $psgi = Wanage::Interface::PSGI->new_from_psgi_env;
-  $psgi->set_status (400);
-  $psgi->set_status (402);
+  $psgi->send_response_headers (status => 400, status_text => 'Bad input');
+  dies_here_ok {
+    $psgi->send_response_headers (status => 402, status_text => 'No payment');
+  };
   $psgi->send_response_headers;
-  dies_here_ok { $psgi->set_status (404) };
   my $result = $psgi->send_response;
-  eq_or_diff $result, [402, [], []];
+  eq_or_diff $result, [400, [], []];
 } # _set_status_nonstreamable_twice
 
 sub _set_response_headers : Test(8) {
@@ -280,8 +281,7 @@ sub _set_response_headers : Test(8) {
     [['Content-TYPE' => '']],
   ) {
     my $psgi = Wanage::Interface::PSGI->new_from_psgi_env;
-    $psgi->set_response_headers ($_);
-    $psgi->send_response_headers;
+    $psgi->send_response_headers (headers => $_);
     my $result = $psgi->send_response;
     eq_or_diff $result, [200, [map { @$_ } @$_], []];
   }
@@ -290,8 +290,7 @@ sub _set_response_headers : Test(8) {
 sub _set_response_headers_streamable : Test(3) {
   my $psgi = Wanage::Interface::PSGI->new_from_psgi_env
       ({'psgi.streaming' => 1});
-  $psgi->set_response_headers ([['Hoge' => 'Fuga']]);
-  $psgi->send_response_headers;
+  $psgi->send_response_headers (headers => [['Hoge' => 'Fuga']]);
   
   my $result = $psgi->send_response;
   my $writer = Test::Wanage::Envs::PSGI::Writer->new;
@@ -306,8 +305,7 @@ sub _set_response_headers_streamable_send_first : Test(3) {
   my $psgi = Wanage::Interface::PSGI->new_from_psgi_env
       ({'psgi.streaming' => 1});
   my $result = $psgi->send_response (onready => sub {
-    $psgi->set_response_headers ([['Hoge' => 'Fuga']]);
-    $psgi->send_response_headers;
+    $psgi->send_response_headers (headers => [['Hoge' => 'Fuga']]);
   });
   my $writer = Test::Wanage::Envs::PSGI::Writer->new;
   my $res;
@@ -320,29 +318,29 @@ sub _set_response_headers_streamable_send_first : Test(3) {
 sub _set_response_headers_twice : Test(2) {
   my $out = '';
   my $psgi = Wanage::Interface::PSGI->new_from_psgi_env;
-  $psgi->set_response_headers ([['Hoge' => 'Fuga']]);
-  $psgi->set_response_headers ([['Hoge' => 'Hoe']]);
-  $psgi->send_response_headers;
-  dies_here_ok { $psgi->set_response_headers ([['Hoge' => 'Abc']]) };
+  $psgi->send_response_headers (headers => [['Hoge' => 'Fuga']]);
+  dies_here_ok {
+    $psgi->send_response_headers (headers => [['Hoge' => 'Hoe']]);
+  };
   $psgi->send_response_headers;
   my $result = $psgi->send_response;
-  eq_or_diff $result, [200, ['Hoge' => 'Hoe'], []];
+  eq_or_diff $result, [200, ['Hoge' => 'Fuga'], []];
 } # _set_response_headers_twice
 
 sub _set_response_headers_streamable_twice : Test(4) {
   my $out = '';
   my $psgi = Wanage::Interface::PSGI->new_from_psgi_env
       ({'psgi.streaming' => 1});
-  $psgi->set_response_headers ([['Hoge' => 'Fuga']]);
-  $psgi->set_response_headers ([['Hoge' => 'Hoe']]);
-  $psgi->send_response_headers;
-  dies_here_ok { $psgi->set_response_headers ([['Hoge' => 'Abc']]) };
+  $psgi->send_response_headers (headers => [['Hoge' => 'Fuga']]);
+  dies_here_ok {
+    $psgi->send_response_headers (headers => [['Hoge' => 'Hoe']]);
+  };
   $psgi->send_response_headers;
   my $result = $psgi->send_response;
   my $writer = Test::Wanage::Envs::PSGI::Writer->new;
   my $res;
   $result->(sub { $res = shift; return $writer });
-  eq_or_diff $res, [200, ['Hoge' => 'Hoe']];
+  eq_or_diff $res, [200, ['Hoge' => 'Fuga']];
   eq_or_diff $writer->data, [];
   ng $writer->closed;
 } # _set_response_headers_streamable_twice
@@ -412,7 +410,7 @@ sub _send_response_body_streamable_send_first : Test(3) {
 sub _send_response_body_then_response_headers : Test(2) {
   my $psgi = Wanage::Interface::PSGI->new_from_psgi_env;
   $psgi->send_response_body ('abc');
-  dies_here_ok { $psgi->set_response_headers (['Foo' => 1]) };
+  dies_here_ok { $psgi->send_response_headers (headers => [['Foo' => 1]]) };
   $psgi->send_response_headers;
   my $result = $psgi->send_response;
   eq_or_diff $result, [200, [], ['abc']];
@@ -422,7 +420,7 @@ sub _send_response_body_then_response_headers_send_first : Test(2) {
   my $psgi = Wanage::Interface::PSGI->new_from_psgi_env;
   my $result = $psgi->send_response (onready => sub {
     $psgi->send_response_body ('abc');
-    dies_here_ok { $psgi->set_response_headers (['Foo' => 1]) };
+    dies_here_ok { $psgi->send_response_headers (headers => [['Foo' => 1]]) };
     $psgi->send_response_headers;
   });
   eq_or_diff $result, [200, [], ['abc']];
@@ -432,7 +430,7 @@ sub _send_response_body_then_response_headers_streamable : Test(4) {
   my $psgi = Wanage::Interface::PSGI->new_from_psgi_env
       ({'psgi.streaming' => 1});
   $psgi->send_response_body ('abc');
-  dies_here_ok { $psgi->set_response_headers (['Foo' => 1]) };
+  dies_here_ok { $psgi->send_response_headers (headers => [['Foo' => 1]]) };
   $psgi->send_response_headers;
   my $result = $psgi->send_response;
   my $writer = Test::Wanage::Envs::PSGI::Writer->new;
@@ -448,7 +446,7 @@ sub _send_response_body_then_response_headers_streamable_send_first : Test(4) {
       ({'psgi.streaming' => 1});
   my $result = $psgi->send_response (onready => sub {
     $psgi->send_response_body ('abc');
-    dies_here_ok { $psgi->set_response_headers (['Foo' => 1]) };
+    dies_here_ok { $psgi->send_response_headers (headers => [['Foo' => 1]]) };
     $psgi->send_response_headers;
   });
   my $writer = Test::Wanage::Envs::PSGI::Writer->new;
@@ -569,7 +567,7 @@ sub _close_response_body_twice_send_first : Test(1) {
 sub _close_response_body_then_send_headers : Test(2) {
   my $psgi = Wanage::Interface::PSGI->new_from_psgi_env;
   $psgi->close_response_body;
-  dies_here_ok { $psgi->set_response_headers ([]) };
+  dies_here_ok { $psgi->send_response_headers (headers => []) };
   dies_here_ok { $psgi->send_response_headers };
 } # _close_response_body_then_send_headers
 
@@ -622,8 +620,8 @@ sub _send_response_twice : Test(2) {
 sub _send_response_send_first : Test(1) {
   my $psgi = Wanage::Interface::PSGI->new_from_psgi_env;
   my $result = $psgi->send_response (onready => sub {
-    $psgi->set_status (501);
-    $psgi->set_response_headers ([[Foo => 12], [Bar => 3111]]);
+    $psgi->send_response_headers (status => 501,
+                                  headers => [[Foo => 12], [Bar => 3111]]);
     $psgi->send_response_headers;
     $psgi->send_response_body ('xyz');
     $psgi->send_response_body ('abcx');
@@ -635,8 +633,8 @@ sub _send_response_send_first_streamable : Test(3) {
   my $psgi = Wanage::Interface::PSGI->new_from_psgi_env
       ({'psgi.streaming' => 1});
   my $result = $psgi->send_response (onready => sub {
-    $psgi->set_status (501);
-    $psgi->set_response_headers ([[Foo => 12], [Bar => 3111]]);
+    $psgi->send_response_headers (status => 501,
+                                  headers => [[Foo => 12], [Bar => 3111]]);
     $psgi->send_response_headers;
     $psgi->send_response_body ('xyz');
     $psgi->send_response_body ('abcx');
@@ -660,8 +658,8 @@ sub _send_response_send_first_twice : Test(2) {
 sub _send_response_send_first_closed : Test(5) {
   my $psgi = Wanage::Interface::PSGI->new_from_psgi_env;
   my $result = $psgi->send_response (onready => sub {
-    $psgi->set_status (501);
-    $psgi->set_response_headers ([[Foo => 12], [Bar => 3111]]);
+    $psgi->send_response_headers (status => 501,
+                                  headers => [[Foo => 12], [Bar => 3111]]);
     $psgi->send_response_headers;
     $psgi->send_response_body ('xyz');
     $psgi->send_response_body ('abcx');
@@ -678,8 +676,8 @@ sub _send_response_send_first_streamable_closed : Test(7) {
   my $psgi = Wanage::Interface::PSGI->new_from_psgi_env
       ({'psgi.streaming' => 1});
   my $result = $psgi->send_response (onready => sub {
-    $psgi->set_status (501);
-    $psgi->set_response_headers ([[Foo => 12], [Bar => 3111]]);
+    $psgi->send_response_headers (status => 501,
+                                  headers => [[Foo => 12], [Bar => 3111]]);
     $psgi->send_response_headers;
     $psgi->send_response_body ('xyz');
     $psgi->send_response_body ('abcx');
@@ -698,18 +696,19 @@ sub _send_response_send_first_streamable_closed : Test(7) {
   dies_here_ok { $psgi->close_response_body };
 } # _send_response_send_first_stremable_closed
 
-sub _send_response_send_first_streamable_closed_2 : Test(9) {
+sub _send_response_send_first_streamable_closed_2 : Test(8) {
   my $psgi = Wanage::Interface::PSGI->new_from_psgi_env
       ({'psgi.streaming' => 1});
   my $result = $psgi->send_response (onready => sub {
-    dies_here_ok { $psgi->set_status (501) };
-    dies_here_ok { $psgi->set_response_headers ([[Foo => 12], [Bar => 3111]]) };
+    dies_here_ok { $psgi->send_response_headers
+                       (status => 501,
+                        headers => [[Foo => 12], [Bar => 3111]]) };
     dies_here_ok { $psgi->send_response_headers };
     dies_here_ok { $psgi->send_response_body ('xyz') };
     dies_here_ok { $psgi->send_response_body ('abcx') };
     dies_here_ok { $psgi->close_response_body };
   });
-  $psgi->set_status (300);
+  $psgi->send_response_headers (status => 300);
   $psgi->send_response_body ('661');
   $psgi->close_response_body;
   my $writer = Test::Wanage::Envs::PSGI::Writer->new;
@@ -722,8 +721,8 @@ sub _send_response_send_first_streamable_closed_2 : Test(9) {
 
 sub _send_response_implicitly_closed : Test(4) {
   my $psgi = Wanage::Interface::PSGI->new_from_psgi_env;
-  $psgi->set_status (501);
-  $psgi->set_response_headers ([[Foo => 12], [Bar => 3111]]);
+  $psgi->send_response_headers (status => 501,
+                                headers => [[Foo => 12], [Bar => 3111]]);
   $psgi->send_response_headers;
   $psgi->send_response_body ('xyz');
   $psgi->send_response_body ('abcx');
@@ -737,8 +736,8 @@ sub _send_response_implicitly_closed : Test(4) {
 sub _send_response_send_first_implicitly_closed : Test(4) {
   my $psgi = Wanage::Interface::PSGI->new_from_psgi_env;
   my $result = $psgi->send_response (onready => sub {
-    $psgi->set_status (501);
-    $psgi->set_response_headers ([[Foo => 12], [Bar => 3111]]);
+    $psgi->send_response_headers (status => 501,
+                                  headers => [[Foo => 12], [Bar => 3111]]);
     $psgi->send_response_headers;
     $psgi->send_response_body ('xyz');
     $psgi->send_response_body ('abcx');

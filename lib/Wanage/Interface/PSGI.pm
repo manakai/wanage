@@ -38,30 +38,27 @@ sub get_request_body_as_ref ($) {
 
 # ------ Response ------
 
-sub set_status ($$;$) {
-  croak "You can no longer set status" if $_[0]->{response_headers_sent};
-  $_[0]->{response} ||= [200, []];
-  $_[0]->{response}->[0] = $_[1];
-} # set_status
-
-sub set_response_headers ($$) {
-  croak "You can no longer set response headers"
-      if $_[0]->{response_headers_sent};
-  $_[0]->{response} ||= [200, []];
-  $_[0]->{response}->[1] = [map { ($_->[0] => $_->[1]) } @{$_[1]}];
-} # set_response_headers
-
-sub send_response_headers ($) {
-  my $self = $_[0];
+sub send_response_headers ($;%) {
+  my ($self, %args) = @_;
   croak "Response body is already closed" if $self->{response_body_closed};
+  if ($self->{response_headers_sent}) {
+    if (defined $args{status} or
+        defined $args{status_text} or
+        $args{headers}) {
+      croak "You can no longer set response headers";
+    }
+    return;
+  }
+  $self->{response} ||= [200, []];
+  $self->{response}->[0] = $args{status} if defined $args{status};
+  $self->{response}->[1] = [map { ($_->[0] => $_->[1]) } @{$args{headers}}]
+      if $args{headers};
   if ($self->{env}->{'psgi.streaming'}) {
     if ($self->{psgi_writer_getter}) {
-      $self->{response} ||= [200, []];
       $self->{psgi_writer} = $self->{psgi_writer_getter}->($self->{response});
       delete $self->{psgi_writer_getter};
     }
   } else {
-    $self->{response} ||= [200, [], []];
     $self->{response}->[2] ||= [];
   }
   $self->{response_headers_sent} = 1;

@@ -260,8 +260,7 @@ sub _set_status : Test(4) {
     my $cgi = with_cgi_env {
       Wanage::Interface::CGI->new_from_main;
     } {}, undef, $out;
-    $cgi->set_status (400, $input);
-    $cgi->send_response_headers;
+    $cgi->send_response_headers (status => 400, status_text => $input);
     eq_or_diff $out, qq{Status: 400 $expected\n\n};
   }
 } # _set_status
@@ -271,10 +270,9 @@ sub _set_status_twice : Test(2) {
   my $cgi = with_cgi_env {
     Wanage::Interface::CGI->new_from_main;
   } {}, undef, $out;
-  $cgi->set_status (400);
-  $cgi->set_status (402);
+  $cgi->send_response_headers (status => 402);
+  dies_here_ok { $cgi->send_response_headers (status => 400) };
   $cgi->send_response_headers;
-  dies_here_ok { $cgi->set_status (404) };
   $cgi->send_response_headers;
   eq_or_diff $out, qq{Status: 402 Payment Required\n\n};
 } # _set_status_twice
@@ -295,7 +293,7 @@ sub _set_response_headers : Test(8) {
     my $cgi = with_cgi_env {
       Wanage::Interface::CGI->new_from_main;
     } {}, undef, $out;
-    $cgi->set_response_headers ($input);
+    $cgi->send_response_headers (headers => $input);
     $cgi->send_response_headers;
     eq_or_diff $out, qq{Status: 200 OK\n$expected\n};
   }
@@ -306,10 +304,10 @@ sub _set_response_headers_twice : Test(2) {
   my $cgi = with_cgi_env {
     Wanage::Interface::CGI->new_from_main;
   } {}, undef, $out;
-  $cgi->set_response_headers ([['Hoge' => 'Fuga']]);
-  $cgi->set_response_headers ([['Hoge' => 'Hoe']]);
-  $cgi->send_response_headers;
-  dies_here_ok { $cgi->set_response_headers ([['Hoge' => 'Abc']]) };
+  $cgi->send_response_headers (headers => [['Hoge' => 'Hoe']]);
+  dies_here_ok {
+    $cgi->send_response_headers (headers => [['Hoge' => 'Fuga']]);
+  };
   $cgi->send_response_headers;
   eq_or_diff $out, qq{Status: 200 OK\nHoge: Hoe\n\n};
 } # _set_response_headers_twice
@@ -418,7 +416,7 @@ sub _send_response_send_first_2 : Test(2) {
     Wanage::Interface::CGI->new_from_main;
   } {}, undef, $out;
   $cgi->send_response (onready => sub {
-    $cgi->set_response_headers ([['abc' => 12]]);
+    $cgi->send_response_headers (headers => [['abc' => 12]]);
     $cgi->send_response_body ('abc');
   });
   eq_or_diff $out, qq{Status: 200 OK\nabc: 12\n\nabc};
@@ -432,7 +430,7 @@ sub _send_response_send_first_then_send : Test(8) {
   $cgi->send_response (onready => sub {
     $cgi->send_response_body ('abc');
   });
-  dies_here_ok { $cgi->set_status (440) };
+  dies_here_ok { $cgi->send_response_headers (status => 440) };
   lives_ok { $cgi->send_response_headers };
   lives_ok { $cgi->send_response_body (120) };
   lives_ok { $cgi->close_response_body };
