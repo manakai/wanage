@@ -15,7 +15,12 @@ meta-variable either C<ON>, C<on>, or C<1>.  (The last requirement is
 a willful violation to RFC 3875 for compatibility with real-world CGI
 server implementations.)
 
+This module is not expected to be invoked directly from applications.
+Applications should use L<Wanage::HTTP> API instead.
+
 =head1 SEE ALSO
+
+L<Wanage::HTTP>.
 
 RFC 3875 The Common Gateway Interface (CGI) Version 1.1
 <http://tools.ietf.org/html/rfc3875>.

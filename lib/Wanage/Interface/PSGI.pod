@@ -1,0 +1,33 @@
+=head1 NAME
+
+Wanage::Interface::PSGI - Wanage interface module for PSGI
+
+=head1 DESCRIPTION
+
+The C<Wanage::Interface::PSGI> module defines an adaptor to use PSGI
+interface within the Wanage abstraction.
+
+The PSGI server must support PSGI.  The module does support both true
+and false values of C<psgi.streaming>.
+
+This module is not expected to be invoked directly from applications.
+Applications should use L<Wanage::HTTP> API instead.
+
+=head1 SEE ALSO
+
+L<Wanage::HTTP>.
+
+PSGI specification <http://search.cpan.org/dist/PSGI/PSGI.pod>.
+
+=head1 AUTHOR
+
+Wakaba <w@suika.fam.cx>.
+
+=head1 LICENSE
+
+Copyright 2012 Wakaba <w@suika.fam.cx>.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
