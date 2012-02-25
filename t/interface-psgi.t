@@ -644,7 +644,7 @@ sub _send_response_twice : Test(2) {
   eq_or_diff $result, [200, [], []];
 } # _send_response_twice
 
-sub _send_response_send_first : Test(2) {
+sub _send_response_send_first : Test(1) {
   my $psgi = Wanage::Interface::PSGI->new_from_psgi_env;
   my $result = $psgi->send_response (onready => sub {
     $psgi->set_status (501);
@@ -744,6 +744,35 @@ sub _send_response_send_first_streamable_closed_2 : Test(9) {
   eq_or_diff $writer->data, ['661'];
   ok $writer->closed;
 } # _send_response_send_first_stremable_closed_2
+
+sub _send_response_implicitly_closed : Test(4) {
+  my $psgi = Wanage::Interface::PSGI->new_from_psgi_env;
+  $psgi->set_status (501);
+  $psgi->set_response_headers ([[Foo => 12], [Bar => 3111]]);
+  $psgi->send_response_headers;
+  $psgi->send_response_body ('xyz');
+  $psgi->send_response_body ('abcx');
+  my $result = $psgi->send_response;
+  dies_here_ok { $psgi->send_response_body ('xxxaa') }; 
+  dies_here_ok { $psgi->close_response_body }; 
+  dies_here_ok { $psgi->send_response_body ('xxxaa') }; 
+  eq_or_diff $result, [501, [Foo => 12, Bar => 3111], ['xyz', 'abcx']];
+} # _send_response_implicitly_closed
+
+sub _send_response_send_first_implicitly_closed : Test(4) {
+  my $psgi = Wanage::Interface::PSGI->new_from_psgi_env;
+  my $result = $psgi->send_response (onready => sub {
+    $psgi->set_status (501);
+    $psgi->set_response_headers ([[Foo => 12], [Bar => 3111]]);
+    $psgi->send_response_headers;
+    $psgi->send_response_body ('xyz');
+    $psgi->send_response_body ('abcx');
+  });
+  dies_here_ok { $psgi->send_response_body ('xxxaa') }; 
+  dies_here_ok { $psgi->close_response_body }; 
+  dies_here_ok { $psgi->send_response_body ('xxxaa') }; 
+  eq_or_diff $result, [501, [Foo => 12, Bar => 3111], ['xyz', 'abcx']];
+} # _send_response_send_first_implicitly_closed
 
 __PACKAGE__->runtests;
 
