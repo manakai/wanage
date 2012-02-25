@@ -11,10 +11,22 @@ Wanage::HTTP - HTTP interface for Wanage Web applications
   print $http->query_param->{mode};
   print $http->request_method;
   print $http->get_request_header ('Accept-Language');
+  print ${$http->response_body_as_ref};
+  
+  return $http->send_response (onready => sub {
+    $http->set_status (302, 'Go to next page');
+    $http->add_response_header ('Content-Language' => 'en');
+    $http->send_response_body_as_text ("Hello\x{3002}");
+    $http->send_response_body_as_ref (\$binary);
+    $http->close_response_body;
+  });
 
 =head1 DESCRIPTION
 
-XXX
+The C<Wanage::HTTP> module provides APIs to interpret HTTP request
+message and generate HTTP response message, using the underlying
+interface for server-application communication, including CGI and
+PSGI.
 
 =head1 METHODS
 
@@ -256,6 +268,22 @@ HTTP <http://tools.ietf.org/html/rfc2616>.
 
 XMLHttpRequest <http://dvcs.w3.org/hg/xhr/raw-file/tip/Overview.html>.
 
-=head1 ...
+RFC 3875 The Common Gateway Interface (CGI) Version 1.1
+<http://tools.ietf.org/html/rfc3875>.
 
-XXX
+SuikaWiki:CGI <http://suika.fam.cx/~wakaba/wiki/sw/n/CGI>.
+
+PSGI specification <http://search.cpan.org/dist/PSGI/PSGI.pod>.
+
+=head1 AUTHOR
+
+Wakaba <w@suika.fam.cx>.
+
+=head1 LICENSE
+
+Copyright 2012 Wakaba <w@suika.fam.cx>.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
