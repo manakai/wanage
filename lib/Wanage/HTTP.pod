@@ -165,6 +165,13 @@ reference is returned.
 
 =head2 Response
 
+The following methods can be used to construct and send the response
+message to the server (and then to client).  Please note that it's
+application's responsibility to generate a message that conforms to
+the relevenant specificaitons (i.e. the HTTP specification and
+server-application interface (e.g. CGI) specifications), otherwise
+broken or sometimes vulnerable message might be sent to the client.
+
 =over 4
 
 =item $http->set_status ($code, $reason)

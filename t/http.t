@@ -315,8 +315,8 @@ sub _send_response_methods_psgi : Test(1) {
   eq_or_diff $http->send_response, [402,
                        ['X-Hoge-Fuga' => '123',
                         'X-Hoge-fuga' => '520',
-                        'X_Hoge-Fuga' => "abc def\x0A\x90",
-                        "x-Hoge fuga:" => 'abc'],
+                        'X_Hoge-Fuga' => "abc def \x90",
+                        "x-Hoge_fuga_" => 'abc'],
                        ["ab\x20\nxzyz", "0"]];
 } # _send_response_methods_psgi
 

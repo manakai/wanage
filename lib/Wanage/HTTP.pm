@@ -133,10 +133,23 @@ sub send_response_headers ($) {
   my $headers = $_[0]->{response_headers};
   my @headers = values %{$headers->{headers} or {}};
   @headers = sort { $a->[0]->[0] cmp $b->[0]->[0] } @headers if $Sortkeys;
+  @headers = map {
+    ## As a general rule, conformance to the relevant specifications,
+    ## including server-application interface specifications and HTTP
+    ## specification, is in the application's (or server's)
+    ## responsitivility.  However, if some implementation failed to
+    ## ensure the conformance to the header syntax, if can cause
+    ## security vulnerability, so we reduce such possibility by
+    ## forcing the following transformation:
+    my ($name, $value) = @$_;
+    $name =~ s/[^0-9A-Za-z_-]/_/g;
+    $value =~ s/[\x0D\x0A]+[\x09\x20]*/ /g;
+    [$name => $value];
+  } map { @$_ } @headers;
   $_[0]->{interface}->send_response_headers
       (status => $headers->{status},
        status_text => $headers->{status_text},
-       headers => [map { @$_ } @headers]);
+       headers => \@headers);
   $_[0]->{response_headers_sent} = 1;
 } # send_response_headers
 
