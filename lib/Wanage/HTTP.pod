@@ -1,0 +1,254 @@
+=head1 NAME
+
+Wanage::HTTP - HTTP interface for Wanage Web applications
+
+=head1 SYNOPSIS
+
+  my $http = Wanage::HTTP->new_cgi;
+  my $http = Wanage::HTTP->new_from_psgi_env ($env);
+  
+  print $http->url->stringify;
+  print $http->query_param->{mode};
+  print $http->request_method;
+  print $http->get_request_header ('Accept-Language');
+
+=head1 DESCRIPTION
+
+XXX
+
+=head1 METHODS
+
+=head2 Constructors
+
+There are two constructors for the HTTP object, depending on the
+interface between the HTTP server and the application:
+
+=over 4
+
+=item $http = Wanage::HTTP->new_cgi
+
+Create a new HTTP object with the current CGI environment.
+
+=item $http = Wanage::HTTP->new_from_psgi_env ($env)
+
+Create a new HTTP object with a PSGI "environment" hash reference.  A
+typical PSGI application implemented using Wanage would look like:
+
+  sub {
+    my $env = shift;
+    my $http = Wanage::HTTP->new_from_psgi_env ($env);
+    
+    return $http->send_response (onready => sub {
+      $http->set_status (200);
+      $http->send_response_body ("OK");
+      $http->close_response_body;
+    });
+  };
+
+=back
+
+=head2 Request URL
+
+=over 4
+
+=item $url = $http->url
+
+Return the L<Wanage::URL> object representing the canonicalized
+variant of the URL requested by the client.
+
+=item $url = $http->original_url
+
+Return the L<Wanage::URL> object representing the original URL
+requested by the client.  Please note that Wanage assumes the URL is a
+string encoded in UTF-8 character string.  If the request URL supplied
+by the client contains a bare (or percent-decoded) non-ASCII character
+encoded in the encoding different from UTF-8, they would be converted
+into sequence of C<U+FFFD> C<REPLACEMENT CHARACTER> or other
+unintentional characters.
+
+=item $params = $http->query_params
+
+Return the hash reference which contains name-value pairs contained in
+the C<query> component of the request URL, interpreted as
+C<application/x-www-form-urlencoded>.  The values in the hash are
+represented as array references of values to preserve duplicate
+parameters in the query.  The values are B<byte strings> and not
+decoded by any character encoding.
+
+=back
+
+=head2 Request method
+
+=over 4
+
+=item $method = $http->request_method
+
+Return the HTTP method name of the request.
+
+If it is one of the methods whose name is compared ASCII
+case-insensitively in the XHR specification
+<http://dvcs.w3.org/hg/xhr/raw-file/tip/Overview.html#dom-xmlhttprequest-open>,
+the returned method name is normalized to uppercase.  Otherwise, the
+original case is preserved.  This is a willful violation to the HTTP
+specification.
+
+=item BOOL = $http->request_method_is_safe
+
+Return whether the request method is "safe" or not, per relevant
+specifications.  Methods C<GET> and C<HEAD> are safe.
+
+=item BOOL = $http->request_method_is_idempotent
+
+Return whether the request method is idempotent or not, per relevant
+specifications.  Methods including C<GET>, C<PUT>, and C<HEAD> are
+idempotent.
+
+=back
+
+=head2 Request headers
+
+In Wanage, terms I<header> and C<headers> are used to refer a header
+field and an entire header, respectively.  This is a willful violation
+to HTTP and MIME specifications for consistency of terminology with
+Web standard specifications and APIs such as XHR.
+
+=over 4
+
+=item $value = $http->get_request_header ($name)
+
+Return the value of the request header whose name is given as the
+argument.  If there is no header with the name, or is not provided by
+the server, the C<undef> value is returned instead.  Header names are
+ASCII case-insensitive.
+
+Depending on the interface specification and the server implementation
+in use, not all HTTP request headers could be accessed from this
+method.  For example, the CGI specification recommend the server not
+to provide the HTTP C<Authorization:> header field to the application.
+Moreover, even when a field value is provided, it might not contain
+the exact value provided by the client in the HTTP request headers.
+For example, the C<Content-Length:> header value returned by this
+method is the value of the C<CONTENT_LENGTH> when the PSGI interface
+is used and the value would be the one calculated by the server, not
+the client.
+
+Please note that the header values are byte strings, not character
+strings.
+
+=back
+
+=head2 Request body
+
+=over 4
+
+=item $ref = $http->request_body_as_ref
+
+Return a reference to the response body.  If there is the response
+body provided by the client, a reference to that byte string is
+returned.  Otherwise, the C<undef> value is returned.
+
+=item $params = $http->request_body_params
+
+Return the hash reference which contains name-value pairs contained in
+the request body, if the MIME type of the body is
+C<application/x-www-form-urlencoded>.
+
+The values in the hash are represented as array references of values
+to preserve duplicate parameters in the query.  The values are B<byte
+strings> and not decoded by any character encoding.
+
+If there is no request body, or if the MIME type of the request body
+is different from C<application/x-www-form-urlencoded>, an empty hash
+reference is returned.
+
+=back
+
+=head2 Response
+
+=over 4
+
+=item $http->set_status ($code, $reason)
+
+Set the HTTP status code and reason phrase for the response.  The
+reason phrase argument is optional.
+
+Please note that some interface does not support reason pharse and is
+ignored.
+
+=item $http->set_response_header ($name => $value)
+
+Register an HTTP header name-value pair for the response.  If there is
+any existing name-value pairs with the same header name, they are
+replaced by the new pair.
+
+=item $http->add_response_header ($name => $value)
+
+Register an HTTP header name-value pair for the response, without
+discarding existing headers.
+
+=item $http->send_response_headers
+
+Send status code, reason phrase, and response headers to the server.
+Once they are sent to the server, they can no longer be altered by the
+methods above.  Exactly when they are sent to the server (and then the
+client) depends on the interface.  This method can be invoked only
+once.
+
+=item $http->send_response_body_as_text ($text)
+
+Send a text of character strings as part of the response body, by
+encoding in UTF-8.
+
+This method can be invoked more than once to send multiple fragments
+of response body text.
+
+The C<send_response_headers> method is implicitly invoked by this
+method if it is not invoked yet.
+
+=item $http->send_response_body_as_ref ($ref)
+
+Send a byte string referenced by the argument, as part of the response
+body.
+
+This method can be invoked more than once to send multiple fragments
+of response body.
+
+The C<send_response_headers> method is implicitly invoked by this
+method if it is not invoked yet.
+
+=item $http->close_response_body
+
+Notify of the interface that there is no more response body to send to
+the client.  Once this method is invoked, you can't send response body
+data to the server anymore.
+
+The C<send_response_headers> method is implicitly invoked by this
+method if it is not invoked yet.
+
+=item $return = $http->send_response (onready => CODE)
+
+The C<send_response> method can be used as the "wrapper" of the code
+to construct the response.  The C<onready> named parameter takes a
+code reference, which is invoked, if specified, once the server is
+ready to receive the response.
+
+Return values depend on the interface in use.  If the interface is
+CGI, the method return no value.  If the interface is PSGI, the method
+return a value that should be returned by the PSGI application to the
+server.  If the PSGI server supports streaming (i.e. C<psgi.streaming>
+is true), the C<onready> handler is invoked within the code returned
+by the method.  Otherwise, the handler is invoked directly by the
+method synchronously.  Therefore, if you use the C<onready> handler,
+you should not rely on exactly when the code is executed.
+
+=back
+
+=head1 SEE ALSO
+
+HTTP <http://tools.ietf.org/html/rfc2616>.
+
+XMLHttpRequest <http://dvcs.w3.org/hg/xhr/raw-file/tip/Overview.html>.
+
+=head1 ...
+
+XXX
