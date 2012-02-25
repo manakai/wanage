@@ -7,8 +7,10 @@ Wanage::Interface::PSGI - Wanage interface module for PSGI
 The C<Wanage::Interface::PSGI> module defines an adaptor to use PSGI
 interface within the Wanage abstraction.
 
-The PSGI server must support PSGI.  The module does support both true
-and false values of C<psgi.streaming>.
+The PSGI server must support PSGI.  Please note that although the
+module does support PSGI servers whose C<psgi.streaming> value is
+false, it is strongly recommended to use the C<psgi.streaming>-enabled
+server such that full functionality of the Wanage API can be used.
 
 This module is not expected to be invoked directly from applications.
 Applications should use L<Wanage::HTTP> API instead.
