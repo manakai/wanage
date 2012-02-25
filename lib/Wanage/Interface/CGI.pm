@@ -57,12 +57,13 @@ sub set_response_headers ($$) {
 } # set_response_headers
 
 sub send_response_headers ($) {
-  croak "You can no longer send data" if $_[0]->{done};
-  return if $_[0]->{response_headers_sent};
-  my $handle = $_[0]->{response_handle};
+  my $self = $_[0];
+  croak "Response body is already closed" if $self->{response_body_closed};
+  return if $self->{response_headers_sent};
+  my $handle = $self->{response_handle};
 
-  my $status = ($_[0]->{status} || 200) + 0;
-  my $status_text = $_[0]->{status_text};
+  my $status = ($self->{status} || 200) + 0;
+  my $status_text = $self->{status_text};
   $status_text = do {
     require Wanage::HTTP::Info;
     $Wanage::HTTP::Info::ReasonPhrases->{$status} || '';
@@ -71,7 +72,7 @@ sub send_response_headers ($) {
 
   print $handle "Status: $status $status_text\n";
   my $has_ct_or_location;
-  for (@{$_[0]->{response_headers} or []}) {
+  for (@{$self->{response_headers} or []}) {
     my $name = $_->[0];
     $has_ct_or_location = 1 if $name =~ /\A(?:Content-Type|Location)\z/i;
     my $value = $_->[1];
@@ -84,38 +85,33 @@ sub send_response_headers ($) {
   }
   print $handle "\n";
   
-  $_[0]->{response_headers_sent} = 1;
+  $self->{response_headers_sent} = 1;
 } # send_response_headers
 
-sub send_response_body ($;$) {
-  $_[0]->send_response_headers;
-  
-  my $writer = $_[0]->{writer} ||= bless {handle => $_[0]->{response_handle}},
-      'Wanage::Interface::CGI::Writer';
-  $_[1]->($writer);
+sub send_response_body ($$) {
+  my $self = $_[0];
+  croak "Response body is already closed" if $self->{response_body_closed};
+  $self->send_response_headers;
+  print { $self->{response_handle} } $_[1];
 } # send_response_body
 
-sub done ($) {
-  $_[0]->send_response_headers;
-  $_[0]->{writer}->close if $_[0]->{writer};
-  $_[0]->{done} = 1;
-} # done
+sub close_response_body ($) {
+  my $self = shift;
+  croak "Response body is already closed" if $self->{response_body_closed};
+  $self->send_response_headers;
+  $self->{response_handle}->close or die $!;
+  $self->{response_body_closed} = 1;
+} # close_response_body
 
-package Wanage::Interface::CGI::Writer;
-our $VERSION = '1.0';
-use Carp;
-
-sub print ($$) {
-  $_[0]->{handle}->print ($_[1]) or croak $!;
-} # write
-
-sub close ($$) {
-  $_[0]->{handle}->close or croak $!;
-} # close
-
-sub DESTROY {
-  $_[0]->close;
-} # DESTROY
+sub send_response ($;%) {
+  my ($self, %args) = @_;
+  my $code = $args{onready};
+  croak "Response has already been sent" if $self->{response_sent};
+  $self->{response_sent} = 1;
+  $code->() if $code;
+  $self->close_response_body unless $self->{response_body_closed};
+  return;
+} # send_response
 
 1;
 

@@ -18,9 +18,8 @@ sub with_cgi_env (&;$$$) {
   return $code->();
 } # with_cgi_env
 
-sub _version : Test(2) {
+sub _version : Test(1) {
   ok $Wanage::Interface::CGI::VERSION;
-  ok $Wanage::Interface::CGI::Writer::VERSION;
 } # _version
 
 # ------ Request data ------
@@ -338,13 +337,9 @@ sub _send_response_body : Test(2) {
     Wanage::Interface::CGI->new_from_main;
   } {}, undef, $out;
   my $writer;
-  $cgi->send_response_body (sub {
-    $writer = $_[0];
-  });
-  isa_ok $writer, 'Wanage::Interface::CGI::Writer';
-  $writer->print ("Hello, ");
-  $writer->print ("World.");
-  $writer->close;
+  $cgi->send_response_body ('Hello, ');
+  $cgi->send_response_body ('World.');
+  $cgi->close_response_body;
   eq_or_diff $out, qq{Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\nHello, World.};
 } # _send_response_body
 
@@ -354,12 +349,8 @@ sub _send_response_body_no_close : Test(2) {
     Wanage::Interface::CGI->new_from_main;
   } {}, undef, $out;
   my $writer;
-  $cgi->send_response_body (sub {
-    $writer = $_[0];
-  });
-  isa_ok $writer, 'Wanage::Interface::CGI::Writer';
-  $writer->print ("Hello, ");
-  $writer->print ("World.");
+  $cgi->send_response_body ("Hello, ");
+  $cgi->send_response_body ("World.");
   eq_or_diff $out, qq{Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\nHello, World.};
 } # _send_response_body_no_close
 
@@ -369,41 +360,16 @@ sub _send_response_body_print_after_close : Test(4) {
     Wanage::Interface::CGI->new_from_main;
   } {}, undef, $out;
   my $writer;
-  $cgi->send_response_body (sub {
-    $writer = $_[0];
-  });
-  isa_ok $writer, 'Wanage::Interface::CGI::Writer';
-  $writer->print ("Hello, ");
-  $writer->close;
+  $cgi->send_response_body ("Hello, ");
+  $cgi->close_response_body;
   dies_here_ok {
-    $writer->print ("World.");
+    $cgi->send_response_body ("World.");
   };
   dies_here_ok {
-    $writer->close;
+    $cgi->close_response_body;
   };
   eq_or_diff $out, qq{Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\nHello, };
 } # _send_response_body_no_close
-
-sub _send_response_body_twice : Test(3) {
-  my $out = '';
-  my $cgi = with_cgi_env {
-    Wanage::Interface::CGI->new_from_main;
-  } {}, undef, $out;
-  my $writer;
-  $cgi->send_response_body (sub {
-    $writer = $_[0];
-  });
-  my $writer2;
-  $cgi->send_response_body (sub {
-    $writer2 = $_[0];
-  });
-  isa_ok $writer, 'Wanage::Interface::CGI::Writer';
-  is $writer2, $writer;
-  $writer->print ("Hello, ");
-  $writer2->print ("World.");
-  $writer->close;
-  eq_or_diff $out, qq{Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\nHello, World.};
-} # _send_response_body_twice
 
 sub _send_response_body_header : Test(2) {
   my $out = '';
@@ -411,62 +377,83 @@ sub _send_response_body_header : Test(2) {
     Wanage::Interface::CGI->new_from_main;
   } {}, undef, $out;
   my $writer;
-  $cgi->send_response_body (sub {
-    $writer = $_[0];
-  });
-  $cgi->send_response_headers;
-  isa_ok $writer, 'Wanage::Interface::CGI::Writer';
-  $writer->print ("Hello, ");
-  $writer->print ("World.");
-  $writer->close; 
-  $cgi->send_response_headers;
+  $cgi->send_response_body ("Hello, ");
+  $cgi->send_response_body ("World.");
+  $cgi->close_response_body;
+  dies_here_ok { $cgi->send_response_headers };
   eq_or_diff $out, qq{Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\nHello, World.};
 } # _send_response_body_header
 
-sub _done_send_response_headers : Test(2) {
+sub _send_response_send_response_headers : Test(2) {
   my $out = '';
   my $cgi = with_cgi_env {
     Wanage::Interface::CGI->new_from_main
   } {}, undef, $out;
   my $writer;
-  $cgi->done;
+  $cgi->send_response;
   dies_here_ok {
     $cgi->send_response_headers;
   };
   eq_or_diff $out, qq{Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\n};
-} # _done_send_response_body
+} # _send_response_send_response_body
 
-sub _done_send_response_body : Test(3) {
+sub _send_response_send_response_body : Test(2) {
   my $out = '';
   my $cgi = with_cgi_env {
     Wanage::Interface::CGI->new_from_main;
   } {}, undef, $out;
-  my $writer;
-  $cgi->done;
+  $cgi->send_response;
   dies_here_ok {
-    $cgi->send_response_body (sub {
-      $writer = $_[0];
-    });
+    $cgi->send_response_body ('abc');
   };
-  ng $writer;
   eq_or_diff $out, qq{Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\n};
-} # _done_send_response_body
+} # _send_response_send_response_body
 
-sub _done_send_response_body_writer : Test(3) {
+sub _send_response_send_first : Test(2) {
   my $out = '';
   my $cgi = with_cgi_env {
     Wanage::Interface::CGI->new_from_main;
   } {}, undef, $out;
-  my $writer;
-  $cgi->send_response_body (sub {
-    $writer = $_[0];
+  $cgi->send_response (onready => sub {
+    $cgi->send_response_body ('abc');
   });
-  $cgi->done;
-  dies_here_ok {
-    $writer->print ("abc");
-  };
-  eq_or_diff $out, qq{Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\n};
-} # _done_send_response_body_writer
+  eq_or_diff $out, qq{Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\nabc};
+} # _send_response_send_first
+
+sub _send_response_send_first_2 : Test(2) {
+  my $out = '';
+  my $cgi = with_cgi_env {
+    Wanage::Interface::CGI->new_from_main;
+  } {}, undef, $out;
+  $cgi->send_response (onready => sub {
+    $cgi->set_response_headers ([['abc' => 12]]);
+    $cgi->send_response_body ('abc');
+  });
+  eq_or_diff $out, qq{Status: 200 OK\nabc: 12\nContent-Type: text/plain; charset=utf-8\n\nabc};
+} # _send_response_send_first_2
+
+sub _send_response_send_first_then_send : Test(5) {
+  my $out = '';
+  my $cgi = with_cgi_env {
+    Wanage::Interface::CGI->new_from_main;
+  } {}, undef, $out;
+  $cgi->send_response (onready => sub {
+    $cgi->send_response_body ('abc');
+  });
+  dies_here_ok { $cgi->set_status (440) };
+  dies_here_ok { $cgi->send_response_headers };
+  dies_here_ok { $cgi->send_response_body (120) };
+  dies_here_ok { $cgi->close_response_body };
+  eq_or_diff $out, qq{Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\nabc};
+} # _send_response_send_first_then_send
+
+sub _send_response_return : Test(1) {
+  my $out = '';
+  my $cgi = with_cgi_env {
+    Wanage::Interface::CGI->new_from_main;
+  } {}, undef, $out;
+  ng $cgi->send_response;
+} # _send_response_return
 
 __PACKAGE__->runtests;
 

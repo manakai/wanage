@@ -52,8 +52,8 @@ sub set_response_headers ($$) {
 } # set_response_headers
 
 sub send_response_headers ($) {
-  my $self = shift;
-  croak "Already closed" if $self->{response_body_closed};
+  my $self = $_[0];
+  croak "Response body is already closed" if $self->{response_body_closed};
   if ($self->{env}->{'psgi.streaming'}) {
     if ($self->{psgi_writer_getter}) {
       $self->{response} ||= [200, []];
@@ -67,7 +67,7 @@ sub send_response_headers ($) {
   $self->{response_headers_sent} = 1;
 } # send_response_headers
 
-sub send_response_body ($;$) {
+sub send_response_body ($$) {
   my $self = $_[0];
   croak "Response body is already closed" if $self->{response_body_closed};
   $self->send_response_headers;
