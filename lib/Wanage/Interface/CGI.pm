@@ -109,7 +109,6 @@ sub send_response ($;%) {
   croak "Response has already been sent" if $self->{response_sent};
   $self->{response_sent} = 1;
   $code->() if $code;
-  $self->close_response_body unless $self->{response_body_closed};
   return;
 } # send_response
 

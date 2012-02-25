@@ -391,7 +391,7 @@ sub _send_response_send_response_headers : Test(2) {
   } {}, undef, $out;
   my $writer;
   $cgi->send_response;
-  dies_here_ok {
+  lives_ok {
     $cgi->send_response_headers;
   };
   eq_or_diff $out, qq{Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\n};
@@ -403,10 +403,10 @@ sub _send_response_send_response_body : Test(2) {
     Wanage::Interface::CGI->new_from_main;
   } {}, undef, $out;
   $cgi->send_response;
-  dies_here_ok {
+  lives_ok {
     $cgi->send_response_body ('abc');
   };
-  eq_or_diff $out, qq{Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\n};
+  eq_or_diff $out, qq{Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\nabc};
 } # _send_response_send_response_body
 
 sub _send_response_send_first : Test(2) {
@@ -432,7 +432,7 @@ sub _send_response_send_first_2 : Test(2) {
   eq_or_diff $out, qq{Status: 200 OK\nabc: 12\nContent-Type: text/plain; charset=utf-8\n\nabc};
 } # _send_response_send_first_2
 
-sub _send_response_send_first_then_send : Test(5) {
+sub _send_response_send_first_then_send : Test(8) {
   my $out = '';
   my $cgi = with_cgi_env {
     Wanage::Interface::CGI->new_from_main;
@@ -441,10 +441,13 @@ sub _send_response_send_first_then_send : Test(5) {
     $cgi->send_response_body ('abc');
   });
   dies_here_ok { $cgi->set_status (440) };
+  lives_ok { $cgi->send_response_headers };
+  lives_ok { $cgi->send_response_body (120) };
+  lives_ok { $cgi->close_response_body };
   dies_here_ok { $cgi->send_response_headers };
   dies_here_ok { $cgi->send_response_body (120) };
   dies_here_ok { $cgi->close_response_body };
-  eq_or_diff $out, qq{Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\nabc};
+  eq_or_diff $out, qq{Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\nabc120};
 } # _send_response_send_first_then_send
 
 sub _send_response_return : Test(1) {
