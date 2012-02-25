@@ -39,14 +39,14 @@ sub get_request_body_as_ref ($) {
 # ------ Response ------
 
 sub set_status ($$;$) {
-  croak "You can no longer set status" if $_[0]->{response_header_sent};
+  croak "You can no longer set status" if $_[0]->{response_headers_sent};
   $_[0]->{response} ||= [200, []];
   $_[0]->{response}->[0] = $_[1];
 } # set_status
 
 sub set_response_headers ($$) {
   croak "You can no longer set response headers"
-      if $_[0]->{response_header_sent};
+      if $_[0]->{response_headers_sent};
   $_[0]->{response} ||= [200, []];
   $_[0]->{response}->[1] = [map { ($_->[0] => $_->[1]) } @{$_[1]}];
 } # set_response_headers
@@ -64,7 +64,7 @@ sub send_response_headers ($) {
     $self->{response} ||= [200, [], []];
     $self->{response}->[2] ||= [];
   }
-  $self->{response_header_sent} = 1;
+  $self->{response_headers_sent} = 1;
 } # send_response_headers
 
 sub send_response_body ($;$) {
@@ -100,7 +100,7 @@ sub send_response ($;%) {
   if ($self->{env}->{'psgi.streaming'}) {
     $self->{response} ||= [200, []];
     return sub {
-      if ($self->{response_header_sent}) {
+      if ($self->{response_headers_sent}) {
         $self->{psgi_writer} = $_[0]->($self->{response});
         for (@{$self->{response_body} or []}) {
           $self->{psgi_writer}->write ($_);
