@@ -144,6 +144,9 @@ method is the value of the C<CONTENT_LENGTH> when the PSGI interface
 is used and the value would be the one calculated by the server, not
 the client.
 
+If there are multiple headers with the same name, their values are
+concatenated by a C<,> character.
+
 Please note that the header values are byte strings, not character
 strings.
 
@@ -164,6 +167,11 @@ C<User-Agent> header value of thre request.
 You can use a subclass of L<Wanage::HTTP::UA> for the client IP
 address object by setting the C<$Wanage::HTTP::UAClass> variable.  See
 L<Wanagr::HTTP::UA> for more information.
+
+=item $mime = $http->request_mime_type
+
+Return the L<Wanage::HTTP::MIMEType> object representing the
+C<Content-Type:> header of the request message.
 
 =item $list = $http->accept_langs
 
@@ -241,6 +249,14 @@ replaced by the new pair.
 Register an HTTP header name-value pair for the response, without
 discarding existing headers.
 
+=item $mime = $http->response_mime_type
+
+Return the L<Wanage::HTTP::MIMEType> object representing the
+C<Content-Type:> header of the response message.
+
+You can modify the object to alter the value of the C<Content-Type:>
+header.
+
 =item $http->send_response_headers
 
 Send status code, reason phrase, and response headers to the server.
@@ -304,12 +320,16 @@ HTTP <http://tools.ietf.org/html/rfc2616>.
 
 XMLHttpRequest <http://dvcs.w3.org/hg/xhr/raw-file/tip/Overview.html>.
 
-RFC 3875 The Common Gateway Interface (CGI) Version 1.1
+RFC 3875 - The Common Gateway Interface (CGI) Version 1.1
 <http://tools.ietf.org/html/rfc3875>.
 
 SuikaWiki:CGI <http://suika.fam.cx/~wakaba/wiki/sw/n/CGI>.
 
 PSGI specification <http://search.cpan.org/dist/PSGI/PSGI.pod>.
+
+MIME Sniffing <http://mimesniff.spec.whatwg.org/>.
+
+BCP 47 - Language Tags <http://tools.ietf.org/html/bcp47>.
 
 =head1 AUTHOR
 

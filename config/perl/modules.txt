@@ -2,4 +2,5 @@ Carp
 Encode
 IO::Handle
 Path::Class
+Scalar::Util
 Test::Class

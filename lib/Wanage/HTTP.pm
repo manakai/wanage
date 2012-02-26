@@ -4,9 +4,13 @@ use warnings;
 our $VERSION = '1.0';
 use Carp;
 use Encode;
+use Scalar::Util qw(weaken);
 use URL::PercentEncode qw(parse_form_urlencoded_b);
 
-our @CARP_NOT = qw(Wanage::Interface::CGI Wanage::Interface::PSGI);
+our @CARP_NOT = qw(
+  Wanage::Interface::CGI Wanage::Interface::PSGI
+  Wanage::HTTP::UA Wanage::HTTP::ClientIPAddr Wanage::HTTP::MIMEType
+);
 
 # ------ Constructor ------
 
@@ -97,8 +101,19 @@ sub ua ($) {
   };
 } # ua
 
+sub request_mime_type ($) {
+  require Wanage::HTTP::MIMEType;
+  return $_[0]->{request_mime_type}
+      ||= Wanage::HTTP::MIMEType->new_from_content_type
+          ($_[0]->{interface}->get_request_header ('Content-Type'));
+} # request_mime_type
+
 sub accept_langs ($) {
   return $_[0]->{accept_langs} if $_[0]->{accept_langs};
+
+  ## This parsing is not strict per the spec definition, but does work
+  ## enough for real-world HTTP messages, and in fact the spec does
+  ## not define error handling at all.
 
   my $langs = $_[0]->{interface}->get_request_header ('Accept-Language');
   $langs = '' unless defined $langs;
@@ -189,6 +204,21 @@ sub set_response_header ($$$) {
       = [[$name => $value]];
 } # set_response_header
 
+sub response_mime_type ($) {
+  return $_[0]->{request_mime_type} ||= do {
+    require Wanage::HTTP::MIMEType;
+    my $headers = $_[0]->{response_headers}->{headers};
+    my $mime = Wanage::HTTP::MIMEType->new_from_content_type
+        ($headers->{'content-type'}
+             ? $headers->{'content-type'}->[-1]->[1] : undef);
+    weaken (my $self = $_[0]);
+    $mime->{onchange} = sub {
+      $self->set_response_header ('Content-Type' => $_[1] || '');
+    };
+    $mime;
+  };
+} # response_mime_type
+
 our $Sortkeys;
 
 sub send_response_headers ($) {
@@ -233,6 +263,12 @@ sub close_response_body ($) {
 sub send_response ($;%) {
   return shift->{interface}->send_response (@_);
 } # send_response
+
+sub DESTROY {
+  if ($Wanage::HTTP::DetectLeak) {
+    warn "Possible memory leak";
+  }
+}
 
 1;
 

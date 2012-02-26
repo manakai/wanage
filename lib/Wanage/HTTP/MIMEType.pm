@@ -71,6 +71,9 @@ sub set_value ($$) {
   my ($self, $value) = @_;
   $value =~ tr/A-Z/a-z/; ## ASCII case-insensitive.
   $self->{value} = $value;
+  if ($self->{onchange}) {
+    $self->{onchange}->($self, $self->as_bytes);
+  }
 } # set_value
 
 sub params ($) {
@@ -81,6 +84,9 @@ sub set_param ($$$) {
   my ($self, $name, $value) = @_;
   $name =~ tr/A-Z/a-z/; ## ASCII case-insensitive.
   $self->{params}->{$name} = $value;
+  if ($self->{onchange}) {
+    $self->{onchange}->($self, $self->as_bytes);
+  }
 } # set_param
 
 sub is_html_mime_type ($) {

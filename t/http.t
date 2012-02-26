@@ -198,6 +198,17 @@ sub _ua_custom : Test(4) {
   }
 } # _ua_custom
 
+sub _request_mime_type : Test(6) {
+  my $https = new_https_for_interfaces
+      env => {CONTENT_TYPE => 'text/HTML; Charset=ISO-8859-1'};
+  for my $http (@$https) {
+    my $mime = $http->request_mime_type;
+    is $mime->value, 'text/html';
+    is $mime->params->{charset}, 'ISO-8859-1';
+    is $http->request_mime_type, $mime;
+  }
+} # _request_mime_type
+
 sub _accept_langs : Test(100) {
   for my $test (
     [undef, []],
@@ -530,7 +541,100 @@ sub _send_response_psgi_streamable_multiple : Test(3) {
   ok $writer->closed;
 } # _send_response_empty_psgi_streamable
 
+sub _response_mime_type_empty : Test(6) {
+  my $https = new_https_for_interfaces;
+  for my $http (@$https) {
+    my $mime = $http->response_mime_type;
+    is $mime->value, undef;
+    eq_or_diff $mime->params, {};
+    is $http->response_mime_type, $mime;
+  }
+} # _response_mime_type_empty
+
+sub _response_mime_type_has_ct_array : Test(6) {
+  my $https = new_https_for_interfaces;
+  for my $http (@$https) {
+    $http->{response_headers}->{'content-type'} = [];
+    my $mime = $http->response_mime_type;
+    is $mime->value, undef;
+    eq_or_diff $mime->params, {};
+    is $http->response_mime_type, $mime;
+  }
+} # _response_mime_type_has_ct_array
+
+sub _response_mime_type_has_ct : Test(6) {
+  my $https = new_https_for_interfaces;
+  for my $http (@$https) {
+    $http->set_response_header ('Content-Type' => 'text/css ; charset=utf-8');
+    my $mime = $http->response_mime_type;
+    is $mime->value, 'text/css';
+    eq_or_diff $mime->params, {charset => 'utf-8'};
+    is $http->response_mime_type, $mime;
+  }
+} # _response_mime_type_has_ct
+
+sub _response_mime_type_has_multiple_ct : Test(6) {
+  my $https = new_https_for_interfaces;
+  for my $http (@$https) {
+    $http->set_response_header ('Content-Type' => 'text/css ; charset=utf-8');
+    $http->add_response_header ('Content-TYPE' => 'image/svg');
+    my $mime = $http->response_mime_type;
+    is $mime->value, 'image/svg';
+    eq_or_diff $mime->params, {};
+    is $http->response_mime_type, $mime;
+  }
+} # _response_mime_type_has_multiple_ct
+
+sub _response_mime_type_set_value : Test(6) {
+  my $https = new_https_for_interfaces;
+  for my $http (@$https) {
+    $http->add_response_header ('Content-Type' => 'text/css');
+    my $mime = $http->response_mime_type;
+    $mime->set_value ('image/svg');
+    eq_or_diff $http->{response_headers}->{headers}->{'content-type'},
+        [['Content-Type' => 'image/svg']];
+  }
+} # _response_mime_type_set_value
+
+sub _response_mime_type_set_param : Test(6) {
+  my $https = new_https_for_interfaces;
+  for my $http (@$https) {
+    $http->add_response_header ('Content-Type' => 'text/css');
+    my $mime = $http->response_mime_type;
+    $mime->set_param (charset => 'EUC-jp');
+    eq_or_diff $http->{response_headers}->{headers}->{'content-type'},
+        [['Content-Type' => 'text/css; charset=EUC-jp']];
+  }
+} # _response_mime_type_set_param
+
+sub _response_mime_type_set_value_invalid : Test(6) {
+  my $https = new_https_for_interfaces;
+  for my $http (@$https) {
+    $http->add_response_header ('Content-Type' => 'text/css');
+    my $mime = $http->response_mime_type;
+    $mime->set_value ('image');
+    eq_or_diff $http->{response_headers}->{headers}->{'content-type'},
+        [['Content-Type' => '']];
+  }
+} # _response_mime_type_set_value_invalid
+
+sub _response_mime_type_set_value_after_sent : Test(6) {
+  my $https = new_https_for_interfaces;
+  for my $http (@$https) {
+    $http->add_response_header ('Content-Type' => 'text/css');
+    $http->send_response_headers;
+    my $mime = $http->response_mime_type;
+    dies_here_ok {
+      $mime->set_value ('image/svg');
+    };
+    eq_or_diff $http->{response_headers}->{headers}->{'content-type'},
+        [['Content-Type' => 'text/css']];
+  }
+} # _response_mime_type_set_value_after_sent
+
 __PACKAGE__->runtests;
+
+$Wanage::HTTP::DetectLeak = 1;
 
 1;
 
