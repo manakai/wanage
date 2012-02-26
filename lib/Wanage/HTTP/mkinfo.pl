@@ -30,8 +30,9 @@ for my $method (keys %$Whatpm::HTTP::Methods) {
 $Data::Dumper::Sortkeys = 1;
 
 my $now = [gmtime];
-printf qq{package Wanage::HTTP::Info;\n\$VERSION = %04d%02d%02d;\n},
-    $now->[5] + 1900, $now->[4] + 1, $now->[3];
+printf qq{package Wanage::HTTP::Info;\n\$VERSION = %f;\n},
+    $Whatpm::HTTP::_StatusCodes::VERSION +
+    $Whatpm::HTTP::_Methods::VERSION;
 
 print map { s/^\$VAR1/\$ReasonPhrases/; $_ } Dumper $ReasonPhrases;
 print map { s/^\$VAR1/\$IdempotentMethods/; $_ } Dumper $IdempotentMethods;
