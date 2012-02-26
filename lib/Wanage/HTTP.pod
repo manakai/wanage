@@ -156,6 +156,15 @@ You can use a subclass of L<Wanage::HTTP::ClientIPAddr> for the client
 IP address object by setting the C<$Wanage::HTTP::ClientIPAddrClass>
 variable.  See L<Wanagr::HTTP::ClientIPAddr> for more information.
 
+=item $ua = $http->ua
+
+Return the L<Wanage::HTTP::UA> object representing the HTTP
+C<User-Agent> header value of thre request.
+
+You can use a subclass of L<Wanage::HTTP::UA> for the client IP
+address object by setting the C<$Wanage::HTTP::UAClass> variable.  See
+L<Wanagr::HTTP::UA> for more information.
+
 =back
 
 =head2 Request body

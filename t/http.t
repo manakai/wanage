@@ -168,7 +168,35 @@ sub _client_ip_addr_custom : Test(4) {
     isa_ok $ip, 'test::http::Wanage::HTTP::ClientIPAddr';
     is $ip->as_text, '40.13.11.41';
   }
-} # _client_ip_addr
+} # _client_ip_addr_custom
+
+sub _ua : Test(6) {
+  my $https = new_https_for_interfaces
+      env => {HTTP_USER_AGENT => 'mybot'};
+  for my $http (@$https) {
+    my $ua = $http->ua;
+    isa_ok $ua, 'Wanage::HTTP::UA';
+    ok $ua->is_bot;
+    is $http->ua, $ua;
+  }
+} # _ua
+
+sub _ua_custom : Test(4) {
+  {
+    package test::http::Wanage::HTTP::UA;
+    push our @ISA, 'Wanage::HTTP::UA';
+    $INC{'test/http/Wanage/HTTP/UA.pm'} = 1;
+    require Wanage::HTTP::UA;
+    sub is_mine { 1 }
+  }
+  local $Wanage::HTTP::UAClass = 'test::http::Wanage::HTTP::UA';
+  my $https = new_https_for_interfaces;
+  for my $http (@$https) {
+    my $ua = $http->ua;
+    isa_ok $ua, 'test::http::Wanage::HTTP::UA';
+    ok $ua->is_mine;
+  }
+} # _ua_custom
 
 # ------ Request body -----
 

@@ -87,6 +87,16 @@ sub client_ip_addr ($) {
   };
 } # client_ip_addr
 
+our $UAClass ||= 'Wanage::HTTP::UA';
+
+sub ua ($) {
+  return $_[0]->{ua} ||= do {
+    eval qq{ require $UAClass } or die $@;
+    $UAClass->new_from_http_user_agent
+        ($_[0]->{interface}->get_meta_variable ('HTTP_USER_AGENT'));
+  };
+} # ua
+
 # ---- Request body ----
 
 sub request_body_as_ref ($) {
