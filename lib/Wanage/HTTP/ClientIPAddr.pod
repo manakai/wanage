@@ -1,0 +1,91 @@
+=head1 NAME
+
+Wanage::HTTP::ClientIPAddr - An object representing the client IP address
+
+=head1 SYNOPSIS
+
+  my $ip = $http->client_ip_addr;
+  print $ip->as_text;
+
+=head1 DESCRIPTION
+
+The C<Wanage::HTTP::ClientIPAddr> object represents the IP address of
+the HTTP client for a request.
+
+The IP address is the value of the C<REMOTE_ADDR> CGI meta-variable in
+the simplest case.  However, when there are one or more intermediate
+proxies, the situation is much more difficult.  This module extracts
+client IP address from HTTP C<X-Forwarded-For> header, if available.
+
+=head1 METHODS
+
+The C<Wanage::HTTP::ClientIPAddr> object for a request can be
+retrieved from the C<client_ip_addr> method of the HTTP object.  See
+L<Wanage::HTTP> for more information.  The object has the following
+method:
+
+=over 4
+
+=item $addr = $ip->as_text
+
+Return the canonical textual representation of the client IP address.
+It can be either an IPv4 address or an IPv6 address.  If no IP address
+is available, the C<undef> value is returned.
+
+=back
+
+=head1 SUBCLASSING
+
+You can define a subclass of the C<Wanage::HTTP::ClientIPAddr> class
+such that the rule to extract the client IP address from the list of
+candidate addresses can be configured for your application's
+installation.  Example:
+
+  package My::Wanage::HTTP::ClientIPAddr;
+  use base qw(Wanage::HTTP::ClientIPAddr);
+  
+  sub select_addr {
+    my ($self) = @_;
+    return $self->{addrs}->grep (sub { not_private_addr $_ })->[-1];
+  }
+  
+  $Wanage::HTTP::ClientIPAddrClass = __PACKAGE__;
+
+The C<select_addr> method is invoked when it is necessary to determine
+the client IP address from the list of candidates.  The method can use
+the C<< $self->{addr} >> list (a L<List::Ish> object) as the list of
+candidate IP addresses in their canonical textual representations.
+The list contains the C<REMOTE_ADDR> address followed by the
+C<X-Forwarded-For> addresses.  The list must not be modified by the
+method.  The method is expected to return one of them, if there is an
+appropriate address, or return the C<undef> value.
+
+By default, the C<select_addr> method return the last address in the
+list.
+
+The subclassing might be useful if you are using multiple reverse
+proxies (or intermediate caches) such that the last IP address in the
+C<X-Forwarded-For> header is not of the client, or if you are using a
+quirky intermediate which inserts sender IP address to wrong place in
+the C<X-Forwarded-For> headers.
+
+=head1 SEE ALSO
+
+L<Wanage::HTTP>.
+
+RFC 3875 - The Common Gateway Interface (CGI) Version 1.1
+<http://tools.ietf.org/html/rfc3875#section-4.1.8>.
+
+SuikaWiki:X-Forwarded-For:
+<http://suika.fam.cx/~wakaba/wiki/sw/n/X-Forwarded-For%3A>.
+
+L<Web::IPAddr::Canonicalize>.
+
+=head1 LICENSE
+
+Copyright 2012 Wakaba <w@suika.fam.cx>.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut

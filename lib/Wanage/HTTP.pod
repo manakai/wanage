@@ -147,6 +147,15 @@ the client.
 Please note that the header values are byte strings, not character
 strings.
 
+=item $ip = $http->client_ip_addr
+
+Return the L<Wanage::HTTP::ClientIPAddr> object representing the IP
+address of the client.
+
+You can use a subclass of L<Wanage::HTTP::ClientIPAddr> for the client
+IP address object by setting the C<$Wanage::HTTP::ClientIPAddrClass>
+variable.  See L<Wanagr::HTTP::ClientIPAddr> for more information.
+
 =back
 
 =head2 Request body

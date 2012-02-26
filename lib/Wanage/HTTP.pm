@@ -74,13 +74,22 @@ sub request_method_is_idempotent ($) {
 
 # ---- Request headers ----
 
-sub get_request_header {
+sub get_request_header ($$) {
   return $_[0]->{interface}->get_request_header ($_[1]);
 } # get_request_header
 
+our $ClientIPAddrClass ||= 'Wanage::HTTP::ClientIPAddr';
+
+sub client_ip_addr ($) {
+  return $_[0]->{client_ip_addr} ||= do {
+    eval qq{ require $ClientIPAddrClass } or die $@;
+    $ClientIPAddrClass->new_from_interface ($_[0]->{interface});
+  };
+} # client_ip_addr
+
 # ---- Request body ----
 
-sub request_body_as_ref {
+sub request_body_as_ref ($) {
   return $_[0]->{request_body_as_ref}
       ||= $_[0]->{interface}->get_request_body_as_ref;
 } # request_body_as_ref

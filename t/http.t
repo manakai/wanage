@@ -140,6 +140,36 @@ sub _get_request_header : Test(10) {
   }
 } # _get_request_header
 
+sub _client_ip_addr : Test(6) {
+  my $https = new_https_for_interfaces
+      env => {REMOTE_ADDR => '19.51.34.123'};
+  for my $http (@$https) {
+    my $ip = $http->client_ip_addr;
+    isa_ok $ip, 'Wanage::HTTP::ClientIPAddr';
+    is $ip->as_text, '19.51.34.123';
+    is $http->client_ip_addr, $ip;
+  }
+} # _client_ip_addr
+
+sub _client_ip_addr_custom : Test(4) {
+  {
+    package test::http::Wanage::HTTP::ClientIPAddr;
+    push our @ISA, 'Wanage::HTTP::ClientIPAddr';
+    $INC{'test/http/Wanage/HTTP/ClientIPAddr.pm'} = 1;
+    require Wanage::HTTP::ClientIPAddr;
+    sub select_addr { '40.13.11.41' }
+  }
+  local $Wanage::HTTP::ClientIPAddrClass
+      = 'test::http::Wanage::HTTP::ClientIPAddr';
+  my $https = new_https_for_interfaces
+      env => {REMOTE_ADDR => '19.51.34.123'};
+  for my $http (@$https) {
+    my $ip = $http->client_ip_addr;
+    isa_ok $ip, 'test::http::Wanage::HTTP::ClientIPAddr';
+    is $ip->as_text, '40.13.11.41';
+  }
+} # _client_ip_addr
+
 # ------ Request body -----
 
 sub _request_body_as_ref_no_body : Test(2) {
