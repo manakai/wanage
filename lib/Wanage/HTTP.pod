@@ -165,6 +165,24 @@ You can use a subclass of L<Wanage::HTTP::UA> for the client IP
 address object by setting the C<$Wanage::HTTP::UAClass> variable.  See
 L<Wanagr::HTTP::UA> for more information.
 
+=item $list = $http->accept_langs
+
+Return the list of language tags accepted by the client through the
+HTTP C<Accept-Language:> header.
+
+The list is a L<List::Ish> object where items are language tags or the
+C<*> value.  Items are ordered by their qvalues (i.e. C<q> parameter
+values), if any.  Items whose qvalues are zero, as well as
+duplications, syntactically illegal language tags, are excluded from
+the list.  If no acceptable language is requested by the client, the
+list is empty.
+
+Language tags are normalized in their lowercase forms.  This is a
+willful violation to the spirit of IETF Language Tag specification
+(BCP 47) which defines more complex recommendations on case-folding.
+
+Applications should not modify the list itself.
+
 =back
 
 =head2 Request body

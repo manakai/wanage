@@ -93,9 +93,52 @@ sub ua ($) {
   return $_[0]->{ua} ||= do {
     eval qq{ require $UAClass } or die $@;
     $UAClass->new_from_http_user_agent
-        ($_[0]->{interface}->get_meta_variable ('HTTP_USER_AGENT'));
+        ($_[0]->{interface}->get_request_header ('User-Agent'));
   };
 } # ua
+
+sub accept_langs ($) {
+  return $_[0]->{accept_langs} if $_[0]->{accept_langs};
+
+  my $langs = $_[0]->{interface}->get_request_header ('Accept-Language');
+  $langs = '' unless defined $langs;
+  my @map;
+  $langs =~ s{(\$\$[0-9]+\$\$|\"[^\"]*\"?)}{
+    push @map, $1;
+    '$$' . $#map . '$$';
+  }ge;
+
+  my @lang;
+  for my $lang (split /,/, $langs) {
+    my $q = 1;
+    if ($lang =~ s/;[\x09\x0A\x0D\x20]*[Qq][\x09\x0A\x0D\x20]*=([^;]*)//) {
+      $q = $1;
+      $q =~ s/\A[\x09\x0A\x0D\x20]+//;
+      $q =~ s/[\x09\x0A\x0D\x20]+\z//;
+      $q =~ s{\$\$([0-9]+)\$\$}{$map[$1]}ge;
+      $q =~ s{\x22([^\x22]*)\x22}{$1}g;
+      if ($q =~ /^([0-9](?:\.[0-9]{1,3})?)/) {
+        $q = 0 + $1;
+        $q = 1 if $q > 1;
+      } else {
+        $q = 1;
+      }
+    } else {
+      $q = 1;
+    }
+    next unless $q;
+    if ($lang =~ /^[\x09\x0A\x0D\x20]*([0-9A-Za-z*-]+)/) {
+      my $v = $1;
+      $v =~ tr/A-Z/a-z/; ## ASCII case-insensitive.
+      push @lang, [$v, $q];
+    }
+  }
+  require List::Ish;
+  return $_[0]->{accept_langs}
+      = List::Ish->new ([sort { $b->[1] <=> $a->[1] } @lang])
+          ->map (sub { $_->[0] })
+          ->uniq_by_key (sub { $_ });
+} # accept_langs
 
 # ---- Request body ----
 
