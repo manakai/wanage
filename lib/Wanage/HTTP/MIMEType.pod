@@ -1,0 +1,102 @@
+=head1 NAME
+
+Wanage::HTTP::MIMEType - MIME type object
+
+=head1 SYNOPSIS
+
+  $mime = $http->request_mime_type;
+  print $mime->value;
+  print $mime->params->{charset};
+  print $mime->is_xml_mime_type;
+
+=head1 DESCRIPTION
+
+The C<Wanage::HTTP::MIMEType> object represents an MIME type, possibly
+with parameters.
+
+This module refers Internet Media Type as "MIME type".  This is a
+willful violation to MIME specifications to match the terminology with
+Web standard specifications such as HTML and XHR.
+
+=head1 METHODS
+
+The C<Wanage::HTTP::MIMEType> object for the C<Content-Type:> header
+in the request message can be accessed from the C<request_mime_type>
+method of the HTTP object.  Likewise, the C<Wanage::HTTP::MIMEType>
+object for the C<Content-Type:> header in the response mesage can be
+accessed from the C<response_mime_type> method of the HTTP object.
+
+=over 4
+
+=item $value = $mime->value
+
+Return the type and subtype of the MIME type, in lowercase.  If the
+object does not repsents a valid MIME type, the C<undef> value is
+returned instead.
+
+=item $hashref = $mime->params
+
+Return the hash reference containing the parameter name-value pairs of
+the MIME type.  Parameter names are normalized to lowercase form.
+
+Applications should not modify the hash.
+
+=item $mime->set_value ($new_value)
+
+Set the type and subtype.  The argument must be a valid MIME type with
+no parameters.
+
+=item $mime->set_param ($name => $value)
+
+Set a parameter.  The argument must be a valid parameter name-value
+pair for the MIME type.  If there is already a parameter with the same
+name is specified for the MIME type, the older value is discarded.
+
+=item BOOL = $mime->is_xml_mime_type
+
+Return whether the MIME type is an XML MIME Type or not.
+
+=item BOOL = $mime->is_html_mime_type
+
+Return whether the MIME type is an HTML MIME Type or not.
+
+=item $bytes = $mime->as_bytes
+
+Serialize the MIME type as a byte string.  If the object does not
+represents a valid MIME type, the C<undef> value is returned.  If the
+object contains syntactically illegal parameter names or values, they
+are ignored.
+
+=back
+
+=head1 SEE ALSO
+
+L<Wanage::HTTP>.
+
+RFC 2045 - MIME Part One: Format of Internet Message Bodies
+<http://tools.ietf.org/html/rfc2045>.
+
+RFC 4288 - Media Type Specifications and Registration Procedures
+<http://tools.ietf.org/html/rfc4288>.
+
+RFC 3023 - XML Media Types <http://tools.ietf.org/html/rfc3023>.
+
+RFC 2616 - HTTP/1.1 <http://tools.ietf.org/html/rfc2616#section-3.7>.
+
+MIME Sniffing <http://mimesniff.spec.whatwg.org/>.
+
+HTML Standard
+<http://www.whatwg.org/specs/web-apps/current-work/#mime-type>.
+
+=head1 AUTHOR
+
+Wakaba <w@suika.fam.cx>.
+
+=head1 LICENSE
+
+Copyright 2012 Wakaba <w@suika.fam.cx>.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
