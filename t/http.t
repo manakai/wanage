@@ -256,6 +256,37 @@ sub _accept_langs_twice : Test(2) {
   }
 } # _accept_langs_twice
 
+sub _request_cookies : Test(72) {
+  for my $test (
+    [undef, {}],
+    ['' => {}],
+    ['0' => {}],
+    ['=def;abc=ddd' => {abc => 'ddd'}],
+    ['0=def' => {0 => 'def'}],
+    ['abc=def' => {abc => 'def'}],
+    ['abc=def;xyz=aaa' => {abc => 'def', xyz => 'aaa'}],
+    ['abc=def;abc=xyz' => {abc => 'def'}],
+    ['abc=def; xaya=abc' => {abc => 'def', xaya => 'abc'}],
+    [' aa  = bbb ; xxx = hrr ' => {aa => 'bbb', xxx => 'hrr'}],
+    ['AbCA = aAWA' => {AbCA => 'aAWA'}],
+    ['ab   aaaa = ea aa  rr' => {'ab   aaaa' => 'ea aa  rr'}],
+    ['"abc def"="xyz aaa"' => {'"abc def"' => '"xyz aaa"'}],
+    ['abc=def;xyz' => {'abc' => 'def'}],
+    ['abac=dee;;aaa=xyz;' => {'abac' => 'dee', 'aaa' => 'xyz'}],
+    ["\x98\x00\xCDab=\xAA\xFF\x00\x12" => {"\x98\x00\xCDab" => "\xAA\xFF\x00\x12"}],
+    ['abc=def,xyz=aaa' => {'abc' => 'def,xyz=aaa'}],
+    ['abc="def;xyz";aaa=bbb' => {'abc' => '"def', 'aaa' => 'bbb'}],
+  ) {
+    my $https = new_https_for_interfaces
+        env => {HTTP_COOKIE => $test->[0]};
+    for my $http (@$https) {
+      my $cookies = $http->request_cookies;
+      eq_or_diff $cookies, $test->[1];
+      is $http->request_cookies, $cookies;
+    }
+  }
+} # _request_cookies
+
 # ------ Request body -----
 
 sub _request_body_as_ref_no_body : Test(2) {

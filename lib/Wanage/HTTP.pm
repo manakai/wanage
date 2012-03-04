@@ -155,6 +155,24 @@ sub accept_langs ($) {
           ->uniq_by_key (sub { $_ });
 } # accept_langs
 
+sub request_cookies {
+  return $_[0]->{cookies} ||= do {
+    my $cookie = $_[0]->get_request_header ('Cookie') || '';
+    my $cookies = {};
+    for (split /;/, $cookie) {
+      my ($n, $v) = split /=/, $_, 2;
+      next unless defined $v;
+      $n =~ s/\A[\x09\x0A\x0D\x20]+//;
+      $n =~ s/[\x09\x0A\x0D\x20]+\z//;
+      next unless length $n;
+      $v =~ s/\A[\x09\x0A\x0D\x20]+//;
+      $v =~ s/[\x09\x0A\x0D\x20]+\z//;
+      $cookies->{$n} = $v unless defined $cookies->{$n};
+    }
+    $cookies;
+  };
+} # request_cookies
+
 # ---- Request body ----
 
 sub request_body_as_ref ($) {

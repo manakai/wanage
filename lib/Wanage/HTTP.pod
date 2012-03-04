@@ -191,6 +191,20 @@ willful violation to the spirit of IETF Language Tag specification
 
 Applications should not modify the list itself.
 
+=item $cookies = $http->request_cookies
+
+Return the list of cookie-pairs sent by the client.
+
+The list is a hash reference where key-value pairs represent
+cookie-pairs in the request.  Cookie-pairs with empty cookie name or
+no cookie value are ignored.  If there are multiple cookie-pairs with
+same cookie name, only the first cookie-pair is included in the list.
+No application-specific decoding of cookie values are performed by
+this method.  Cookie names and values are both represented as byte
+(not character) strings.
+
+Applications should not modify the hash reference.
+
 =back
 
 =head2 Request body
@@ -216,6 +230,8 @@ strings> and not decoded by any character encoding.
 If there is no request body, or if the MIME type of the request body
 is different from C<application/x-www-form-urlencoded>, an empty hash
 reference is returned.
+
+Applications should not modify the hash reference.
 
 =back
 
