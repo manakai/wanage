@@ -759,6 +759,66 @@ sub _set_response_cookie_after_sent : Test(4) {
   }
 } # _set_response_cookie_after_sent
 
+sub _set_response_auth : Test(30) {
+  for my $test (
+    [[], undef],
+    [['Basic'], undef],
+    [['BASIC'], undef],
+    [['basic'], 'Basic realm=""'],
+    [['basic', realm => ''], 'Basic realm=""'],
+    [['basic', realm => 'hoge'], 'Basic realm="hoge"'],
+    [['basic', realm => 'hoge fuga'], 'Basic realm="hoge fuga"'],
+    [['basic', realm => 'abc\de'], 'Basic realm="abc\de"'],
+    [['basic', realm => 'ab"cd'], 'Basic realm="ab_cd"'],
+    [['basic', realm => "\x0D\x0A"], qq{Basic realm="\x0D\x0A"}], # XXX
+    [['basic', realm => "\x90\xFE"], qq{Basic realm="\xc2\x90\xc3\xbe"}],
+    [['basic', realm => "\x{5000}\x{3121}"],
+     qq{Basic realm="\xe5\x80\x80\xe3\x84\xa1"}],
+  ) {
+    my $https = new_https_for_interfaces;
+    for my $http (@$https) {
+      if (defined $test->[1]) {
+        $http->set_response_auth (@{$test->[0]});
+        eq_or_diff $http->{response_headers}->{headers}->{'www-authenticate'},
+            [['WWW-Authenticate' => $test->[1]]];
+      } else {
+        dies_here_ok {
+          $http->set_response_auth (@{$test->[0]});
+        };
+        eq_or_diff
+            $http->{response_headers}->{headers}->{'www-authenticate'} || [],
+            [];
+      }
+    }
+  }
+} # _set_response_auth
+
+sub _set_response_auth_multiple : Test(2) {
+  my $https = new_https_for_interfaces;
+  for my $http (@$https) {
+    $http->set_response_header ('WWW-Authenticate' => 'abcde');
+    $http->set_response_auth ('basic' => realm => 'fuga');
+    $http->set_response_auth ('basic' => realm => 'bar');
+    eq_or_diff $http->{response_headers}->{headers}->{'www-authenticate'},
+        [['WWW-Authenticate' => 'abcde'],
+         ['WWW-Authenticate' => 'Basic realm="fuga"'],
+         ['WWW-Authenticate' => 'Basic realm="bar"']];
+  }
+} # _set_response_auth_multiple
+
+sub _set_response_auth_after_sent : Test(4) {
+  my $https = new_https_for_interfaces;
+  for my $http (@$https) {
+    $http->set_response_header ('WWW-Authenticate' => 'abcde');
+    $http->send_response_headers;
+    dies_here_ok {
+      $http->set_response_auth ('basic', realm => 'fuga');
+    };
+    eq_or_diff $http->{response_headers}->{headers}->{'www-authenticate'},
+        [['WWW-Authenticate' => 'abcde']];
+  }
+} # _set_response_auth_after_sent
+
 __PACKAGE__->runtests;
 
 $Wanage::HTTP::DetectLeak = 1;

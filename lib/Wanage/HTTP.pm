@@ -207,6 +207,10 @@ sub _ascii ($) {
   }
 } # _ascii
 
+sub _u8 ($) {
+  return encode 'utf-8', $_[0];
+} # _u8
+
 sub set_status ($$;$) {
   croak "You can no longer set the status" if $_[0]->{response_headers_sent};
   $_[0]->{response_headers}->{status} = $_[1];
@@ -282,6 +286,18 @@ sub set_response_cookie {
 
   $self->add_response_header ('Set-Cookie' => join '; ', @attr);
 } # set_response_cookie
+
+sub set_response_auth {
+  my ($self, $auth_scheme, %args) = @_;
+  $args{realm} = '' unless defined $args{realm};
+  if ($auth_scheme eq 'basic') {
+    $args{realm} =~ tr/"/_/;
+    $self->add_response_header
+        ('WWW-Authenticate' => 'Basic realm="' . (_u8 $args{realm}) . '"');
+  } else {
+    croak "Auth-scheme |$auth_scheme| is not supported";
+  }
+} # set_response_auth
 
 our $Sortkeys;
 

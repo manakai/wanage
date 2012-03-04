@@ -327,6 +327,21 @@ If true, set the "httponly" flag by cookie's C<HttpOnly> attribute.
 
 =back
 
+=item $http->set_response_auth ($auth_scheme, %args)
+
+Add a C<WWW-Authenticate:> header with the specified C<auth-scheme>.
+
+The first argument specifies the C<auth-scheme>.  It must be C<basic>
+(in lowercase).
+
+In addition, more options can be specified as name-value pairs.  The
+C<realm> option specifies the C<realm=""> C<auth-param>, i.e. a short
+string representing the protection space.  It must be a (possibly
+empty) string of printable ASCII characters except for C<"> and C<\>.
+
+If the C<auth-scheme> is C<basic>, it represents the Basic
+authentication.  No additional options can be specified.
+
 =item $http->send_response_headers
 
 Send status code, reason phrase, and response headers to the server.
