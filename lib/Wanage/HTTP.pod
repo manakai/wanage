@@ -243,6 +243,10 @@ application's responsibility to generate a message that conforms to
 the relevenant specificaitons (i.e. the HTTP specification and
 server-application interface (e.g. CGI) specifications), otherwise
 broken or sometimes vulnerable message might be sent to the client.
+Although Wanage attempts not to generate completely broken, insecure
+message by e.g. replacing any newline character in header values to
+prevent from another header injected by malicious user input,
+applications should not rely on this behavior.
 
 =over 4
 
@@ -272,6 +276,56 @@ C<Content-Type:> header of the response message.
 
 You can modify the object to alter the value of the C<Content-Type:>
 header.
+
+=item $http->set_response_cookie ($name => $value, %args)
+
+Set a cookie-pair by adding a C<Set-Cookie:> header to the response.
+
+The first argument must be a valid cookie name, i.e. an HTTP token.
+In particular, it can only contain printable ASCII characters and
+cannot contain white space characters, C<">, C<=>, C<;>, and C<,>.
+
+The second argument must be a valid cookie value or the C<undef>
+value.  If it is not the C<undef> value, it must be a string of zero
+ore more printable ASCII characters.  In particular, it cannot contain
+white space characters, C<;>, and C<,>.  In addition, you cannot use
+the C<"> character other than quoting the entire string.  The C<undef>
+value can be used to specify that the cookie should be discarded by
+the client.  It is equivalent to setting the C<expires> option to a
+past date.
+
+Following additional name-value pairs can be specified to set cookie
+attributes:
+
+=over 4
+
+=item expires => $seconds
+
+Set the expiry date-time of the cookie by cookie's C<Expires>
+attribute.  The value must be a Unix epoch (time_t) of the date-time.
+
+Please note that Wanage does not support cookie C<Max-Age> attribute
+as it is redundant with C<Expires> attribute.
+
+=item domain => $domain
+
+Set the applicable hosts of the cookie by cookie's C<Domain>
+attribute.  The value must be a valid (ASCII) domain name.
+
+=item path => $path
+
+Set the applicable path's directory by cookie's C<Path> attribute.
+The value must be a valid (ASCII) path string.
+
+=item secure => boolean
+
+If true, set the "secure" flag by cookie's C<Secure> attribute.
+
+=item httponly => boolean
+
+If true, set the "httponly" flag by cookie's C<HttpOnly> attribute.
+
+=back
 
 =item $http->send_response_headers
 

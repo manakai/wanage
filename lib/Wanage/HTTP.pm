@@ -4,6 +4,7 @@ use warnings;
 our $VERSION = '1.0';
 use Carp;
 use Encode;
+require utf8;
 use Scalar::Util qw(weaken);
 use URL::PercentEncode qw(parse_form_urlencoded_b);
 
@@ -198,6 +199,14 @@ sub request_body_params ($) {
 
 # ------ Response construction ------
 
+sub _ascii ($) {
+  if (utf8::is_utf8 ($_[0])) {
+    return encode 'utf8', $_[0];
+  } else {
+    return $_[0];
+  }
+} # _ascii
+
 sub set_status ($$;$) {
   croak "You can no longer set the status" if $_[0]->{response_headers_sent};
   $_[0]->{response_headers}->{status} = $_[1];
@@ -236,6 +245,43 @@ sub response_mime_type ($) {
     $mime;
   };
 } # response_mime_type
+
+sub set_response_cookie {
+  my ($self, $name => $value, %args) = @_;
+
+  if (not defined $value) {
+    $value = '';
+    $args{expires} ||= 0;
+  }
+  $name =~ tr/;=/__/;
+  $value =~ tr/;/_/;
+  
+  if (defined $args{expires}) {
+    my @expires = gmtime $args{expires};
+    $args{expires} = sprintf '%s, %02d-%s-%04d %02d:%02d:%02d GMT',
+        [qw(Sun Mon Tue Wed Thu Fri Sat Sun)]->[$expires[6]],
+        $expires[3],
+        [qw(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec)]->[$expires[4]],
+        $expires[5] + 1900,
+        $expires[2],
+        $expires[1],
+        $expires[0];
+  }
+
+  my @attr = ((_ascii $name) . '=' . (_ascii $value));
+  
+  for (qw(domain path expires)) {
+    my $value = $args{$_} or next;
+    $value =~ tr/;/_/;
+    push @attr, $_ . '=' . (_ascii $value);
+  }
+  
+  for (qw(secure httponly)) {
+    push @attr, $_ if $args{$_};
+  }
+
+  $self->add_response_header ('Set-Cookie' => join '; ', @attr);
+} # set_response_cookie
 
 our $Sortkeys;
 

@@ -663,6 +663,102 @@ sub _response_mime_type_set_value_after_sent : Test(6) {
   }
 } # _response_mime_type_set_value_after_sent
 
+sub _set_response_cookie : Test(98) {
+  for my $test (
+    [[], '=; expires=Thu, 01-Jan-1970 00:00:00 GMT'],
+    [['hoge' => ''], 'hoge='],
+    [['hoge' => 'fuga'], 'hoge=fuga'],
+    [['hoge' => '0'], 'hoge=0'],
+    [['0' => 'fuga'], '0=fuga'],
+    [['' => 'fuga'], '=fuga'],
+    [['ho ge=;' => 'fuga;='], 'ho ge__=fuga_='],
+    [["ho%FE\xFDge" => "fuga\xCC\x00%01"], "ho%FE\xFDge=fuga\xCC\x00%01"],
+    [["hoge\x{6000}" => "fuga\x9C"], "hoge\xe6\x80\x80=fuga\x9C"],
+    [["hoge\x9C" => "fuga\x{6000}"], "hoge\x9C=fuga\xe6\x80\x80"],
+    [['hoge' => '"fu\"ga"'], 'hoge="fu\"ga"'],
+    [['hoge' => 'fuga', expires => 0],
+     'hoge=fuga; expires=Thu, 01-Jan-1970 00:00:00 GMT'],
+    [['hoge' => 'fuga', expires => 124142],
+     'hoge=fuga; expires=Fri, 02-Jan-1970 10:29:02 GMT'],
+    [['hoge' => 'fuga', expires => -124142],
+     'hoge=fuga; expires=Tue, 30-Dec-1969 13:30:58 GMT'],
+    [['hoge' => 'fuga', expires => 1521124142],
+     'hoge=fuga; expires=Thu, 15-Mar-2018 14:29:02 GMT'],
+    [['hoge' => 'fuga', expires => 3021124142],
+     'hoge=fuga; expires=Fri, 25-Sep-2065 17:09:02 GMT'],
+    [['hoge' => 'fuga', expires => "abc"],
+     'hoge=fuga; expires=Thu, 01-Jan-1970 00:00:00 GMT'],
+    [['hoge' => 'fuga', path => undef], 'hoge=fuga'],
+    [['hoge' => 'fuga', path => 0], 'hoge=fuga'],
+    [['hoge' => 'fuga', path => ''], 'hoge=fuga'],
+    [['hoge' => 'fuga', path => '/'], 'hoge=fuga; path=/'],
+    [['hoge' => 'fuga', path => '/abc'], 'hoge=fuga; path=/abc'],
+    [['hoge' => 'fuga', path => ' / a'], 'hoge=fuga; path= / a'],
+    [['hoge' => 'fuga', path => '/a;b'], 'hoge=fuga; path=/a_b'],
+    [['hoge' => 'fuga', path => '/a=b'], 'hoge=fuga; path=/a=b'],
+    [['hoge' => 'fuga', path => "\xC0"], "hoge=fuga; path=\xC0"],
+    [['hoge' => "\xB0fuga", path => "\x{9000}"], "hoge=\xB0fuga; path=\xe9\x80\x80"],
+    [['hoge' => 'fuga', domain => undef], 'hoge=fuga'],
+    [['hoge' => 'fuga', domain => ''], 'hoge=fuga'],
+    [['hoge' => 'fuga', domain => '0'], 'hoge=fuga'],
+    [['hoge' => 'fuga', domain => 'hoge.fuga'], 'hoge=fuga; domain=hoge.fuga'],
+    [['hoge' => 'fuga', domain => '/a;b'], 'hoge=fuga; domain=/a_b'],
+    [['hoge' => 'fuga', domain => '/a=b'], 'hoge=fuga; domain=/a=b'],
+    [['hoge' => 'fuga', domain => "\xC0"], "hoge=fuga; domain=\xC0"],
+    [['hoge' => "\xB0fuga", domain => "\x{9000}"], "hoge=\xB0fuga; domain=\xe9\x80\x80"],
+    [['hoge' => 'fuga', secure => undef], 'hoge=fuga'],
+    [['hoge' => 'fuga', secure => ''], 'hoge=fuga'],
+    [['hoge' => 'fuga', secure => 0], 'hoge=fuga'],
+    [['hoge' => 'fuga', secure => 1], 'hoge=fuga; secure'],
+    [['hoge' => 'fuga', httponly => undef], 'hoge=fuga'],
+    [['hoge' => 'fuga', httponly => 0], 'hoge=fuga'],
+    [['hoge' => 'fuga', httponly => ''], 'hoge=fuga'],
+    [['hoge' => 'fuga', httponly => 1], 'hoge=fuga; httponly'],
+    [['hoge' => 'fuga', httponly => 'httponly'], 'hoge=fuga; httponly'],
+    [['hoge' => 'fuga', abc => 'def'], 'hoge=fuga'],
+    [['hoge' => 'fuga', 'max-age' => 0], 'hoge=fuga'],
+    [['hoge' => 'fuga', Secure => 1], 'hoge=fuga'],
+    [['hoge' => 'fuga', secure => 1, httponly => 1],
+     'hoge=fuga; secure; httponly'],
+    [["ho\x0Dge" => "fu\x0Aga"], "ho\x0Dge=fu\x0Aga"], # XXX
+  ) {
+    my $https = new_https_for_interfaces;
+    for my $http (@$https) {
+      $http->set_response_cookie (@{$test->[0]});
+      eq_or_diff $http->{response_headers}->{headers}->{'set-cookie'},
+          [['Set-Cookie' => $test->[1]]];
+    }
+  }
+} # _set_response_cookie
+
+sub _set_response_cookie_multiple : Test(2) {
+  my $https = new_https_for_interfaces;
+  for my $http (@$https) {
+    $http->set_response_header ('Set-Cookie' => 'abcde');
+    $http->set_response_cookie ('hoge' => 'fuga');
+    $http->set_response_cookie ('foo' => 'bar');
+    $http->set_response_cookie ('foo' => 'bar2');
+    eq_or_diff $http->{response_headers}->{headers}->{'set-cookie'},
+        [['Set-Cookie' => 'abcde'],
+         ['Set-Cookie' => 'hoge=fuga'],
+         ['Set-Cookie' => 'foo=bar'],
+         ['Set-Cookie' => 'foo=bar2']];
+  }
+} # _set_response_cookie_multiple
+
+sub _set_response_cookie_after_sent : Test(4) {
+  my $https = new_https_for_interfaces;
+  for my $http (@$https) {
+    $http->set_response_header ('Set-Cookie' => 'abcde');
+    $http->send_response_headers;
+    dies_here_ok {
+      $http->set_response_cookie ('hoge' => 'fuga');
+    };
+    eq_or_diff $http->{response_headers}->{headers}->{'set-cookie'},
+        [['Set-Cookie' => 'abcde']];
+  }
+} # _set_response_cookie_after_sent
+
 __PACKAGE__->runtests;
 
 $Wanage::HTTP::DetectLeak = 1;
