@@ -287,6 +287,43 @@ sub _request_cookies : Test(72) {
   }
 } # _request_cookies
 
+sub _request_auth : Test(32) {
+  for my $test (
+    [undef, {}],
+    ['' => {}],
+    ['Basic' => {}],
+    ['Basic abc!xyz' => {}],
+    ['Basic abc=',
+     {auth_scheme => 'basic', userid => "i\xB7", password => undef}],
+    ['BASIC abc=',
+     {auth_scheme => 'basic', userid => "i\xB7", password => undef}],
+    ['basic abc=',
+     {auth_scheme => 'basic', userid => "i\xB7", password => undef}],
+    ['basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==',
+     {auth_scheme => 'basic', userid => "Aladdin", password => 'open sesame'}],
+    ['Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==',
+     {auth_scheme => 'basic', userid => "Aladdin", password => 'open sesame'}],
+    ['BASIC QWxhZGRpbjpvcGVuIHNlc2FtZQ==',
+     {auth_scheme => 'basic', userid => "Aladdin", password => 'open sesame'}],
+    ['basic QWxhZGRpbjpvcGVuIHNlc2FtZQ',
+     {auth_scheme => 'basic', userid => "Aladdin", password => 'open sesame'}],
+    ['  basic   QWxhZGRpbjpvcGVuIHNlc2FtZQ',
+     {auth_scheme => 'basic', userid => "Aladdin", password => 'open sesame'}],
+    ['basic QWxhZGRpbjpvcGVuIHN lc2FtZQ==', {}],
+    ['basic YWdlYXdnYXdnYWVmIGFnZXdnZWFmZXdhZ2FnZmV3OmdhZWFnZUpXd2dld2dhZ0d3Z2FnYWVhIGFlZmFnZWVlZWVlZWUgYWdld2dld2FnYXdnYWVld2E=',
+     {auth_scheme => 'basic', userid => "ageawgawgaef agewgeafewagagfew",
+      password => 'gaeageJWwgewgagGwgagaea aefageeeeeeee agewgewagawgaeewa'}],
+    ['Hoge fuga="" abc', {}],
+    ['notbasic QWxhZGRpbjpvcGVuIHNlc2FtZQ', {}],
+  ) {
+    my $https = new_https_for_interfaces
+        env => {HTTP_AUTHORIZATION => $test->[0]};
+    for my $http (@$https) {
+      eq_or_diff $http->request_auth, $test->[1];
+    }
+  }
+} # _request_auth
+
 # ------ Request body -----
 
 sub _request_body_as_ref_no_body : Test(2) {

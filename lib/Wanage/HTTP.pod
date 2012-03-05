@@ -205,6 +205,29 @@ this method.  Cookie names and values are both represented as byte
 
 Applications should not modify the hash reference.
 
+=item $auth = $http->request_auth
+
+Return a hash reference containing the authorization data contained in
+the C<Authorization:> header of the request.
+
+Please note that some data source such as CGI does not provide HTTP
+C<Authorization:> request header to the application.
+
+If the request contains the authorization data with an C<auth-scheme>
+supported by Wanage, the hash reference contains the C<auth_scheme>
+key, whose value is set to the lowercase-normalized form of the
+C<auth-scheme>.
+
+If the C<auth_scheme> value is C<basic>, the C<Authorization:> header
+contains C<basic-credentials>.  In this case the array reference
+contains keys C<userid> and C<password>.  If the credentials contains
+no password (which violates the HTTP spec), the C<password> key is set
+to the C<undef> value.  Otherwise, these keys contain values of
+C<userid> and C<password>, respectively, in the C<basic-credentials>.
+They are byte strings.
+
+At the time of writing, no other C<auth-scheme> is supported.
+
 =back
 
 =head2 Request body

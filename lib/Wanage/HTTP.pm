@@ -174,6 +174,20 @@ sub request_cookies {
   };
 } # request_cookies
 
+sub request_auth ($) {
+  my $auth = $_[0]->get_request_header ('Authorization') || '';
+  if ($auth =~ s/^[\x09\x0A\x0D\x20]*[Bb][Aa][Ss][Ii][Cc][\x09\x0A\x0D\x20]+//) {
+    $auth =~ s/[\x09\x0A\x0D\x20]+\z//;
+    return {} if $auth =~ m{[^A-Za-z0-9+/=]};
+    require MIME::Base64;
+    my $decoded = MIME::Base64::decode_base64 ($auth);
+    my ($userid, $password) = split /:/, $decoded, 2;
+    return {auth_scheme => 'basic', userid => $userid, password => $password};
+  } else {
+    return {};
+  }
+} # request_auth
+
 # ---- Request body ----
 
 sub request_body_as_ref ($) {
