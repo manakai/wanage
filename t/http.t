@@ -324,11 +324,12 @@ sub _request_auth : Test(32) {
   }
 } # _request_auth
 
-sub _request_cache_control : Test(42) {
+sub _request_cache_control : Test(138) {
   for my $test (
     [undef, {}],
     ['', {}],
-    ['no-cache', {'no-cache' => undef}],
+    ['no-cache', {'no-cache' => undef}, 1],
+    ['no-cache=120', {'no-cache' => 120}, 1],
     ['no-store', {'no-store' => undef}],
     ['max-age', {'max-age' => undef}],
     ['max-age=120', {'max-age' => '120'}],
@@ -347,12 +348,15 @@ sub _request_cache_control : Test(42) {
                              '$$1$$' => undef, 'abc' => undef}],
     ['hoge=fuga=1', {'hoge' => 'fuga=1'}],
     ['hoge fuga=1', {}],
+    ['hoge fuga=1,no-cache', {'no-cache' => undef}, 1],
     [',,max-age=4,,', {'max-age' => 4}],
   ) {
     my $https = new_https_for_interfaces
         env => {HTTP_CACHE_CONTROL => $test->[0]};
     for my $http (@$https) {
       eq_or_diff $http->request_cache_control, $test->[1];
+      is $http->request_cache_control, $http->request_cache_control;
+      is_bool $http->is_superreload, $test->[2];
     }
   }
 } # _request_cache_control

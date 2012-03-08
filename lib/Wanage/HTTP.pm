@@ -189,41 +189,47 @@ sub request_auth ($) {
 } # request_auth
 
 sub request_cache_control ($) {
-  my $value = $_[0]->get_request_header ('Cache-Control');
-  $value = '' unless defined $value;
-  my @map;
-  $value =~ s{(\$\$[0-9]+\$\$|\"[^\"]*\"?)}{
-    push @map, $1;
-    '$$' . $#map . '$$';
-  }ge;
-  my $directives = {};
-  for (split /,/, $value) {
-    s/^[\x09\x0A\x0D\x20]*([^\x09\x0A\x0D\x20=]+)// or next;
-    my $name = $1;
-    my $value = $1
-        if s/^[\x09\x0A\x0D\x20]*=[\x09\x0A\x0D\x20]*([^\x09\x0A\x0D\x20]*)//;
-    s/^[\x09\x0A\x0D\x20]+//;
-    next if length $_;
-    $name =~ s/\$\$([0-9]+)\$\$/$map[$1]/g;
-    next if $name =~ /\"/;
-    $name =~ tr/A-Z/a-z/; ## ASCII case-insensitive.
-    if (defined $value) {
-      $value =~ s/\$\$([0-9]+)\$\$/$map[$1]/g;
-      if ($value =~ /^"/ and $value =~ /"$/) {
-        $value =~ s/^\"//;
-        $value =~ s/\"$//;
-      }
-    }
-    if (defined $directives->{$name}) {
+  return $_[0]->{request_cache_control} ||= do {
+    my $value = $_[0]->get_request_header ('Cache-Control');
+    $value = '' unless defined $value;
+    my @map;
+    $value =~ s{(\$\$[0-9]+\$\$|\"[^\"]*\"?)}{
+      push @map, $1;
+      '$$' . $#map . '$$';
+    }ge;
+    my $directives = {};
+    for (split /,/, $value) {
+      s/^[\x09\x0A\x0D\x20]*([^\x09\x0A\x0D\x20=]+)// or next;
+      my $name = $1;
+      my $value = $1
+          if s/^[\x09\x0A\x0D\x20]*=[\x09\x0A\x0D\x20]*([^\x09\x0A\x0D\x20]*)//;
+      s/^[\x09\x0A\x0D\x20]+//;
+      next if length $_;
+      $name =~ s/\$\$([0-9]+)\$\$/$map[$1]/g;
+      next if $name =~ /\"/;
+      $name =~ tr/A-Z/a-z/; ## ASCII case-insensitive.
       if (defined $value) {
-        $directives->{$name} .= ',' . $value;
+        $value =~ s/\$\$([0-9]+)\$\$/$map[$1]/g;
+        if ($value =~ /^"/ and $value =~ /"$/) {
+          $value =~ s/^\"//;
+          $value =~ s/\"$//;
+        }
       }
-    } else {
-      $directives->{$name} = $value;
+      if (defined $directives->{$name}) {
+        if (defined $value) {
+          $directives->{$name} .= ',' . $value;
+        }
+      } else {
+        $directives->{$name} = $value;
+      }
     }
-  }
-  return $directives;
+    $directives;
+  };
 } # request_cache_control
+
+sub is_superreload ($) {
+  return exists $_[0]->request_cache_control->{'no-cache'};
+} # is_superreload
 
 # ---- Request body ----
 

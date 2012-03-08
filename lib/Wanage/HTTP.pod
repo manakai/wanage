@@ -233,18 +233,24 @@ At the time of writing, no other C<auth-scheme> is supported.
 Parse the C<Cache-Control:> header of the request and return the
 result as a hash reference.
 
-If a cache-directive is included in the headers, its name is included
-in the hash as a key.  If the cache-directive has a value specified in
-the headers, the value is used as the value corresponding to the key
-in the hash.  If the cache-directive is specified multiple times with
-values, they are concatenated by C<,> in order (At the time of
-writing, however, no cache-directive is explicitly allowed to appear
-multiple times in an HTTP request).  Otherwise, i.e. the
-cache-directive has no value, the value corresponding to the key in
-the hash is C<undef>.
+If a cache-directive is included in the headers, its name, normalized
+to lowercase, is included in the hash as a key.  If the
+cache-directive has a value specified in the headers, the value is
+used as the value corresponding to the key in the hash.  If the
+cache-directive is specified multiple times with values, they are
+concatenated by C<,> in order (At the time of writing, however, no
+cache-directive is explicitly allowed to appear multiple times in an
+HTTP request).  Otherwise, i.e. the cache-directive has no value, the
+value corresponding to the key in the hash is C<undef>.
 
 If the request has no C<Cache-Control:> header, an empty hash
 reference is returned.
+
+=item BOOL = $http->is_superreload
+
+Return whether the request is a "super-reload" or not.  This is
+equivalent to C<< exists $http->request_cache_control->{'no-cache'}
+>>.
 
 =back
 
