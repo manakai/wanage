@@ -324,6 +324,39 @@ sub _request_auth : Test(32) {
   }
 } # _request_auth
 
+sub _request_cache_control : Test(42) {
+  for my $test (
+    [undef, {}],
+    ['', {}],
+    ['no-cache', {'no-cache' => undef}],
+    ['no-store', {'no-store' => undef}],
+    ['max-age', {'max-age' => undef}],
+    ['max-age=120', {'max-age' => '120'}],
+    ['max-age="120"', {'max-age' => '120'}],
+    ['max-age=120,max-age=200', {'max-age' => '120,200'}],
+    ['max-stale=0', {'max-stale' => '0'}],
+    ['max-stale=0,max-stale=2', {'max-stale' => '0,2'}],
+    ['Max-Stale=0,max-stale=5', {'max-stale' => '0,5'}],
+    ['min-refresh  =  0', {'min-refresh' => '0'}],
+    ['NO-transform', {'no-transform' => undef}],
+    ['only-if-cached=', {'only-if-cached' => ''}],
+    ['  max-stale  =  0    ', {'max-stale' => '0'}],
+    ['hoge="fuga,$$1$$,abc"', {'hoge' => 'fuga,$$1$$,abc'}],
+    ['hoge=fuga$$1$$abc', {'hoge' => 'fuga$$1$$abc'}],
+    ['hoge=fuga,$$1$$,abc', {'hoge' => 'fuga',
+                             '$$1$$' => undef, 'abc' => undef}],
+    ['hoge=fuga=1', {'hoge' => 'fuga=1'}],
+    ['hoge fuga=1', {}],
+    [',,max-age=4,,', {'max-age' => 4}],
+  ) {
+    my $https = new_https_for_interfaces
+        env => {HTTP_CACHE_CONTROL => $test->[0]};
+    for my $http (@$https) {
+      eq_or_diff $http->request_cache_control, $test->[1];
+    }
+  }
+} # _request_cache_control
+
 # ------ Request body -----
 
 sub _request_body_as_ref_no_body : Test(2) {
