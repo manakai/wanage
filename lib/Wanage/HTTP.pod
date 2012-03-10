@@ -389,6 +389,11 @@ empty) string of printable ASCII characters except for C<"> and C<\>.
 If the C<auth-scheme> is C<basic>, it represents the Basic
 authentication.  No additional options can be specified.
 
+=item $http->set_response_last_modified ($time)
+
+Set the C<Last-Modified:> header with the specified timestamp.  The
+timestamp must be a Unix epoch (time_t) value.
+
 =item $http->send_response_headers
 
 Send status code, reason phrase, and response headers to the server.

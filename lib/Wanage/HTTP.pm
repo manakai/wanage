@@ -356,6 +356,17 @@ sub set_response_auth {
   }
 } # set_response_auth
 
+sub set_response_last_modified {
+  my @time = gmtime $_[1];
+  $_[0]->set_response_header
+      ('Last-Modified' => sprintf '%s, %02d %s %04d %02d:%02d:%02d GMT',
+           [qw(Sun Mon Tue Wed Thu Fri Sat Sun)]->[$time[6]],
+           $time[3],
+           [qw(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec)]->[$time[4]],
+           $time[5] + 1900,
+           $time[2], $time[1], $time[0]);
+} # set_response_last_modified
+
 our $Sortkeys;
 
 sub send_response_headers ($) {

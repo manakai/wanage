@@ -893,6 +893,51 @@ sub _set_response_auth_after_sent : Test(4) {
   }
 } # _set_response_auth_after_sent
 
+sub _set_response_last_modified : Test(20) {
+  for my $test (
+    [undef, 'Thu, 01 Jan 1970 00:00:00 GMT'],
+    [0 =>  'Thu, 01 Jan 1970 00:00:00 GMT'],
+    [1 => 'Thu, 01 Jan 1970 00:00:01 GMT'],
+    [121414111 => 'Tue, 06 Nov 1973 06:08:31 GMT'],
+    [-12222 => 'Wed, 31 Dec 1969 20:36:18 GMT'],
+    [1999941222 => 'Tue, 17 May 2033 11:13:42 GMT'],
+    [21999942222 => 'Sun, 24 Feb 2667 23:03:42 GMT'],
+    ['abc' => 'Thu, 01 Jan 1970 00:00:00 GMT'],
+    [2141214512.1211 => 'Sat, 07 Nov 2037 13:48:32 GMT'],
+    ["\x{1000}abc" => 'Thu, 01 Jan 1970 00:00:00 GMT'],
+  ) {
+    my $https = new_https_for_interfaces;
+    for my $http (@$https) {
+      $http->set_response_last_modified ($test->[0]);
+      eq_or_diff $http->{response_headers}->{headers}->{'last-modified'},
+          [['Last-Modified' => $test->[1]]];
+    }
+  }
+} # _set_response_last_modified
+
+sub _set_response_last_modified_multiple : Test(2) {
+  my $https = new_https_for_interfaces;
+  for my $http (@$https) {
+    $http->set_response_last_modified (5215212);
+    $http->set_response_last_modified (1999941222);
+    eq_or_diff $http->{response_headers}->{headers}->{'last-modified'},
+        [['Last-Modified' => 'Tue, 17 May 2033 11:13:42 GMT']];
+  }
+} # _set_response_last_modified_multiple
+
+sub _set_response_last_modified_after_sent : Test(4) {
+  my $https = new_https_for_interfaces;
+  for my $http (@$https) {
+    $http->set_response_last_modified (5215212);
+    $http->send_response_headers;
+    dies_here_ok {
+      $http->set_response_last_modified (1999941222);
+    };
+    eq_or_diff $http->{response_headers}->{headers}->{'last-modified'},
+        [['Last-Modified' => 'Mon, 02 Mar 1970 08:40:12 GMT']];
+  }
+} # _set_response_last_modified_after_sent
+
 __PACKAGE__->runtests;
 
 $Wanage::HTTP::DetectLeak = 1;
