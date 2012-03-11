@@ -924,11 +924,13 @@ sub _set_response_cookie_after_sent : Test(4) {
 sub _set_response_auth : Test(30) {
   for my $test (
     [[], undef],
-    [['Basic'], undef],
-    [['BASIC'], undef],
+    [['Basic'], 'Basic realm=""'],
+    [['BASIC'], 'Basic realm=""'],
     [['basic'], 'Basic realm=""'],
     [['basic', realm => ''], 'Basic realm=""'],
     [['basic', realm => 'hoge'], 'Basic realm="hoge"'],
+    [['Basic', realm => 'hoge'], 'Basic realm="hoge"'],
+    [['BASIC', realm => 'hoge'], 'Basic realm="hoge"'],
     [['basic', realm => 'hoge fuga'], 'Basic realm="hoge fuga"'],
     [['basic', realm => 'abc\de'], 'Basic realm="abc\de"'],
     [['basic', realm => 'ab"cd'], 'Basic realm="ab_cd"'],

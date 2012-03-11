@@ -354,6 +354,7 @@ sub set_response_cookie {
 
 sub set_response_auth {
   my ($self, $auth_scheme, %args) = @_;
+  $auth_scheme =~ tr/A-Z/a-z/; ## ASCII case-insensitive.
   $args{realm} = '' unless defined $args{realm};
   if ($auth_scheme eq 'basic') {
     $args{realm} =~ tr/"/_/;

@@ -390,8 +390,7 @@ If true, set the "httponly" flag by cookie's C<HttpOnly> attribute.
 
 Add a C<WWW-Authenticate:> header with the specified C<auth-scheme>.
 
-The first argument specifies the C<auth-scheme>.  It must be C<basic>
-(in lowercase).
+The first argument specifies the C<auth-scheme>.  It must be C<basic>.
 
 In addition, more options can be specified as name-value pairs.  The
 C<realm> option specifies the C<realm=""> C<auth-param>, i.e. a short
