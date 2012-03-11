@@ -35,6 +35,17 @@ sub get_request_header ($$) {
 
 sub url_scheme { die "url_scheme not implemented" }
 
+sub _url_scheme_by_proxy {
+  if ($Wanage::HTTP::UseXForwardedScheme) {
+    my $scheme = $_[0]->get_request_header ('X-Forwarded-Scheme');
+    if ($scheme and $scheme =~ /\A[0-9A-Za-z+_.-]+\z/) {
+      $scheme =~ tr/A-Z/a-z/; ## ASCII case-insensitive.
+      return $scheme;
+    }
+  }
+  return undef;
+} # _url_scheme_by_proxy
+
 sub original_url ($) {
   return $_[0]->{original_url} ||= do {
     my $handler = $_[0];

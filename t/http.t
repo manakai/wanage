@@ -54,6 +54,54 @@ sub _url : Test(14) {
   }
 } # _url
 
+sub _url_x_forwarded_scheme_ignored : Test(4) {
+  my $https = new_https_for_interfaces
+      env => {HTTP_HOST => q<hoge.TEST>, REQUEST_URI => "/hoge/?abc\xFE\xC5",
+              'psgi.url_scheme' => 'https', HTTPS => 'on',
+              HTTP_X_FORWARDED_SCHEME => 'hoge'};
+  for my $http (@$https) {
+    is $http->url->{scheme}, 'https';
+    is $http->original_url->{scheme}, 'https';
+  }
+} # _url_x_forwarded_scheme_ignored
+
+sub _url_x_forwarded_scheme_used : Test(4) {
+  local $Wanage::HTTP::UseXForwardedScheme = 1;
+  my $https = new_https_for_interfaces
+      env => {HTTP_HOST => q<hoge.TEST>, REQUEST_URI => "/hoge/?abc\xFE\xC5",
+              'psgi.url_scheme' => 'https', HTTPS => 'on',
+              HTTP_X_FORWARDED_SCHEME => 'hoge'};
+  for my $http (@$https) {
+    is $http->url->{scheme}, 'hoge';
+    is $http->original_url->{scheme}, 'hoge';
+  }
+} # _url_x_forwarded_scheme_used
+
+sub _url_x_forwarded_scheme_bad : Test(4) {
+  local $Wanage::HTTP::UseXForwardedScheme = 1;
+  my $https = new_https_for_interfaces
+      env => {HTTP_HOST => q<hoge.TEST>, REQUEST_URI => "/hoge/?abc\xFE\xC5",
+              'psgi.url_scheme' => 'https', HTTPS => 'on',
+              HTTP_X_FORWARDED_SCHEME => 'hoge,fuga'};
+  for my $http (@$https) {
+    is $http->url->{scheme}, 'https';
+    is $http->original_url->{scheme}, 'https';
+  }
+} # _url_x_forwarded_scheme_bad
+
+sub _url_x_forwarded_scheme_request_uri : Test(4) {
+  local $Wanage::HTTP::UseXForwardedScheme = 1;
+  my $https = new_https_for_interfaces
+      env => {HTTP_HOST => q<hoge.TEST>,
+              REQUEST_URI => "ftp://aa/hoge/?abc\xFE\xC5",
+              'psgi.url_scheme' => 'https', HTTPS => 'on',
+              HTTP_X_FORWARDED_SCHEME => 'hoge,fuga'};
+  for my $http (@$https) {
+    is $http->url->{scheme}, 'ftp';
+    is $http->original_url->{scheme}, 'ftp';
+  }
+} # _url_x_forwarded_scheme_request_uri
+
 sub _original_url : Test(14) {
   my $https = new_https_for_interfaces
       env => {HTTP_HOST => q<hoge.TEST>, REQUEST_URI => "/hoge/?abc\xFE\xC5",

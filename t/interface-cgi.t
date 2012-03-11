@@ -63,6 +63,21 @@ sub _url_scheme_with_https_0 : Test(1) {
   is $cgi->url_scheme, 'http';
 } # _url_scheme_with_https_0
 
+sub _url_scheme_x_forwarded_scheme_ignored : Test(1) {
+  my $cgi = with_cgi_env {
+    Wanage::Interface::CGI->new_from_main;
+  } {HTTPS => '1', HTTP_X_FORWARDED_SCHEME => 'hoge'};
+  is $cgi->url_scheme, 'https';
+} # _url_scheme_x_forwarded_scheme_ignored
+
+sub _url_scheme_x_forwarded_scheme_used : Test(1) {
+  local $Wanage::HTTP::UseXForwardedScheme = 1;
+  my $cgi = with_cgi_env {
+    Wanage::Interface::CGI->new_from_main;
+  } {HTTPS => '1', HTTP_X_FORWARDED_SCHEME => 'hoge'};
+  is $cgi->url_scheme, 'hoge';
+} # _url_scheme_x_forwarded_scheme_used
+
 sub _get_meta_variable : Test(2) {
   my $cgi = with_cgi_env {
     Wanage::Interface::CGI->new_from_main;

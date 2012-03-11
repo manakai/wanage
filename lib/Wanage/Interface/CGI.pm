@@ -22,7 +22,8 @@ sub new_from_main ($) {
 
 sub url_scheme ($) {
   return $_[0]->{url_scheme} ||= (
-    (($_[0]->{env}->{HTTPS} || '') =~ /^(?:[Oo][Nn]|1)$/) ? 'https' : 'http'
+    $_[0]->_url_scheme_by_proxy ||
+    ((($_[0]->{env}->{HTTPS} || '') =~ /^(?:[Oo][Nn]|1)$/) ? 'https' : 'http')
   );
 } # url_scheme
 

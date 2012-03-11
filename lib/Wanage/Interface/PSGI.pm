@@ -16,7 +16,7 @@ sub new_from_psgi_env ($$) {
 # ------ Request data ------
 
 sub url_scheme ($) {
-  return $_[0]->{env}->{'psgi.url_scheme'};
+  return $_[0]->_url_scheme_by_proxy || $_[0]->{env}->{'psgi.url_scheme'};
 } # url_scheme
 
 sub get_meta_variable ($$) {
