@@ -35,39 +35,6 @@ sub get_request_header ($$) {
 
 sub url_scheme { die "url_scheme not implemented" }
 
-# XXX This method will be deleted due to lack of use cases
-sub script_url ($) {
-  my $handler = $_[0];
-
-  my $scheme = $handler->url_scheme;
-  
-  my $host = $handler->get_meta_variable ('HTTP_HOST')
-      || ($handler->get_meta_variable ('SERVER_NAME') . ':' . 
-          $handler->get_meta_variable ('SERVER_PORT'));
-  my $port;
-  if ($host =~ s/:([0-9]+)\z//) {
-    $port = $1;
-  }
-
-  my $path = $handler->get_meta_variable ('SCRIPT_NAME');
-  $path = '' unless defined $path;
-  my $path_info = $handler->get_meta_variable ('PATH_INFO');
-  $path .= $path_info if defined $path_info;
-  $path = '/' . $path unless $path =~ m{^/};
-  $path =~ s{([\x00-\x20\x22\x23\x25<>\x5B-\x5E\x60\x7B-\x7D;=?\x7F-\xFF])}
-      {sprintf '%%%02X', ord $1}ge;
-  
-  return Wanage::URL->new_from_parsed_url ({
-    scheme => $scheme,
-    scheme_normalized => $scheme,
-    is_hierarchical => 1,
-    host => $host,
-    port => $port,
-    path => $path,
-    query => $handler->get_meta_variable ('QUERY_STRING'),
-  });
-} # script_url
-
 sub original_url ($) {
   return $_[0]->{original_url} ||= do {
     my $handler = $_[0];
