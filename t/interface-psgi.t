@@ -9,6 +9,7 @@ use base qw(Test::Class);
 use Wanage::Interface::PSGI;
 use Test::MoreMore;
 use Test::Wanage::Envs;
+use Encode;
 
 sub _version : Test(1) {
   ok $Wanage::Interface::PSGI::VERSION;
@@ -288,11 +289,11 @@ sub _set_response_headers : Test(8) {
   for (
     [],
     [['Title' => 'HOge Fuga']],
-    [['Title' => 'HOge Fuga'], [Title => "\x{500}\x{2000}a"]],
+    [['Title' => 'HOge Fuga'], [Title => encode 'utf-8', "\x{500}\x{2000}a"]],
     [['Content-Type' => 'text/html; charset=euc-jp']],
     [['Hoge' => "Fu\x0D\x0Aga"]],
     [["Hoge\x00\x0A" => "Fu\x0D\x0Aga"]],
-    [["Hog\x{1000}" => "Fu\x0D\x0Aga"]],
+    [[(encode 'utf-8', "Hog\x{1000}") => "Fu\x0D\x0Aga"]],
     [['Content-TYPE' => '']],
   ) {
     my $psgi = Wanage::Interface::PSGI->new_from_psgi_env;

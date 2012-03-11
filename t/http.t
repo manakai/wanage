@@ -664,6 +664,36 @@ sub _set_response_header_cgi : Test(4) {
   eq_or_diff $out, "Status: 200 OK\nX-ABC: 111\nX-Hoge: xy zz\n\n";
 } # _set_response_header_cgi
 
+sub _set_response_header_cgi_utf8_name : Test(3) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
+  ng $http->send_response;
+  $http->set_response_header ("X-\x{4e00}" => 'ab cd');
+  $http->send_response_body_as_ref (\"");
+  eq_or_diff $out, "Status: 200 OK\nX-_: ab cd\n\n";
+  ng utf8::is_utf8 $out;
+} # _set_response_header_cgi_utf8_name
+
+sub _set_response_header_cgi_utf8_name_2 : Test(3) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
+  ng $http->send_response;
+  $http->set_response_header ((decode 'utf-8', "X-Hoge") => "ab cd\xFE");
+  $http->send_response_body_as_ref (\"");
+  eq_or_diff $out, "Status: 200 OK\nX-Hoge: ab cd\xFE\n\n";
+  ng utf8::is_utf8 $out;
+} # _set_response_header_cgi_utf8_name_2
+
+sub _set_response_header_cgi_utf8_value : Test(3) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
+  ng $http->send_response;
+  $http->set_response_header ("X-Hoge" => "ab\x{4E00}");
+  $http->send_response_body_as_ref (\"");
+  eq_or_diff $out, encode 'utf-8', "Status: 200 OK\nX-Hoge: ab\x{4e00}\n\n";
+  ng utf8::is_utf8 $out;
+} # _set_response_header_cgi_utf8_value
+
 sub _add_response_header_cgi : Test(4) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;

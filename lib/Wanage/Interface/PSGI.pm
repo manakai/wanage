@@ -5,6 +5,7 @@ our $VERSION = '1.0';
 use Wanage::Interface::Base;
 push our @ISA, qw(Wanage::Interface::Base);
 use Carp;
+use Encode;
 
 # ------ Constructor ------
 
@@ -51,7 +52,9 @@ sub send_response_headers ($;%) {
   }
   $self->{response} ||= [200, []];
   $self->{response}->[0] = $args{status} if defined $args{status};
-  $self->{response}->[1] = [map { ($_->[0] => $_->[1]) } @{$args{headers}}]
+  $self->{response}->[1] = [map { 
+    utf8::is_utf8 ($_) ? encode 'utf-8', $_ : $_
+  } map { ($_->[0] => $_->[1]) } @{$args{headers}}]
       if $args{headers};
   if ($self->{env}->{'psgi.streaming'}) {
     if ($self->{psgi_writer_getter}) {

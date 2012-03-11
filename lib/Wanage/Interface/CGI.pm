@@ -2,6 +2,7 @@ package Wanage::Interface::CGI;
 use strict;
 use warnings;
 our $VERSION = '1.0';
+require utf8;
 use Carp;
 use Encode;
 use IO::Handle;
@@ -72,12 +73,14 @@ sub send_response_headers ($;%) {
 
   my $status = $args{status};
   $status = 200 if not defined $status;
+  $status = 0 + $status;
   my $status_text = $args{status_text};
   $status_text = do {
     require Wanage::HTTP::Info;
     $Wanage::HTTP::Info::ReasonPhrases->{$status} || '';
   } unless defined $status_text;
   $status_text =~ s/\s+/ /g;
+  $status_text = encode 'utf-8', $status_text if utf8::is_utf8 ($status_text);
 
   print $handle "Status: $status $status_text\n";
   for (@{$args{headers} or []}) {
@@ -85,6 +88,8 @@ sub send_response_headers ($;%) {
     my $value = $_->[1];
     $name =~ s/[^0-9A-Za-z_-]/_/g; ## Far more restrictive than RFC 3875
     $value =~ s/[\x0D\x0A]+[\x09\x20]*/ /g;
+    $name = encode 'utf-8', $name if utf8::is_utf8 ($name);
+    $value = encode 'utf-8', $value if utf8::is_utf8 ($value);
     print $handle "$name: $value\n";
   }
   print $handle "\n";
