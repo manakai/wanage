@@ -35,6 +35,9 @@ Parameters - Date/Time Formats - Full Date
 PERSISTENT CLIENT STATE HTTP COOKIES
 <http://web.archive.org/web/19961125090609/http://www2.netscape.com/newsref/std/cookie_spec.html>.
 
+Cookie date parsing test data
+<https://github.com/abarth/http-state/tree/master/tests/data/dates>.
+
 =head1 AUTHOR
 
 Wakaba <w@suika.fam.cx>.
