@@ -6,7 +6,7 @@ use Carp;
 use Encode;
 require utf8;
 use Scalar::Util qw(weaken);
-use URL::PercentEncode qw(parse_form_urlencoded_b);
+use URL::PercentEncode qw(percent_encode_c parse_form_urlencoded_b);
 
 our @CARP_NOT = qw(
   Wanage::Interface::CGI Wanage::Interface::PSGI
@@ -375,6 +375,26 @@ sub set_response_last_modified {
            $time[5] + 1900,
            $time[2], $time[1], $time[0]);
 } # set_response_last_modified
+
+## See: <http://suika.fam.cx/~wakaba/wiki/sw/n/Content-Disposition%3A>.
+sub set_response_disposition {
+  my ($self, %args) = @_;
+  my $header = _ascii ($args{disposition} || 'attachment');
+  $header =~ tr/A-Z/a-z/; ## ASCII case-insensitive.
+  $header =~ s/[,;\"\\]/_/g;
+  
+  if (defined $args{filename}) {
+    if ($args{filename} =~ /[^\x20-\x7E]/ or
+        $args{filename} =~ /[,;\"\\]/) {
+      $args{filename} = percent_encode_c $args{filename};
+      $header .= '; filename=' . $args{filename}          ## IE
+              .  "; filename*=utf-8''" . $args{filename}; ## RFC 6266
+    } else {
+      $header .= '; filename="' . (_ascii $args{filename}) . '"';
+    }
+  }
+  $self->set_response_header ('Content-Disposition' => $header);
+} # set_response_disposition
 
 our $Sortkeys;
 

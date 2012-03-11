@@ -336,6 +336,31 @@ C<Content-Type:> header of the response message.
 You can modify the object to alter the value of the C<Content-Type:>
 header.
 
+=item $http->set_response_disposition (%args)
+
+Set the C<Content-Disposition:> response header.  Following options
+can be specified:
+
+=over 4
+
+=item disposition => $disposition_type
+
+Specify the C<disposition-type> in the header.  The value must be
+C<inline>, C<attachment>, or any other valid C<disposition-type>.
+Unlike the default of MIME and HTTP, the default value here is
+C<attachment>, as it would be more appropriate for most cases an
+explicit HTTP C<Content-Disposition:> header should be specified.
+
+=item filename => $filename
+
+Specify the C<filename=""> parameter value in the header.  Though the
+value can be any character string, it is desired to use only printable
+ASCII characters as file name for avoiding significant
+interoperability problems of browsers.  If this option is not
+specified, no C<filename=""> parameter is presented in the header.
+
+=back
+
 =item $http->set_response_cookie ($name => $value, %args)
 
 Set a cookie-pair by adding a C<Set-Cookie:> header to the response.
@@ -481,6 +506,10 @@ RFC 2616 - Hypertext Transfer Protocol -- HTTP/1.1
 
 RFC 2617 - HTTP Authentication: Basic and Digest Access Authentication
 <http://tools.ietf.org/html/rfc2617>.
+
+RFC 6266 - Use of the Content-Disposition Header Field in the
+Hypertext Transfer Protocol (HTTP)
+<http://tools.ietf.org/html/rfc6266>.
 
 XMLHttpRequest <http://dvcs.w3.org/hg/xhr/raw-file/tip/Overview.html>.
 

@@ -1028,6 +1028,62 @@ sub _set_response_last_modified_after_sent : Test(4) {
   }
 } # _set_response_last_modified_after_sent
 
+sub _set_response_disposition : Test(38) {
+  for my $test (
+    [[], 'attachment'],
+    [[disposition => 'attachment'], 'attachment'],
+    [[disposition => 'Attachment'], 'attachment'],
+    [[disposition => 'ATTACHMENT'], 'attachment'],
+    [[disposition => 'inline'], 'inline'],
+    [[disposition => 'InLine'], 'inline'],
+    [[disposition => 'INLINE'], 'inline'],
+    [[disposition => 'x-hoge-fuga'], 'x-hoge-fuga'],
+    [[disposition => "abc<\"&>,\\\";\xFE\xAC"], "abc<_&>____\xFE\xAC"],
+    [[disposition => 'in line'], 'in line'],
+    [[filename => undef], 'attachment'],
+    [[filename => ''], 'attachment; filename=""'],
+    [[filename => 'abc'], 'attachment; filename="abc"'],
+    [[filename => 'abc.txt'], 'attachment; filename="abc.txt"'],
+    [[filename => '/foo/bar'], 'attachment; filename="/foo/bar"'],
+    [[filename => 'hoge fuga'], 'attachment; filename="hoge fuga"'],
+    [[filename => '"<&>:;\\\''], "attachment; filename=%22%3C%26%3E%3A%3B%5C%27; filename*=utf-8''%22%3C%26%3E%3A%3B%5C%27"],
+    [[filename => "\x00\xFFabc"], "attachment; filename=%00%C3%BFabc; filename*=utf-8''%00%C3%BFabc"],
+    [[filename => "\x{4e00}\x{FC}\x{1000}"], "attachment; filename=%E4%B8%80%C3%BC%E1%80%80; filename*=utf-8''%E4%B8%80%C3%BC%E1%80%80"],
+  ) {
+    my $https = new_https_for_interfaces;
+    for my $http (@$https) {
+      $http->set_response_disposition (@{$test->[0]});
+      eq_or_diff $http->{response_headers}->{headers}->{'content-disposition'},
+          [['Content-Disposition' => $test->[1]]];
+    }
+  }
+} # _set_response_disposition
+
+sub _set_response_disposition_multiple : Test(2) {
+  my $https = new_https_for_interfaces;
+  for my $http (@$https) {
+    $http->set_response_disposition (disposition => 'inline');
+    $http->set_response_disposition (disposition => 'x-hoge',
+                                     filename => 'abc.txt');
+    eq_or_diff $http->{response_headers}->{headers}->{'content-disposition'},
+        [['Content-Disposition' => 'x-hoge; filename="abc.txt"']];
+  }
+} # _set_response_disposition_multiple
+
+sub _set_response_disposition_sent : Test(4) {
+  my $https = new_https_for_interfaces;
+  for my $http (@$https) {
+    $http->set_response_disposition (disposition => 'inline');
+    $http->send_response_headers;
+    dies_here_ok {
+      $http->set_response_disposition (disposition => 'x-hoge',
+                                       filename => 'abc.txt');
+    };
+    eq_or_diff $http->{response_headers}->{headers}->{'content-disposition'},
+        [['Content-Disposition' => 'inline']];
+  }
+} # _set_response_disposition_sent
+
 __PACKAGE__->runtests;
 
 $Wanage::HTTP::DetectLeak = 1;
