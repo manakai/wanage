@@ -437,6 +437,18 @@ sub close_response_body ($) {
   $_[0]->{interface}->close_response_body;
 } # close_response_body
 
+sub set_response_plain_text ($$) {
+  $_[0]->set_response_header ('Content-Type' => 'text/plain; charset=utf-8');
+  $_[0]->send_response_body_as_text ($_[1]);
+  $_[0]->close_response_body;
+} # set_response_plain_text
+
+sub set_response_html ($$) {
+  $_[0]->set_response_header ('Content-Type' => 'text/html; charset=utf-8');
+  $_[0]->send_response_body_as_text ($_[1]);
+  $_[0]->close_response_body;
+} # set_response_html
+
 sub send_response ($;%) {
   return shift->{interface}->send_response (@_);
 } # send_response

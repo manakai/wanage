@@ -1114,6 +1114,32 @@ sub _set_response_disposition_sent : Test(4) {
   }
 } # _set_response_disposition_sent
 
+sub _set_response_plain_text : Test(2) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
+  $http->set_response_plain_text ("\x{5000}\x{fe}\x{50}\x00");
+  dies_here_ok {
+    $http->send_response_body_as_ref (\'abcde');
+  };
+  eq_or_diff $out, qq{Status: 200 OK
+Content-Type: text/plain; charset=utf-8
+
+\xe5\x80\x80\xc3\xbeP\x00};
+} # _set_response_plain_text
+
+sub _set_response_html : Test(2) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
+  $http->set_response_html ("\x{5000}\x{fe}\x{50}\x00");
+  dies_here_ok {
+    $http->send_response_body_as_ref (\'abcde');
+  };
+  eq_or_diff $out, qq{Status: 200 OK
+Content-Type: text/html; charset=utf-8
+
+\xe5\x80\x80\xc3\xbeP\x00};
+} # _set_response_html
+
 __PACKAGE__->runtests;
 
 $Wanage::HTTP::DetectLeak = 1;
