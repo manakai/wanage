@@ -340,7 +340,7 @@ sub _request_cookies : Test(72) {
     ['abc=def;xyz=aaa' => {abc => 'def', xyz => 'aaa'}],
     ['abc=def;abc=xyz' => {abc => 'def'}],
     ['abc=def; xaya=abc' => {abc => 'def', xaya => 'abc'}],
-    [' aa  = bbb ; xxx = hrr ' => {aa => 'bbb', xxx => 'hrr'}],
+    [' aa  = bbb ; xxy = hrr ' => {aa => 'bbb', xxy => 'hrr'}],
     ['AbCA = aAWA' => {AbCA => 'aAWA'}],
     ['ab   aaaa = ea aa  rr' => {'ab   aaaa' => 'ea aa  rr'}],
     ['"abc def"="xyz aaa"' => {'"abc def"' => '"xyz aaa"'}],
@@ -912,7 +912,7 @@ sub _set_response_cookie : Test(98) {
     [['hoge' => 'fuga', Secure => 1], 'hoge=fuga'],
     [['hoge' => 'fuga', secure => 1, httponly => 1],
      'hoge=fuga; secure; httponly'],
-    [["ho\x0Dge" => "fu\x0Aga"], "ho\x0Dge=fu\x0Aga"], # XXX
+    [["ho\x0Dge" => "fu\x0Aga"], "ho\x0Dge=fu\x0Aga"],
   ) {
     my $https = new_https_for_interfaces;
     for my $http (@$https) {
@@ -964,7 +964,7 @@ sub _set_response_auth : Test(30) {
     [['basic', realm => 'hoge fuga'], 'Basic realm="hoge fuga"'],
     [['basic', realm => 'abc\de'], 'Basic realm="abc\de"'],
     [['basic', realm => 'ab"cd'], 'Basic realm="ab_cd"'],
-    [['basic', realm => "\x0D\x0A"], qq{Basic realm="\x0D\x0A"}], # XXX
+    [['basic', realm => "\x0D\x0A"], qq{Basic realm="\x0D\x0A"}],
     [['basic', realm => "\x90\xFE"], qq{Basic realm="\xc2\x90\xc3\xbe"}],
     [['basic', realm => "\x{5000}\x{3121}"],
      qq{Basic realm="\xe5\x80\x80\xe3\x84\xa1"}],

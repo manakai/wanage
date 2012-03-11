@@ -53,7 +53,9 @@ sub send_response_headers ($;%) {
   $self->{response} ||= [200, []];
   $self->{response}->[0] = $args{status} if defined $args{status};
   $self->{response}->[1] = [map { 
-    utf8::is_utf8 ($_) ? encode 'utf-8', $_ : $_
+    my $s = utf8::is_utf8 ($_) ? encode 'utf-8', $_ : $_;
+    $s =~ s/[\x0D\x0A]+[\x09\x20]*/ /g;
+    $s;
   } map { ($_->[0] => $_->[1]) } @{$args{headers}}]
       if $args{headers};
   if ($self->{env}->{'psgi.streaming'}) {

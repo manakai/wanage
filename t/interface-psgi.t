@@ -285,21 +285,25 @@ sub _set_status_nonstreamable_twice : Test(2) {
   eq_or_diff $result, [400, [], []];
 } # _set_status_nonstreamable_twice
 
-sub _set_response_headers : Test(8) {
+sub _set_response_headers : Test(9) {
   for (
-    [],
-    [['Title' => 'HOge Fuga']],
-    [['Title' => 'HOge Fuga'], [Title => encode 'utf-8', "\x{500}\x{2000}a"]],
-    [['Content-Type' => 'text/html; charset=euc-jp']],
-    [['Hoge' => "Fu\x0D\x0Aga"]],
-    [["Hoge\x00\x0A" => "Fu\x0D\x0Aga"]],
-    [[(encode 'utf-8', "Hog\x{1000}") => "Fu\x0D\x0Aga"]],
-    [['Content-TYPE' => '']],
+    [[]],
+    [[['Title' => 'HOge Fuga']]],
+    [[['Title' => 'HOge Fuga'], ['Title' => "\x{500}\x{2000}a"]] =>
+     [['Title' => 'HOge Fuga'],
+      ['Title' => encode 'utf-8', "\x{500}\x{2000}a"]]],
+    [[['Content-Type' => 'text/html; charset=euc-jp']]],
+    [[['Hoge' => "Fu\x0D\x0Aga"]] => [['Hoge' => "Fu ga"]]],
+    [[['Hoge' => "Fu\x0D\x0A ga"]] => [['Hoge' => "Fu ga"]]],
+    [[["Hoge\x00\x0A" => "Fu\x0D\x0Aga"]] => [["Hoge\x00 " => "Fu ga"]]],
+    [[["Hog\x{1000}" => "Fu\x0D\x0Aga"]] =>
+     [[(encode 'utf-8', "Hog\x{1000}") => "Fu ga"]]],
+    [[['Content-TYPE' => '']]],
   ) {
     my $psgi = Wanage::Interface::PSGI->new_from_psgi_env;
-    $psgi->send_response_headers (headers => $_);
+    $psgi->send_response_headers (headers => $_->[0]);
     my $result = $psgi->send_response;
-    eq_or_diff $result, [200, [map { @$_ } @$_], []];
+    eq_or_diff $result, [200, [map { @$_ } @{$_->[1] || $_->[0]}], []];
   }
 } # _set_response_headers
 
