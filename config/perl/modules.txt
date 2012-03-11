@@ -1,6 +1,8 @@
 Carp
 Encode
+Exporter::Lite
 IO::Handle
 Path::Class
 Scalar::Util
+Time::Local
 Test::Class

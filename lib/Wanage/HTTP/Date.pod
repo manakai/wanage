@@ -1,0 +1,49 @@
+=head1 NAME
+
+Wanage::HTTP::Date - HTTP date-time parser
+
+=head1 SYNOPSIS
+
+  use Wanage::HTTP::Date;
+  
+  my $time = parse_date $http->get_request_header ('If-Modified-Since');
+
+=head1 DESCRIPTION
+
+The C<Wanage::HTTP::Date> module exports a function, C<parse_date>,
+which converts a byte string representing an HTTP C<date-time> into an
+integer value representing a date-time in so-called Unix epoch
+(time_t).
+
+The function parses the given string using the algorithm specified in
+RFC 6265 Section 5.1.1, with a modification: the C<( non-digit *OCTET
+)> parts in the ABNF grammer can be omitted.  This algorithm can parse
+date-time strings in three formats specified by core HTTP
+specifications, as well as another format specified by Netscape's
+original cookie specification.
+
+=head1 SEE ALSO
+
+RFC 6265 - HTTP State Management Mechanism - User Agent Requirements -
+Subcomponent Algorithms - Dates
+<http://tools.ietf.org/html/rfc6265#section-5.1.1>.
+
+RFC 2616 - Hypertext Transfer Protocol -- HTTP/1.1 - Protocol
+Parameters - Date/Time Formats - Full Date
+<http://tools.ietf.org/html/rfc2616#section-3.3.1>.
+
+PERSISTENT CLIENT STATE HTTP COOKIES
+<http://web.archive.org/web/19961125090609/http://www2.netscape.com/newsref/std/cookie_spec.html>.
+
+=head1 AUTHOR
+
+Wakaba <w@suika.fam.cx>.
+
+=head1 LICENSE
+
+Copyright 2012 Wakaba <w@suika.fam.cx>.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut

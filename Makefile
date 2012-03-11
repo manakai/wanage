@@ -3,7 +3,13 @@ PROVE = prove
 
 all:
 
-test: safetest
+test: test-data safetest
+
+test-data:
+	cd t/data && make all
+
+update-test-data:
+	cd t/data && make update
 
 safetest: local-submodules carton-install config/perl/libs.txt
 	PATH=$(PERL_PATH):$(PATH) PERL5LIB=$(shell cat config/perl/libs.txt) \
@@ -11,7 +17,7 @@ safetest: local-submodules carton-install config/perl/libs.txt
 
 Makefile-setupenv: Makefile.setupenv
 	make --makefile Makefile.setupenv setupenv-update \
-	    SETUPENV_MIN_REVISION=20120311
+	    SETUPENV_MIN_REVISION=20120310
 
 Makefile.setupenv:
 	wget -O $@ https://raw.github.com/wakaba/perl-setupenv/master/Makefile.setupenv
