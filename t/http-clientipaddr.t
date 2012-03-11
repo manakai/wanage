@@ -26,6 +26,7 @@ sub _new_from_interface : Test(2) {
 } # _new_from_interface
 
 sub _addrs : Test(30) {
+  local $Wanage::HTTP::UseXForwardedFor = 1;
   for my $test (
     {result => undef},
     {addr => '', result => undef},
@@ -73,6 +74,7 @@ sub _addrs : Test(30) {
 } # _addrs
 
 sub _select_addr_subclassed : Test(2) {
+  local $Wanage::HTTP::UseXForwardedFor = 1;
   {
     package test::my::ipaddr::select;
     push our @ISA, 'Wanage::HTTP::ClientIPAddr';
@@ -98,6 +100,17 @@ sub _select_addr_subclassed : Test(2) {
     is $ip->as_text, undef;
   }
 } # _select_addr_subclassed
+
+sub _no_x_forwarded_for : Test(2) {
+  my $https = new_https_for_interfaces
+      env => {REMOTE_ADDR => '10.4.12.14',
+              HTTP_X_FORWARDED_FOR => '10.52.111.21'};
+  for my $http (@$https) {
+    my $ip = Wanage::HTTP::ClientIPAddr->new_from_interface
+        ($http->{interface});
+    is $ip->as_text, '10.4.12.14';
+  }
+} # _no_x_forwarded_for
 
 __PACKAGE__->runtests;
 

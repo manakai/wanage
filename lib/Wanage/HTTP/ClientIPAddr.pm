@@ -23,8 +23,10 @@ sub new_from_interface ($$) {
     ## "unknown" value is ignored.
   } (
      $if->get_meta_variable ('REMOTE_ADDR'),
-     map { s/\A[\x09\x0A\x0D\x20]+//; s/[\x09\x0A\x0D\x20]+\z//; $_ }
-     split /,/, $if->get_request_header ('X-Forwarded-For') || ''
+     ($Wanage::HTTP::UseXForwardedFor ? (
+        map { s/\A[\x09\x0A\x0D\x20]+//; s/[\x09\x0A\x0D\x20]+\z//; $_ }
+        split /,/, $if->get_request_header ('X-Forwarded-For') || ''
+      ) : ()),
   )]);
   return bless {addrs => $addrs}, $class;
 } # new_from_interface

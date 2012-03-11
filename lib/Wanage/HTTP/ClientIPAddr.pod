@@ -56,7 +56,7 @@ the client IP address from the list of candidates.  The method can use
 the C<< $self->{addr} >> list (a L<List::Ish> object) as the list of
 candidate IP addresses in their canonical textual representations.
 The list contains the C<REMOTE_ADDR> address followed by the
-C<X-Forwarded-For> addresses.  The list must not be modified by the
+C<X-Forwarded-For:> addresses.  The list must not be modified by the
 method.  The method is expected to return one of them, if there is an
 appropriate address, or return the C<undef> value.
 
@@ -65,9 +65,13 @@ list.
 
 The subclassing might be useful if you are using multiple reverse
 proxies (or intermediate caches) such that the last IP address in the
-C<X-Forwarded-For> header is not of the client, or if you are using a
+C<X-Forwarded-For:> header is not of the client, or if you are using a
 quirky intermediate which inserts sender IP address to wrong place in
-the C<X-Forwarded-For> headers.
+the C<X-Forwarded-For:> headers.
+
+The C<X-Forwarded-For:> headers are ignored unless the
+C<$Wanage::HTTP::UseXForwardedFor> variable is set to true.  This
+varibale is set to false by default.
 
 =head1 SEE ALSO
 

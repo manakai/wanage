@@ -218,6 +218,31 @@ sub _client_ip_addr_custom : Test(4) {
   }
 } # _client_ip_addr_custom
 
+sub _client_ip_addr_x_forwarded_for_ignored : Test(6) {
+  my $https = new_https_for_interfaces
+      env => {REMOTE_ADDR => '19.51.34.123',
+              HTTP_X_FORWARDED_FOR => '20.51.112.31'};
+  for my $http (@$https) {
+    my $ip = $http->client_ip_addr;
+    isa_ok $ip, 'Wanage::HTTP::ClientIPAddr';
+    is $ip->as_text, '19.51.34.123';
+    is $http->client_ip_addr, $ip;
+  }
+} # _client_ip_addr_x_forwarded_for_ignored
+
+sub _client_ip_addr_x_forwarded_for_used : Test(6) {
+  local $Wanage::HTTP::UseXForwardedFor = 1;
+  my $https = new_https_for_interfaces
+      env => {REMOTE_ADDR => '19.51.34.123',
+              HTTP_X_FORWARDED_FOR => '20.51.112.31'};
+  for my $http (@$https) {
+    my $ip = $http->client_ip_addr;
+    isa_ok $ip, 'Wanage::HTTP::ClientIPAddr';
+    is $ip->as_text, '20.51.112.31';
+    is $http->client_ip_addr, $ip;
+  }
+} # _client_ip_addr_x_forwarded_for_used
+
 sub _ua : Test(6) {
   my $https = new_https_for_interfaces
       env => {HTTP_USER_AGENT => 'mybot'};

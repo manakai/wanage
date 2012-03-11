@@ -163,6 +163,9 @@ You can use a subclass of L<Wanage::HTTP::ClientIPAddr> for the client
 IP address object by setting the C<$Wanage::HTTP::ClientIPAddrClass>
 variable.  See L<Wanagr::HTTP::ClientIPAddr> for more information.
 
+If the C<$Wanagr::HTTP::UseXForwardedFor> variable is set to true, the
+C<X-Forwarded-For:> headers, if any, is taken into account.
+
 =item $ua = $http->ua
 
 Return the L<Wanage::HTTP::UA> object representing the HTTP
