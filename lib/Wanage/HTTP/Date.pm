@@ -5,11 +5,11 @@ our $VERSION = '1.0';
 use Time::Local qw(timegm);
 use Exporter::Lite;
 
-our @EXPORT = qw(parse_date);
+our @EXPORT = qw(parse_http_date);
 
 ## RFC 6265 Section 5.1.1. with a bug fix: "(non-digit *OCTET)" in
 ## grammer can be omitted.
-sub parse_date ($) {
+sub parse_http_date ($) {
   ## Step 1.
   my @token = split /([\x09\x20-\x2F\x3B-\x40\x5B-\x60\x7B-\x7E])/, $_[0], -1;
   
@@ -81,7 +81,7 @@ sub parse_date ($) {
     timegm $second_value, $minute_value, $hour_value,
         $day_of_month_value, $month_value - 1, $year_value;
   }; # or undef
-} # parse_date
+} # parse_http_date
 
 1;
 

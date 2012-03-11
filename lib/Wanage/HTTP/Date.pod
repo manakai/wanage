@@ -6,14 +6,14 @@ Wanage::HTTP::Date - HTTP date-time parser
 
   use Wanage::HTTP::Date;
   
-  my $time = parse_date $http->get_request_header ('If-Modified-Since');
+  my $time = parse_http_date $http_date_value;
 
 =head1 DESCRIPTION
 
-The C<Wanage::HTTP::Date> module exports a function, C<parse_date>,
-which converts a byte string representing an HTTP C<date-time> into an
-integer value representing a date-time in so-called Unix epoch
-(time_t).
+The C<Wanage::HTTP::Date> module exports a function,
+C<parse_http_date>, which converts a byte string representing an HTTP
+C<date-time> into an integer value representing a date-time in
+so-called Unix epoch (time_t).
 
 The function parses the given string using the algorithm specified in
 RFC 6265 Section 5.1.1, with a modification: the C<( non-digit *OCTET

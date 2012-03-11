@@ -14,7 +14,7 @@ sub _version : Test(1) {
   ok $Wanage::HTTP::Date::VERSION;
 } # _version
 
-sub _parse_date : Test(28) {
+sub _parse_http_date : Test(28) {
   for (
     [undef, undef],
     ['' => undef],
@@ -45,11 +45,11 @@ sub _parse_date : Test(28) {
     ['Sun Nov 6 08:49:37 1994' => [1994,11,6,8,49,37]],
     ['Sun Nov  6 08:49:37 1994' => [1994,11,6,8,49,37]],
   ) {
-    my $result = parse_date $_->[0];
+    my $result = parse_http_date $_->[0];
     is $result, $_->[1]
         ? timegm @{(map { $_->[4]--; $_ } [reverse @{$_->[1]}])[0]} : undef;
   }
-} # _parse_date
+} # _parse_http_date
 
 my $data_d = file (__FILE__)->dir->subdir ('data');
 
@@ -58,8 +58,8 @@ sub _examples : Tests {
   for (@$json) {
     my $input = $_->{test};
     my $expected = $_->{expected};
-    $expected = parse_date $expected if $expected;
-    is parse_date $input, $expected;
+    $expected = parse_http_date $expected if $expected;
+    is parse_http_date $input, $expected;
   }
 } # _examples
 
@@ -70,8 +70,8 @@ sub _bsd_examples : Tests {
   for (@$json) {
     my $input = $_->{test};
     my $expected = $_->{expected};
-    $expected = parse_date $expected if $expected;
-    is parse_date $input, $expected;
+    $expected = parse_http_date $expected if $expected;
+    is parse_http_date $input, $expected;
   }
 } # _bsd_examples
 
