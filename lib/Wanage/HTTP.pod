@@ -252,6 +252,11 @@ Return whether the request is a "super-reload" or not.  This is
 equivalent to C<< exists $http->request_cache_control->{'no-cache'}
 >>.
 
+=item $time = $http->request_ims
+
+Return the time specified by the C<If-Modified-Since:> header, if any,
+in the Unix epoch (or time_t) integer, or the C<undef> value.
+
 =back
 
 =head2 Request body

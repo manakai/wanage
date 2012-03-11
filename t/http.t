@@ -361,6 +361,21 @@ sub _request_cache_control : Test(138) {
   }
 } # _request_cache_control
 
+sub _request_ims : Test(8) {
+  for my $test (
+    [undef, undef],
+    ['1224' => undef],
+    ['12 Dec 2005 01:12:44 GMT' => 1134349964],
+    ['Dec 21 01:12:44 2007' => 1198199564],
+  ) {
+    my $https = new_https_for_interfaces
+        env => {HTTP_IF_MODIFIED_SINCE => $test->[0]};
+    for my $http (@$https) {
+      is $http->request_ims, $test->[1];
+    }
+  }
+} # _request_ims
+
 # ------ Request body -----
 
 sub _request_body_as_ref_no_body : Test(2) {

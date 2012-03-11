@@ -231,6 +231,14 @@ sub is_superreload ($) {
   return exists $_[0]->request_cache_control->{'no-cache'};
 } # is_superreload
 
+sub request_ims ($) {
+  return $_[0]->{request_ims} if exists $_[0]->{request_ims};
+  my $date = $_[0]->get_request_header ('If-Modified-Since');
+  require Wanage::HTTP::Date;
+  return $_[0]->{request_ims} = defined $date
+      ? Wanage::HTTP::Date::parse_date ($date) : undef;
+} # request_ims
+
 # ---- Request body ----
 
 sub request_body_as_ref ($) {
