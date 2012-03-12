@@ -24,6 +24,7 @@ Makefile.setupenv:
 
 remotedev-test remotedev-reset remotedev-reset-setupenv \
 config/perl/libs.txt local-perl \
+perl-exec perl-version \
 carton-install carton-update local-submodules: %: Makefile-setupenv
 	make --makefile Makefile.setupenv $@
 
