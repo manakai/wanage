@@ -17,13 +17,13 @@ safetest: local-submodules carton-install config/perl/libs.txt
 
 Makefile-setupenv: Makefile.setupenv
 	make --makefile Makefile.setupenv setupenv-update \
-	    SETUPENV_MIN_REVISION=20120310
+	    SETUPENV_MIN_REVISION=20120312
 
 Makefile.setupenv:
 	wget -O $@ https://raw.github.com/wakaba/perl-setupenv/master/Makefile.setupenv
 
-setupenv remotedev-test remotedev-reset remotedev-reset-setupenv \
-config/perl/libs.txt \
+remotedev-test remotedev-reset remotedev-reset-setupenv \
+config/perl/libs.txt local-perl \
 carton-install carton-update local-submodules: %: Makefile-setupenv
 	make --makefile Makefile.setupenv $@
 
