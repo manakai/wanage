@@ -70,7 +70,7 @@ sub original_url ($) {
       }
       $parsed_url->{host} = $host;
       
-      delete $parsed_url->{invalid};
+      delete $parsed_url->{invalid} if $parsed_url->{path} =~ m{^(?:/|\z)};
     }
     
     $parsed_url;
