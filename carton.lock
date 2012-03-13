@@ -1,5 +1,61 @@
 {
    "modules" : {
+      "Algorithm::Diff" : {
+         "dist" : "Algorithm-Diff-1.1902",
+         "module" : "Algorithm::Diff",
+         "mymeta" : {
+            "abstract" : "unknown",
+            "author" : [
+               "unknown"
+            ],
+            "dynamic_config" : 0,
+            "generated_by" : "ExtUtils::MakeMaker version 6.62, CPAN::Meta::Converter version 2.112150",
+            "license" : [
+               "unknown"
+            ],
+            "meta-spec" : {
+               "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+               "version" : "2"
+            },
+            "name" : "Algorithm-Diff",
+            "no_index" : {
+               "directory" : [
+                  "t",
+                  "inc"
+               ]
+            },
+            "prereqs" : {
+               "build" : {
+                  "requires" : {
+                     "ExtUtils::MakeMaker" : 0
+                  }
+               },
+               "configure" : {
+                  "requires" : {
+                     "ExtUtils::MakeMaker" : 0
+                  }
+               },
+               "runtime" : {
+                  "requires" : {}
+               }
+            },
+            "release_status" : "stable",
+            "version" : "1.1902"
+         },
+         "name" : "Algorithm::Diff",
+         "pathname" : "T/TY/TYEMQ/Algorithm-Diff-1.1902.tar.gz",
+         "provides" : {
+            "Algorithm::Diff" : {
+               "file" : "Algorithm/Diff.pm",
+               "version" : "1.1902"
+            },
+            "Algorithm::DiffOld" : {
+               "file" : "Algorithm/DiffOld.pm",
+               "version" : "1.1"
+            }
+         },
+         "version" : "1.1902"
+      },
       "Exporter::Lite" : {
          "dist" : "Exporter-Lite-0.02",
          "module" : "Exporter::Lite",
@@ -355,6 +411,49 @@
          },
          "version" : "0.11"
       },
+      "Net::LibIDN" : {
+         "dist" : "Net-LibIDN-0.12",
+         "module" : "Net::LibIDN",
+         "mymeta" : {
+            "abstract" : "unknown",
+            "author" : [
+               "unknown"
+            ],
+            "dynamic_config" : 0,
+            "generated_by" : "ExtUtils::MakeMaker version 6.30_01, CPAN::Meta::Converter version 2.112150",
+            "license" : [
+               "unknown"
+            ],
+            "meta-spec" : {
+               "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+               "version" : "2"
+            },
+            "name" : "Net-LibIDN",
+            "prereqs" : {
+               "build" : {
+                  "requires" : {
+                     "ExtUtils::MakeMaker" : 0
+                  }
+               },
+               "runtime" : {
+                  "requires" : {}
+               }
+            },
+            "release_status" : "stable",
+            "version" : "0.12",
+            "x_installdirs" : "site",
+            "x_version_from" : "LibIDN.pm"
+         },
+         "name" : "Net::LibIDN",
+         "pathname" : "T/TH/THOR/Net-LibIDN-0.12.tar.gz",
+         "provides" : {
+            "Net::LibIDN" : {
+               "file" : "Net/LibIDN.pm",
+               "version" : "0.12"
+            }
+         },
+         "version" : "0.12"
+      },
       "Path::Class" : {
          "dist" : "Path-Class-0.25",
          "module" : "Path::Class",
@@ -606,6 +705,65 @@
          },
          "version" : "0.36"
       },
+      "Test::Differences" : {
+         "dist" : "Test-Differences-0.61",
+         "module" : "Test::Differences",
+         "mymeta" : {
+            "abstract" : "Test strings and data structures and show differences if not ok",
+            "author" : [
+               "Curtis \"Ovid\" Poe <ovid@cpan.org>"
+            ],
+            "dynamic_config" : 0,
+            "generated_by" : "Module::Build version 0.38, CPAN::Meta::Converter version 2.112150",
+            "license" : [
+               "perl_5"
+            ],
+            "meta-spec" : {
+               "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+               "version" : "2"
+            },
+            "name" : "Test-Differences",
+            "prereqs" : {
+               "configure" : {
+                  "requires" : {
+                     "Module::Build" : "0.36"
+                  }
+               },
+               "runtime" : {
+                  "requires" : {
+                     "Data::Dumper" : "2.126",
+                     "Test::More" : 0,
+                     "Text::Diff" : "0.35"
+                  }
+               }
+            },
+            "provides" : {
+               "Test::Differences" : {
+                  "file" : "lib/Test/Differences.pm",
+                  "version" : "0.61"
+               }
+            },
+            "release_status" : "stable",
+            "resources" : {
+               "license" : [
+                  "http://dev.perl.org/licenses/"
+               ],
+               "repository" : {
+                  "url" : "https://github.com/Ovid/Test-Differences"
+               }
+            },
+            "version" : "0.61"
+         },
+         "name" : "Test::Differences",
+         "pathname" : "O/OV/OVID/Test-Differences-0.61.tar.gz",
+         "provides" : {
+            "Test::Differences" : {
+               "file" : "Test/Differences.pm",
+               "version" : "0.61"
+            }
+         },
+         "version" : "0.61"
+      },
       "Test::Exception" : {
          "dist" : "Test-Exception-0.31",
          "module" : "Test::Exception",
@@ -664,6 +822,491 @@
             }
          },
          "version" : "0.31"
+      },
+      "Test::NoWarnings" : {
+         "dist" : "Test-NoWarnings-1.04",
+         "module" : "Test::NoWarnings",
+         "mymeta" : {
+            "abstract" : "Make sure you didn't emit any warnings while testing",
+            "author" : [
+               "Fergal Daly <fergal@esatclear.ie>"
+            ],
+            "dynamic_config" : 0,
+            "generated_by" : "ExtUtils::MakeMaker version 6.62, CPAN::Meta::Converter version 2.112621, CPAN::Meta::Converter version 2.112150",
+            "license" : [
+               "open_source"
+            ],
+            "meta-spec" : {
+               "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+               "version" : "2"
+            },
+            "name" : "Test-NoWarnings",
+            "no_index" : {
+               "directory" : [
+                  "t",
+                  "inc"
+               ]
+            },
+            "prereqs" : {
+               "build" : {
+                  "requires" : {
+                     "Test::More" : "0.47",
+                     "Test::Tester" : "0.107"
+                  }
+               },
+               "configure" : {
+                  "requires" : {
+                     "ExtUtils::MakeMaker" : 0
+                  }
+               },
+               "runtime" : {
+                  "requires" : {
+                     "Test::Builder" : "0.86",
+                     "perl" : "5.006"
+                  }
+               }
+            },
+            "release_status" : "stable",
+            "resources" : {
+               "repository" : {
+                  "url" : "http://svn.ali.as/cpan/trunk/Test-NoWarnings"
+               }
+            },
+            "version" : "1.04"
+         },
+         "name" : "Test::NoWarnings",
+         "pathname" : "A/AD/ADAMK/Test-NoWarnings-1.04.tar.gz",
+         "provides" : {
+            "Test::NoWarnings" : {
+               "file" : "Test/NoWarnings.pm",
+               "version" : "1.04"
+            },
+            "Test::NoWarnings::Warning" : {
+               "file" : "Test/NoWarnings/Warning.pm",
+               "version" : "1.04"
+            }
+         },
+         "version" : "1.04"
+      },
+      "Test::Tester" : {
+         "dist" : "Test-Tester-0.108",
+         "module" : "Test::Tester",
+         "mymeta" : {
+            "abstract" : "unknown",
+            "author" : [
+               "unknown"
+            ],
+            "dynamic_config" : 0,
+            "generated_by" : "ExtUtils::MakeMaker version 6.30_01, CPAN::Meta::Converter version 2.112150",
+            "license" : [
+               "unknown"
+            ],
+            "meta-spec" : {
+               "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+               "version" : "2"
+            },
+            "name" : "Test-Tester",
+            "prereqs" : {
+               "build" : {
+                  "requires" : {
+                     "ExtUtils::MakeMaker" : 0
+                  }
+               },
+               "runtime" : {
+                  "requires" : {
+                     "Test::Builder" : 0
+                  }
+               }
+            },
+            "release_status" : "stable",
+            "version" : "0.108",
+            "x_installdirs" : "perl",
+            "x_version_from" : "./lib/Test/Tester.pm"
+         },
+         "name" : "Test::Tester",
+         "pathname" : "F/FD/FDALY/Test-Tester-0.108.tar.gz",
+         "provides" : {
+            "Test::Tester" : {
+               "file" : "Test/Tester.pm",
+               "version" : "0.108"
+            },
+            "Test::Tester::Capture" : {
+               "file" : "Test/Tester/Capture.pm"
+            },
+            "Test::Tester::CaptureRunner" : {
+               "file" : "Test/Tester/CaptureRunner.pm"
+            },
+            "Test::Tester::Delegate" : {
+               "file" : "Test/Tester/Delegate.pm"
+            }
+         },
+         "version" : "0.108"
+      },
+      "Text::Diff" : {
+         "dist" : "Text-Diff-1.41",
+         "module" : "Text::Diff",
+         "mymeta" : {
+            "abstract" : "Perform diffs on files and record sets",
+            "author" : [
+               "Adam Kennedy <adamk@cpan.org>"
+            ],
+            "dynamic_config" : 0,
+            "generated_by" : "ExtUtils::MakeMaker version 6.56, CPAN::Meta::Converter version 2.112150",
+            "license" : [
+               "perl_5"
+            ],
+            "meta-spec" : {
+               "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+               "version" : "2"
+            },
+            "name" : "Text-Diff",
+            "no_index" : {
+               "directory" : [
+                  "t",
+                  "inc"
+               ]
+            },
+            "prereqs" : {
+               "build" : {
+                  "requires" : {
+                     "ExtUtils::MakeMaker" : 0
+                  }
+               },
+               "configure" : {
+                  "requires" : {
+                     "ExtUtils::MakeMaker" : 0
+                  }
+               },
+               "runtime" : {
+                  "requires" : {
+                     "Algorithm::Diff" : "1.19",
+                     "Exporter" : 0
+                  }
+               }
+            },
+            "release_status" : "stable",
+            "resources" : {
+               "repository" : {
+                  "url" : "https://github.com/Ovid/Text-Diff"
+               }
+            },
+            "version" : "1.41"
+         },
+         "name" : "Text::Diff",
+         "pathname" : "O/OV/OVID/Text-Diff-1.41.tar.gz",
+         "provides" : {
+            "Text::Diff" : {
+               "file" : "Text/Diff.pm",
+               "version" : "1.41"
+            },
+            "Text::Diff::Base" : {
+               "file" : "Text/Diff.pm"
+            },
+            "Text::Diff::Config" : {
+               "file" : "Text/Diff/Config.pm",
+               "version" : "1.41"
+            },
+            "Text::Diff::Table" : {
+               "file" : "Text/Diff/Table.pm",
+               "version" : "1.41"
+            }
+         },
+         "version" : "1.41"
+      },
+      "URI" : {
+         "dist" : "URI-1.59",
+         "module" : "URI::_punycode",
+         "mymeta" : {
+            "abstract" : "Uniform Resource Identifiers (absolute and relative)",
+            "author" : [
+               "Gisle Aas <gisle@activestate.com>"
+            ],
+            "dynamic_config" : 0,
+            "generated_by" : "ExtUtils::MakeMaker version 6.57_05, CPAN::Meta::Converter version 2.112150",
+            "license" : [
+               "perl_5"
+            ],
+            "meta-spec" : {
+               "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+               "version" : "2"
+            },
+            "name" : "URI",
+            "no_index" : {
+               "directory" : [
+                  "t",
+                  "inc"
+               ]
+            },
+            "prereqs" : {
+               "build" : {
+                  "requires" : {
+                     "ExtUtils::MakeMaker" : 0,
+                     "Test" : 0,
+                     "Test::More" : 0
+                  }
+               },
+               "configure" : {
+                  "requires" : {
+                     "ExtUtils::MakeMaker" : 0
+                  }
+               },
+               "runtime" : {
+                  "recommends" : {
+                     "Business::ISBN" : 0
+                  },
+                  "requires" : {
+                     "MIME::Base64" : "2",
+                     "perl" : "5.008001"
+                  }
+               }
+            },
+            "release_status" : "stable",
+            "resources" : {
+               "repository" : {
+                  "url" : "http://gitorious.org/projects/perl-uri"
+               },
+               "x_MailingList" : "mailto:libwww@perl.org"
+            },
+            "version" : "1.59"
+         },
+         "name" : "URI",
+         "pathname" : "G/GA/GAAS/URI-1.59.tar.gz",
+         "provides" : {
+            "URI" : {
+               "file" : "URI.pm",
+               "version" : "1.59"
+            },
+            "URI::Escape" : {
+               "file" : "URI/Escape.pm",
+               "version" : "3.31"
+            },
+            "URI::Heuristic" : {
+               "file" : "URI/Heuristic.pm",
+               "version" : "4.20"
+            },
+            "URI::IRI" : {
+               "file" : "URI/IRI.pm"
+            },
+            "URI::QueryParam" : {
+               "file" : "URI/QueryParam.pm"
+            },
+            "URI::Split" : {
+               "file" : "URI/Split.pm"
+            },
+            "URI::URL" : {
+               "file" : "URI/URL.pm",
+               "version" : "5.04"
+            },
+            "URI::WithBase" : {
+               "file" : "URI/WithBase.pm",
+               "version" : "2.20"
+            },
+            "URI::_punycode" : {},
+            "URI::data" : {
+               "file" : "URI/data.pm"
+            },
+            "URI::file" : {
+               "file" : "URI/file.pm",
+               "version" : "4.21"
+            },
+            "URI::file::Base" : {
+               "file" : "URI/file/Base.pm"
+            },
+            "URI::file::FAT" : {
+               "file" : "URI/file/FAT.pm"
+            },
+            "URI::file::Mac" : {
+               "file" : "URI/file/Mac.pm"
+            },
+            "URI::file::OS2" : {
+               "file" : "URI/file/OS2.pm"
+            },
+            "URI::file::QNX" : {
+               "file" : "URI/file/QNX.pm"
+            },
+            "URI::file::Unix" : {
+               "file" : "URI/file/Unix.pm"
+            },
+            "URI::file::Win32" : {
+               "file" : "URI/file/Win32.pm"
+            },
+            "URI::ftp" : {
+               "file" : "URI/ftp.pm"
+            },
+            "URI::gopher" : {
+               "file" : "URI/gopher.pm"
+            },
+            "URI::http" : {
+               "file" : "URI/http.pm"
+            },
+            "URI::https" : {
+               "file" : "URI/https.pm"
+            },
+            "URI::ldap" : {
+               "file" : "URI/ldap.pm",
+               "version" : "1.12"
+            },
+            "URI::ldapi" : {
+               "file" : "URI/ldapi.pm"
+            },
+            "URI::ldaps" : {
+               "file" : "URI/ldaps.pm"
+            },
+            "URI::mailto" : {
+               "file" : "URI/mailto.pm"
+            },
+            "URI::mms" : {
+               "file" : "URI/mms.pm"
+            },
+            "URI::news" : {
+               "file" : "URI/news.pm"
+            },
+            "URI::nntp" : {
+               "file" : "URI/nntp.pm"
+            },
+            "URI::pop" : {
+               "file" : "URI/pop.pm"
+            },
+            "URI::rlogin" : {
+               "file" : "URI/rlogin.pm"
+            },
+            "URI::rsync" : {
+               "file" : "URI/rsync.pm"
+            },
+            "URI::rtsp" : {
+               "file" : "URI/rtsp.pm"
+            },
+            "URI::rtspu" : {
+               "file" : "URI/rtspu.pm"
+            },
+            "URI::sip" : {
+               "file" : "URI/sip.pm",
+               "version" : "0.11"
+            },
+            "URI::sips" : {
+               "file" : "URI/sips.pm"
+            },
+            "URI::snews" : {
+               "file" : "URI/snews.pm"
+            },
+            "URI::ssh" : {
+               "file" : "URI/ssh.pm"
+            },
+            "URI::telnet" : {
+               "file" : "URI/telnet.pm"
+            },
+            "URI::tn3270" : {
+               "file" : "URI/tn3270.pm"
+            },
+            "URI::urn" : {
+               "file" : "URI/urn.pm"
+            },
+            "URI::urn::isbn" : {
+               "file" : "URI/urn/isbn.pm"
+            },
+            "URI::urn::oid" : {
+               "file" : "URI/urn/oid.pm"
+            }
+         },
+         "version" : "1.59"
+      },
+      "Unicode::Stringprep" : {
+         "dist" : "Unicode-Stringprep-1.104",
+         "module" : "Unicode::Stringprep",
+         "mymeta" : {
+            "abstract" : "Preparation of Internationalized Strings (RFC 3454)",
+            "author" : [
+               "Claus Färber <CFAERBER@cpan.org>"
+            ],
+            "dynamic_config" : 0,
+            "generated_by" : "Module::Build version 0.38, CPAN::Meta::Converter version 2.112150",
+            "license" : [
+               "perl_5"
+            ],
+            "meta-spec" : {
+               "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+               "version" : "2"
+            },
+            "name" : "Unicode-Stringprep",
+            "no_index" : {
+               "directory" : [
+                  "eg"
+               ]
+            },
+            "prereqs" : {
+               "build" : {
+                  "requires" : {
+                     "Test::More" : 0,
+                     "Test::NoWarnings" : 0
+                  }
+               },
+               "configure" : {
+                  "requires" : {
+                     "Module::Build" : "0.38"
+                  }
+               },
+               "runtime" : {
+                  "requires" : {
+                     "Unicode::Normalize" : "1",
+                     "perl" : "5.008003"
+                  }
+               }
+            },
+            "provides" : {
+               "Unicode::Stringprep" : {
+                  "file" : "lib/Unicode/Stringprep.pm",
+                  "version" : "1.104"
+               },
+               "Unicode::Stringprep::BiDi" : {
+                  "file" : "lib/Unicode/Stringprep/BiDi.pm",
+                  "version" : "1.10"
+               },
+               "Unicode::Stringprep::Mapping" : {
+                  "file" : "lib/Unicode/Stringprep/Mapping.pm",
+                  "version" : "1.10"
+               },
+               "Unicode::Stringprep::Prohibited" : {
+                  "file" : "lib/Unicode/Stringprep/Prohibited.pm",
+                  "version" : "1.10"
+               },
+               "Unicode::Stringprep::Unassigned" : {
+                  "file" : "lib/Unicode/Stringprep/Unassigned.pm",
+                  "version" : "1.10"
+               }
+            },
+            "release_status" : "stable",
+            "resources" : {
+               "license" : [
+                  "http://dev.perl.org/licenses/"
+               ]
+            },
+            "version" : "1.104"
+         },
+         "name" : "Unicode::Stringprep",
+         "pathname" : "C/CF/CFAERBER/Unicode-Stringprep-1.104.tar.gz",
+         "provides" : {
+            "Unicode::Stringprep" : {
+               "file" : "Unicode/Stringprep.pm",
+               "version" : "1.104"
+            },
+            "Unicode::Stringprep::BiDi" : {
+               "file" : "Unicode/Stringprep/BiDi.pm",
+               "version" : "1.10"
+            },
+            "Unicode::Stringprep::Mapping" : {
+               "file" : "Unicode/Stringprep/Mapping.pm",
+               "version" : "1.10"
+            },
+            "Unicode::Stringprep::Prohibited" : {
+               "file" : "Unicode/Stringprep/Prohibited.pm",
+               "version" : "1.10"
+            },
+            "Unicode::Stringprep::Unassigned" : {
+               "file" : "Unicode/Stringprep/Unassigned.pm",
+               "version" : "1.10"
+            }
+         },
+         "version" : "1.104"
       }
    },
    "version" : "0.9"
