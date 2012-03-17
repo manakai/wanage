@@ -1,0 +1,193 @@
+=head1 NAME
+
+Wanage::App - Wanage Web Application API
+
+=head1 SYNOPSIS
+
+TBD
+
+=head1 DESCRIPTION
+
+TBD
+
+=head1 METHODS
+
+TBD
+
+=head2 Constructor
+
+=over 4
+
+=item $app = Wanage::App->new_from_http ($http)
+
+Create and return a new application object, associated with the given
+HTTP interface object (i.e. an instance of L<Wanage::HTTP>).
+
+=item $http = $app->http
+
+Return the HTTP interface object (i.e. an instance of L<Wanage::HTTP>)
+associated with the application object.
+
+=cut
+
+=head2 Request data accessors
+
+=over 4
+
+=item $components = $app->path_segments
+
+Return the list (L<List::Ish>) object of the path segments
+(C</>-separated components in the path component) of the requested
+URL.
+
+The path segments are percent-decoded and then interpreted as UTF-8
+texts.
+
+If the request does not contain a valid URL with path segments, the
+method return an empty list object.  (Maybe you want to return a
+C<400> or C<404> response in this case.)
+
+Examples:
+
+  "/"             -> List::Ish->new ([''])
+  "/foo/bar"      -> List::Ish->new (['foo', 'bar'])
+  "/foo%2Fbar"    -> List::Ish->new (['foo/bar'])
+  "/%EF%AC%AD"    -> List::Ish->new (["\x{FB2D}"])
+  "/\xEF\xAC\xAD" -> List::Ish->new (["\x{FB2D}"])
+  "/ab%9Fa%A0%00" -> List::Ish->new (["ab\x{FFFD}a\x{FFFD}\x00"])
+  "/foo//bar/"    -> List::Ish->new (["foo", "", "bar", ""])
+  ""              -> List::Ish->new ([])
+  "*"             -> List::Ish->new ([])
+  "foo/bar"       -> List::Ish->new ([])
+
+=back
+
+Following methods extract data from request parameters, where request
+parameters consist of C<application/x-www-form-urlencoded>-encoded
+data in the query component of the request URL and
+C<application/x-www-form-urlencoded>- or
+C<multipart/form-data>-encoded data in the request-body.  Please note
+that the C<Content-Type:> header of the request must have the value
+C<application/x-www-form-urlencoded> or C<multipart/form-data> for the
+request-body to be parsed as parameters.
+
+=over 4
+
+=item $value = $app->text_param ($name)
+
+Return the value for the parameter whose name is given as the
+argument.  If there are multiple parameters with the same name, the
+first one is returned.  Parameters in the query component of the
+request URL appear before parameters in the request-body.  If there is
+no parameter with the specified name, the C<undef> value is returned.
+
+The parameter names and values are interpreted as UTF-8 texts.  The
+argument must be a character string.  The return value, if it is not
+C<undef>, is a character string.
+
+=item $list = $app->text_param_list ($name)
+
+Return the list (L<List::Ish>) object containing the parameter values
+whose name is given as the argument.  If there are multiple parameters
+with the same name, their values are added to the list in order.
+Parameters in the query component of the request URL appear before
+parameters in the request-body.  If there is no parameter with the
+specified name, an empty list is returned.
+
+The parameter names and values are interpreted as UTF-8 texts.  The
+argument must be a character string.  The returned list contains zero
+or more character strings.
+
+=back
+
+=head2 Response construction
+
+=over 4
+
+=item $app->send_redirect_response ($url_as_string)
+
+Send a redirect response.  The argument must be the URL to which the
+request is redirected.  It must be a character string.  The URL will
+be resolved with respect to the URL of the request (i.e. C<< $app->url
+>>).
+
+Examples:
+
+  $app->send_redirect_response ('/page/1234');
+  $app->send_redirect_response ('http://www.google.com/');
+
+By subclassing and defining the C<redirect_url_filter> method, you can
+modify the redirect URL just before it is set to the C<Location:>
+header.  The method receives an argument, which is the L<Wanage::URL>
+canonicalized URL object to be used in the C<Location:> header.  The
+method must return a L<Wanage::URL> object, which may or may not be
+same as the argument.  The returned URL object is then serialized and
+set to the L<Location:> header.
+
+Example:
+
+  package My::App;
+  use base qw(Wanage::App);
+  sub send_redirect_response {
+    my $url = shift;
+    if ($url->stringify =~ m{^http://myhost.example.com/}) {
+      return $url;
+    } else {
+      my $orig_url = $url->stringify;
+      return Wanage::URL->new_from_parsed_url ({
+        scheme => 'http',
+        hostname => 'myhost.example.com',
+        path => '/',
+        query => 'url=' . percent_encode_c $orig_url,
+      });
+    }
+  }
+
+  $app->send_redirect_response (q<http://myhost.example.com/>);
+      # Location: http://myhost.example.com/
+  $app->send_redirect_response (q<http://www.google.com/>);
+      # Location: http://myhost.example.com/?url=http%3A%2F%2Fwww.google.com%2F
+
+=item $app->send_error_response ($code, %args)
+
+Send an error response with the specified HTTP status code.
+
+Following option is available:
+
+=over 4
+
+=item reason_phrase => $text
+
+Specify the C<reason-phrase> in the C<Status-Line> of the HTTP
+response.  The value must be a short string of US-ASCII printable
+characters.  If this option is not specified, the default response
+phrase from HTTP specifications is used.
+
+Depending on the interface, C<Reason-Phrase> might be ignored.  CGI
+does support C<Reason-Phrase>, while PSGI does not.
+
+=back
+
+Examples:
+
+  $app->send_error_response (404 => 'Resource not found');
+  $app->send_error_response (409);
+
+=back
+
+=head1 SEE ALSO
+
+L<Wanage::HTTP>.
+
+=head1 AUTHOR
+
+Wakaba <w@suika.fam.cx>.
+
+=head1 LICENSE
+
+Copyright 2012 Wakaba <w@suika.fam.cx>.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
