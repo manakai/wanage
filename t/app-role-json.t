@@ -1,4 +1,4 @@
-package test::Wanage::HTTP::Role::JSON;
+package test::Wanage::App::Role::JSON;
 use strict;
 use warnings;
 use Path::Class;
@@ -8,11 +8,18 @@ use lib file (__FILE__)->dir->parent->subdir ('t', 'lib')->stringify;
 use base qw(Test::Class);
 use Test::MoreMore;
 use Test::Wanage::Envs;
-use Wanage::HTTP::Full;
 use Encode;
+use Wanage::HTTP;
+
+{
+  package test::Wanage::App::Role::JSON::App::JSON;
+  use base qw(Wanage::App::Role::JSON Wanage::App);
+}
+
+our $APP_CLASS = 'test::Wanage::App::Role::JSON::App::JSON';
 
 sub _version : Test(1) {
-  ok $Wanage::HTTP::Role::JSON::VERSION;
+  ok $Wanage::App::Role::JSON::VERSION;
 } # _version
 
 sub _request_json : Test(14) {
@@ -27,19 +34,21 @@ sub _request_json : Test(14) {
      => {"abc\x{AA91}" => ["\x99\x{8111}"]}],
   ) {
     my $in = $_->[0];
-    my $http = with_cgi_env { Wanage::HTTP::Full->new_cgi } {
+    my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
       CONTENT_LENGTH => defined $in ? length $in : undef,
     }, $in;
-    my $json = $http->request_json;
+    my $app = $APP_CLASS->new_from_http ($http);
+    my $json = $app->request_json;
     eq_or_diff $json, $_->[1];
-    is $http->request_json, $json;
+    is $app->request_json, $json;
   }
 } # _request_json
 
-sub _set_response_json : Test(2) {
+sub _send_json : Test(2) {
   my $out = '';
-  my $http = with_cgi_env { Wanage::HTTP::Full->new_cgi } {}, undef, $out;
-  $http->set_response_json ({"\x{4000}ab" => [123, "xyxz"]});
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
+  my $app = $APP_CLASS->new_from_http ($http);
+  $app->send_json ({"\x{4000}ab" => [123, "xyxz"]});
   dies_here_ok {
     $http->send_response_body_as_ref (\'abcde');
   };
@@ -47,12 +56,13 @@ sub _set_response_json : Test(2) {
 Content-Type: application/json
 
 {"\xe4\x80\x80ab":[123,"xyxz"]}};
-} # _set_response_json
+} # _send_json
 
-sub _set_response_json_undef : Test(2) {
+sub _send_json_undef : Test(2) {
   my $out = '';
-  my $http = with_cgi_env { Wanage::HTTP::Full->new_cgi } {}, undef, $out;
-  $http->set_response_json (undef);
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
+  my $app = $APP_CLASS->new_from_http ($http);
+  $app->send_json (undef);
   dies_here_ok {
     $http->send_response_body_as_ref (\'abcde');
   };
@@ -60,12 +70,13 @@ sub _set_response_json_undef : Test(2) {
 Content-Type: application/json
 
 null};
-} # _set_response_json_undef
+} # _send_json_undef
 
-sub _set_response_json_scalar : Test(2) {
+sub _send_json_scalar : Test(2) {
   my $out = '';
-  my $http = with_cgi_env { Wanage::HTTP::Full->new_cgi } {}, undef, $out;
-  $http->set_response_json ("abcd\x{4000}");
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
+  my $app = $APP_CLASS->new_from_http ($http);
+  $app->send_json ("abcd\x{4000}");
   dies_here_ok {
     $http->send_response_body_as_ref (\'abcde');
   };

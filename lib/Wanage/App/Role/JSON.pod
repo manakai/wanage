@@ -1,28 +1,27 @@
 =head1 NAME
 
-Wanage::HTTP::Role::JSON - Wanage HTTP interface - JSON module
+Wanage::App::Role::JSON - Wanage application - JSON module
 
 =head1 SYNOPSIS
 
-  package My::Wanage::HTTP;
-  use base qw(Wanage::HTTP Wanage::HTTP::Role::JSON);
+  package My::Wanage::App;
+  use base qw(Wanage::App Wanage::App::Role::JSON);
 
-  $http = My::Wanage::HTTP->new_cgi;
-  print $http->request_json;
-  $http->set_response_json ({hoge => 'fuga'});
+  $app = My::Wanage::App->new_from_http ($http);
+  print Dumper $app->request_json;
+  $app->send_json ({hoge => 'fuga'});
 
 =head1 DESCRIPTION
 
-The C<Wanage::HTTP::Role::JSON> module defines additional methods for
-handling JSON data in L<Wanage::HTTP> API.  This module is intended to
-be used a superclass of some subclass of L<Wanage::HTTP>, such as
-L<Wanage::HTTP::Full>.
+The C<Wanage::App::Role::JSON> module defines additional methods for
+handling JSON data in L<Wanage::App> API.  This module is intended to
+be used a superclass of some subclass of L<Wanage::App>.
 
 =head1 METHODS
 
 =over 4
 
-=item $data = $http->request_json
+=item $data = $app->request_json
 
 Decode JSON data in the request-body and return it.  If there is no
 request-body, or if the request-body is not a JSON data, the C<undef>
@@ -32,10 +31,10 @@ This method does not check the value of the C<Content-Type:> header.
 It should be done by the application if it is desired or forced to
 check the value of the header by appropriate specifications.
 
-=item $http->set_response_json ($data)
+=item $app->send_json ($data)
 
-Set the given data to the response-body, in JSON format.  The data
-must be a value that can be encoded into JSON by L<JSON::XS>.
+Send the given data, encoded in JSON format, as the response-body.
+The data must be a value that can be encoded into JSON by L<JSON::XS>.
 
 The C<Content-Type:> header is set to C<application/json>.
 
@@ -48,7 +47,7 @@ L<JSON::Functions::XS>.
 RFC 4627 - The application/json Media Type for JavaScript Object
 Notation (JSON) <http://tools.ietf.org/html/rfc4627>.
 
-L<Wanage::HTTP::Full>.
+L<Wanage::App>.
 
 =head1 AUTHOR
 
