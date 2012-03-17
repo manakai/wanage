@@ -149,63 +149,91 @@ sub _text_param_list : Test(2) {
 
 ## ------ Response construction ------
 
-sub _send_redirect_response_no_args : Test(1) {
+sub _send_plain_text : Test(2) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->send_plain_text ("\x{5000}\x{fe}\x{50}\x00");
+  dies_here_ok {
+    $app->send_response_body_as_ref (\'abcde');
+  };
+  eq_or_diff $out, qq{Status: 200 OK
+Content-Type: text/plain; charset=utf-8
+
+\xe5\x80\x80\xc3\xbeP\x00};
+} # _send_plain_text
+
+sub _send_html : Test(2) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->send_html ("\x{5000}\x{fe}\x{50}\x00");
+  dies_here_ok {
+    $app->send_response_body_as_ref (\'abcde');
+  };
+  eq_or_diff $out, qq{Status: 200 OK
+Content-Type: text/html; charset=utf-8
+
+\xe5\x80\x80\xc3\xbeP\x00};
+} # _send_html
+
+sub _send_redirect_no_args : Test(1) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
     REQUEST_URI => q<https://hogehoge.test:0123/foo/b%61r/baz?a=b&c=">,
   }, undef, $out;
   my $app = Wanage::App->new_from_http ($http);
-  $app->send_redirect_response;
+  $app->send_redirect;
   eq_or_diff $out, q{Status: 302 Found
 Content-Type: text/html; charset=utf-8
 Location: https://hogehoge.test:123/foo/bar/baz?a=b&c=%22
 
 <!DOCTYPE HTML><title>Moved</title><a href="https://hogehoge.test:123/foo/bar/baz?a=b&amp;c=%22">Moved</a>};
-} # _send_redirect_response_no_args
+} # _send_redirect_no_args
 
-sub _send_redirect_response_relative : Test(1) {
+sub _send_redirect_relative : Test(1) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
     REQUEST_URI => q<https://hogehoge.test:0123/foo/b%61r/baz?a=b&c=">,
   }, undef, $out;
   my $app = Wanage::App->new_from_http ($http);
-  $app->send_redirect_response (q<../hoge/fug&a>);
+  $app->send_redirect (q<../hoge/fug&a>);
   eq_or_diff $out, q{Status: 302 Found
 Content-Type: text/html; charset=utf-8
 Location: https://hogehoge.test:123/foo/hoge/fug&a
 
 <!DOCTYPE HTML><title>Moved</title><a href="https://hogehoge.test:123/foo/hoge/fug&amp;a">Moved</a>};
-} # _send_redirect_response_relative
+} # _send_redirect_relative
 
-sub _send_redirect_response_abspath : Test(1) {
+sub _send_redirect_abspath : Test(1) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
     REQUEST_URI => q<https://hogehoge.test:0123/foo/b%61r/baz?a=b&c=">,
   }, undef, $out;
   my $app = Wanage::App->new_from_http ($http);
-  $app->send_redirect_response (q</hoge/fuga#abc>);
+  $app->send_redirect (q</hoge/fuga#abc>);
   eq_or_diff $out, q{Status: 302 Found
 Content-Type: text/html; charset=utf-8
 Location: https://hogehoge.test:123/hoge/fuga#abc
 
 <!DOCTYPE HTML><title>Moved</title><a href="https://hogehoge.test:123/hoge/fuga#abc">Moved</a>};
-} # _send_redirect_response_abspath
+} # _send_redirect_abspath
 
-sub _send_redirect_response_absurl : Test(1) {
+sub _send_redirect_absurl : Test(1) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
     REQUEST_URI => q<https://hogehoge.test:0123/foo/b%61r/baz?a=b&c=">,
   }, undef, $out;
   my $app = Wanage::App->new_from_http ($http);
-  $app->send_redirect_response (q<httP://abc.TEST/hoge/fuga#abc>);
+  $app->send_redirect (q<httP://abc.TEST/hoge/fuga#abc>);
   eq_or_diff $out, q{Status: 302 Found
 Content-Type: text/html; charset=utf-8
 Location: http://abc.test/hoge/fuga#abc
 
 <!DOCTYPE HTML><title>Moved</title><a href="http://abc.test/hoge/fuga#abc">Moved</a>};
-} # _send_redirect_response_absurl
+} # _send_redirect_absurl
 
-sub _send_redirect_response_filtered : Test(1) {
+sub _send_redirect_filtered : Test(1) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
     REQUEST_URI => q<https://hogehoge.test:0123/foo/b%61r/baz?a=b&c=">,
@@ -221,57 +249,57 @@ sub _send_redirect_response_filtered : Test(1) {
     }
   }
   my $app = test::_send_redirect_response_filtered::app->new_from_http ($http);
-  $app->send_redirect_response (q<httP://abc.TEST/hoge/fuga#abc>);
+  $app->send_redirect (q<httP://abc.TEST/hoge/fuga#abc>);
   eq_or_diff $out, q{Status: 302 Found
 Content-Type: text/html; charset=utf-8
 Location: ftp://abc.test/hoge/fuga/HOGE#abc
 
 <!DOCTYPE HTML><title>Moved</title><a href="ftp://abc.test/hoge/fuga/HOGE#abc">Moved</a>};
-} # _send_redirect_response_filtered
+} # _send_redirect_filtered
 
-sub _send_error_response_no_args : Test(1) {
+sub _send_error_no_args : Test(1) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
   my $app = Wanage::App->new_from_http ($http);
-  $app->send_error_response;
+  $app->send_error;
   eq_or_diff $out, q{Status: 400 Bad Request
 Content-Type: text/plain; charset=us-ascii
 
 400};
-} # _send_error_response_no_args
+} # _send_error_no_args
 
-sub _send_error_response_with_code : Test(1) {
+sub _send_error_with_code : Test(1) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
   my $app = Wanage::App->new_from_http ($http);
-  $app->send_error_response (410);
+  $app->send_error (410);
   eq_or_diff $out, q{Status: 410 Gone
 Content-Type: text/plain; charset=us-ascii
 
 410};
-} # _send_error_response_with_code
+} # _send_error_with_code
 
-sub _send_error_response_with_code_and_reason : Test(1) {
+sub _send_error_with_code_and_reason : Test(1) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
   my $app = Wanage::App->new_from_http ($http);
-  $app->send_error_response (410, reason_phrase => "The page was\nremoved!");
+  $app->send_error (410, reason_phrase => "The page was\nremoved!");
   eq_or_diff $out, q{Status: 410 The page was removed!
 Content-Type: text/plain; charset=us-ascii
 
 410};
-} # _send_error_response_with_code_and_reason
+} # _send_error_with_code_and_reason
 
-sub _send_error_response_with_code_and_reason_utf8 : Test(1) {
+sub _send_error_with_code_and_reason_utf8 : Test(1) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
   my $app = Wanage::App->new_from_http ($http);
-  $app->send_error_response (410, reason_phrase => "\x{5000}\x{5100}\x00");
+  $app->send_error (410, reason_phrase => "\x{5000}\x{5100}\x00");
   eq_or_diff $out, encode 'utf-8', qq{Status: 410 \x{5000}\x{5100}\x00
 Content-Type: text/plain; charset=us-ascii
 
 410};
-} # _send_error_response_with_code_and_reason_utf8
+} # _send_error_with_code_and_reason_utf8
 
 __PACKAGE__->runtests;
 

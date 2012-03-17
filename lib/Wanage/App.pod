@@ -104,7 +104,17 @@ or more character strings.
 
 =over 4
 
-=item $app->send_redirect_response ($url_as_string)
+=item $app->send_plain_text ($text)
+
+Send a plain text, encoded in UTF-8.  The C<Content-Type:> header is
+set to C<text/plain; charset=utf-8>.
+
+=item $app->send_html ($text)
+
+Send an HTML document, encoded in UTF-8.  The C<Content-Type:> header
+is set to C<text/html; charset=utf-8>.
+
+=item $app->send_redirect ($url_as_string)
 
 Send a redirect response.  The argument must be the URL to which the
 request is redirected.  It must be a character string.  The URL will

@@ -65,11 +65,25 @@ sub htescape ($) {
   return $s;
 }
 
+sub send_plain_text ($$) {
+  my $http = $_[0]->{http};
+  $http->set_response_header ('Content-Type' => 'text/plain; charset=utf-8');
+  $http->send_response_body_as_text ($_[1]);
+  $http->close_response_body;
+} # send_plain_text
+
+sub send_html ($$) {
+  my $http = $_[0]->{http};
+  $http->set_response_header ('Content-Type' => 'text/html; charset=utf-8');
+  $http->send_response_body_as_text ($_[1]);
+  $http->close_response_body;
+} # send_html
+
 sub redirect_url_filter ($$) {
   return $_[1];
 } # redirect_url_filter
 
-sub send_redirect_response ($$;%) {
+sub send_redirect ($$;%) {
   my ($self, $url_as_string, %args) = @_;
   my $http = $self->{http};
 
@@ -84,16 +98,18 @@ sub send_redirect_response ($$;%) {
   $http->send_response_body_as_text
       (sprintf '<!DOCTYPE HTML><title>Moved</title><a href="%s">Moved</a>',
            htescape $location_url->stringify);
-} # send_redirect_response
+  $http->close_response_body;
+} # send_redirect
 
-sub send_error_response ($$;%) {
+sub send_error ($$;%) {
   my ($self, $code, %args) = @_;
   my $proto = $self->{http};
   $proto->set_status ($code ||= 400, $args{reason_phrase});
   $proto->set_response_header
       ('Content-Type' => 'text/plain; charset=us-ascii');
   $proto->send_response_body_as_ref (\$code);
-} # send_error_response
+  $proto->close_response_body;
+} # send_error
 
 1;
 
