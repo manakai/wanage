@@ -56,7 +56,9 @@ sub original_url ($) {
     
     my $parsed_url = Wanage::URL->new_from_string ($url);
     if (defined $parsed_url->{scheme}) {
-      #
+      unless ($Wanage::Interface::UseRequestURLScheme) {
+        $parsed_url->set_scheme ($handler->url_scheme);
+      }
     } else {
       $parsed_url->{scheme} = $handler->url_scheme;
       $parsed_url->{scheme_normalized} = $parsed_url->{scheme};

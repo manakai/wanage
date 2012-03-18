@@ -61,6 +61,8 @@ typical PSGI application implemented using Wanage would look like:
 
 =head2 Request URL
 
+Following methods can be used to get the request URL.
+
 =over 4
 
 =item $url = $http->url
@@ -71,6 +73,11 @@ variant of the URL requested by the client.
 If the C<$Wanage::HTTP::UseXForwardedScheme> variable is set to true,
 the C<X-Forwarded-Scheme:> header, if any, is used to determine the
 scheme component of the URL.
+
+Unless the C<$Wanage::Interface::UseRequestURLScheme> variable is set
+to true, the URL scheme of the C<Request-URI> in the HTTP request is
+ignored, as it might not represent the actual protocol used to connect
+the server.
 
 =item $url = $http->original_url
 
@@ -94,6 +101,9 @@ decoded by any character encoding.
 =back
 
 =head2 Request method
+
+Following methods can be used to obtain the request method or to test
+characteristics of the request method in use.
 
 =over 4
 
@@ -267,6 +277,9 @@ in the Unix epoch (or time_t) integer, or the C<undef> value.
 =back
 
 =head2 Request body
+
+Following methods can be used to get the request-body data provided by
+the client:
 
 =over 4
 

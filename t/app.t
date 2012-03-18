@@ -218,6 +218,7 @@ Content-Type: text/html; charset=utf-8
 sub _send_redirect_no_args : Test(1) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    HTTPS => 1,
     REQUEST_URI => q<https://hogehoge.test:0123/foo/b%61r/baz?a=b&c=">,
   }, undef, $out;
   my $app = Wanage::App->new_from_http ($http);
@@ -232,6 +233,7 @@ Location: https://hogehoge.test:123/foo/bar/baz?a=b&c=%22
 sub _send_redirect_relative : Test(1) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    HTTPS => 1,
     REQUEST_URI => q<https://hogehoge.test:0123/foo/b%61r/baz?a=b&c=">,
   }, undef, $out;
   my $app = Wanage::App->new_from_http ($http);
@@ -246,6 +248,7 @@ Location: https://hogehoge.test:123/foo/hoge/fug&a
 sub _send_redirect_abspath : Test(1) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    HTTPS => 1,
     REQUEST_URI => q<https://hogehoge.test:0123/foo/b%61r/baz?a=b&c=">,
   }, undef, $out;
   my $app = Wanage::App->new_from_http ($http);
@@ -260,6 +263,7 @@ Location: https://hogehoge.test:123/hoge/fuga#abc
 sub _send_redirect_absurl : Test(1) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    HTTPS => 1,
     REQUEST_URI => q<https://hogehoge.test:0123/foo/b%61r/baz?a=b&c=">,
   }, undef, $out;
   my $app = Wanage::App->new_from_http ($http);
@@ -274,6 +278,7 @@ Location: http://abc.test/hoge/fuga#abc
 sub _send_redirect_filtered : Test(1) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    HTTPS => 1,
     REQUEST_URI => q<https://hogehoge.test:0123/foo/b%61r/baz?a=b&c=">,
   }, undef, $out;
   {
@@ -496,6 +501,7 @@ sub _requires_valid_url_scheme_https : Test(1) {
 } # _requires_valid_url_scheme_https
 
 sub _requires_valid_url_scheme_ftp : Test(1) {
+  local $Wanage::Interface::UseRequestURLScheme = 1;
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
     REQUEST_URI => q<ftp://foo/bar>,
@@ -531,6 +537,7 @@ Content-Type: text/plain; charset=us-ascii
 sub _requires_https_https : Test(1) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    HTTPS => 1,
     REQUEST_URI => q<https://foo/bar>,
   }, undef, $out;
   my $app = Wanage::App->new_from_http ($http);
@@ -563,6 +570,7 @@ Location: https://foo/bar
 } # _requires_https_http_get
 
 sub _requires_https_ftp_get : Test(1) {
+  local $Wanage::Interface::UseRequestURLScheme = 1;
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
     REQUEST_URI => q<ftp://foo/bar>,
@@ -618,6 +626,7 @@ Content-Type: text/plain; charset=us-ascii
 sub _requires_valid_hostname : Test(1) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    HTTPS => 1,
     REQUEST_URI => q<https://foo/bar>,
   }, undef, $out;
   my $app = Wanage::App->new_from_http ($http);
@@ -632,6 +641,7 @@ sub _requires_valid_hostname_custom_true : Test(1) {
   local $Wanage::App::AllowedHostnamePattern = qr/^hoge.fuga$/;
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    HTTPS => 1,
     REQUEST_URI => q<https://hoge.fuga/bar>,
   }, undef, $out;
   my $app = Wanage::App->new_from_http ($http);
@@ -646,6 +656,7 @@ sub _requires_valid_hostname_custom_false : Test(1) {
   local $Wanage::App::AllowedHostnamePattern = qr/^hoge.fuga$/;
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    HTTPS => 1,
     REQUEST_URI => q<https://hoge.fugaa/bar>,
   }, undef, $out;
   my $app = Wanage::App->new_from_http ($http);
@@ -660,6 +671,7 @@ Content-Type: text/plain; charset=us-ascii
 } # _requires_valid_hostname_custom_false
 
 sub _requires_valid_hostname_custom_false_no_host : Test(1) {
+  local $Wanage::Interface::UseRequestURLScheme = 1;
   local $Wanage::App::AllowedHostnamePattern = qr/^hoge.fuga$/;
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {

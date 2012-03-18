@@ -205,7 +205,47 @@ sub _original_url_from_request_uri_abs : Test(4) {
   is $psgi->canon_url->stringify, 'http://hogehoge/hoge%3Cscript%3E/fuga';
 } # _original_url_from_request_uri_abs
 
+sub _original_url_from_request_uri_abs_https_really : Test(4) {
+  my $env = new_psgi_env {SERVER_NAME => 'hoge.Fuga', SERVER_PORT => 190,
+                          SCRIPT_NAME => '', PATH_INFO => '/',
+                          HTTP_HOST => 'fuga:80',
+                          REQUEST_URI => 'https://hogehoge:/hoge<script>/fuga',
+                          'psgi.url_scheme' => 'https'};
+  my $psgi = Wanage::Interface::PSGI->new_from_psgi_env ($env);
+  isa_ok $psgi->original_url, 'Wanage::URL';
+  isa_ok $psgi->canon_url, 'Wanage::URL';
+  is $psgi->original_url->stringify, 'https://hogehoge:/hoge<script>/fuga';
+  is $psgi->canon_url->stringify, 'https://hogehoge/hoge%3Cscript%3E/fuga';
+} # _original_url_from_request_uri_abs_https_really
+
+sub _original_url_from_request_uri_abs_https_not : Test(4) {
+  my $env = new_psgi_env {SERVER_NAME => 'hoge.Fuga', SERVER_PORT => 190,
+                          SCRIPT_NAME => '', PATH_INFO => '/',
+                          HTTP_HOST => 'fuga:80',
+                          REQUEST_URI => 'https://hogehoge:/hoge<script>/fuga',
+                          'psgi.url_scheme' => 'http'};
+  my $psgi = Wanage::Interface::PSGI->new_from_psgi_env ($env);
+  isa_ok $psgi->original_url, 'Wanage::URL';
+  isa_ok $psgi->canon_url, 'Wanage::URL';
+  is $psgi->original_url->stringify, 'http://hogehoge:/hoge<script>/fuga';
+  is $psgi->canon_url->stringify, 'http://hogehoge/hoge%3Cscript%3E/fuga';
+} # _original_url_from_request_uri_abs_https_not
+
 sub _original_url_from_request_uri_abs_non_http : Test(4) {
+  my $env = new_psgi_env {SERVER_NAME => 'hoge.Fuga', SERVER_PORT => 190,
+                          SCRIPT_NAME => '', PATH_INFO => '/',
+                          HTTP_HOST => 'fuga:80',
+                          REQUEST_URI => 'ftp://hogehoge:/hoge<script>/fuga',
+                          'psgi.url_scheme' => 'http'};
+  my $psgi = Wanage::Interface::PSGI->new_from_psgi_env ($env);
+  isa_ok $psgi->original_url, 'Wanage::URL';
+  isa_ok $psgi->canon_url, 'Wanage::URL';
+  is $psgi->original_url->stringify, 'http://hogehoge:/hoge<script>/fuga';
+  is $psgi->canon_url->stringify, 'http://hogehoge/hoge%3Cscript%3E/fuga';
+} # _original_url_from_request_uri_abs_non_http
+
+sub _original_url_from_request_uri_abs_non_http_use_scheme : Test(4) {
+  local $Wanage::Interface::UseRequestURLScheme = 1;
   my $env = new_psgi_env {SERVER_NAME => 'hoge.Fuga', SERVER_PORT => 190,
                           SCRIPT_NAME => '', PATH_INFO => '/',
                           HTTP_HOST => 'fuga:80',
@@ -216,7 +256,7 @@ sub _original_url_from_request_uri_abs_non_http : Test(4) {
   isa_ok $psgi->canon_url, 'Wanage::URL';
   is $psgi->original_url->stringify, 'ftp://hogehoge:/hoge<script>/fuga';
   is $psgi->canon_url->stringify, 'ftp://hogehoge/hoge%3Cscript%3E/fuga';
-} # _original_url_from_request_uri_abs_non_http
+} # _original_url_from_request_uri_abs_non_http_use_scheme
 
 # ------ Response ------
 

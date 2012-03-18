@@ -90,6 +90,7 @@ sub _url_x_forwarded_scheme_bad : Test(4) {
 } # _url_x_forwarded_scheme_bad
 
 sub _url_x_forwarded_scheme_request_uri : Test(4) {
+  local $Wanage::Interface::UseRequestURLScheme = 1;
   local $Wanage::HTTP::UseXForwardedScheme = 1;
   my $https = new_https_for_interfaces
       env => {HTTP_HOST => q<hoge.TEST>,
@@ -101,6 +102,32 @@ sub _url_x_forwarded_scheme_request_uri : Test(4) {
     is $http->original_url->{scheme}, 'ftp';
   }
 } # _url_x_forwarded_scheme_request_uri
+
+sub _url_x_forwarded_scheme_request_uri_2 : Test(4) {
+  local $Wanage::HTTP::UseXForwardedScheme = 1;
+  my $https = new_https_for_interfaces
+      env => {HTTP_HOST => q<hoge.TEST>,
+              REQUEST_URI => "ftp://aa/hoge/?abc\xFE\xC5",
+              'psgi.url_scheme' => 'https', HTTPS => 'on',
+              HTTP_X_FORWARDED_SCHEME => 'hoge,fuga'};
+  for my $http (@$https) {
+    is $http->url->{scheme}, 'https';
+    is $http->original_url->{scheme}, 'https';
+  }
+} # _url_x_forwarded_scheme_request_uri_2
+
+sub _url_x_forwarded_scheme_request_uri_3 : Test(4) {
+  local $Wanage::HTTP::UseXForwardedScheme = 1;
+  my $https = new_https_for_interfaces
+      env => {HTTP_HOST => q<hoge.TEST>,
+              REQUEST_URI => "ftp://aa/hoge/?abc\xFE\xC5",
+              'psgi.url_scheme' => 'https', HTTPS => 'on',
+              HTTP_X_FORWARDED_SCHEME => 'http'};
+  for my $http (@$https) {
+    is $http->url->{scheme}, 'http';
+    is $http->original_url->{scheme}, 'http';
+  }
+} # _url_x_forwarded_scheme_request_uri_3
 
 sub _original_url : Test(14) {
   my $https = new_https_for_interfaces
