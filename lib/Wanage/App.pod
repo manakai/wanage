@@ -98,6 +98,31 @@ The parameter names and values are interpreted as UTF-8 texts.  The
 argument must be a character string.  The returned list contains zero
 or more character strings.
 
+=item $value = $app->bare_param ($name)
+
+Return the value for the parameter whose name is given as the
+argument.  If there are multiple parameters with the same name, the
+first one is returned.  Parameters in the query component of the
+request URL appear before parameters in the request-body.  If there is
+no parameter with the specified name, the C<undef> value is returned.
+
+The parameter names and values are interpreted as octet-streams.  The
+argument must be a byte string.  The return value, if it is not
+C<undef>, is a byte string.
+
+=item $list = $app->bare_param_list ($name)
+
+Return the list (L<List::Ish>) object containing the parameter values
+whose name is given as the argument.  If there are multiple parameters
+with the same name, their values are added to the list in order.
+Parameters in the query component of the request URL appear before
+parameters in the request-body.  If there is no parameter with the
+specified name, an empty list is returned.
+
+The parameter names and values are interpreted as octet-streams.  The
+argument must be a byte string.  The returned list contains zero or
+more byte strings.
+
 =back
 
 =head2 Response construction

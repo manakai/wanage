@@ -69,7 +69,7 @@ sub _path_segments : Test(60) {
   }
 } # _path_segments
 
-sub _text_param_from_query : Test(10) {
+sub _text_param_from_query : Test(20) {
   my $http = with_cgi_env {
     Wanage::HTTP->new_cgi;
   } {QUERY_STRING => 'hoge=fuga&FOO=foo&foo=bar&foo=baz&abc=&def'};
@@ -84,9 +84,19 @@ sub _text_param_from_query : Test(10) {
   eq_or_diff $app->text_param_list ('foo')->to_a, ['bar', 'baz'];
   eq_or_diff $app->text_param_list ('abc')->to_a, [''];
   eq_or_diff $app->text_param_list ('def')->to_a, [''];
+  is $app->bare_param ('fage'), undef;
+  is $app->bare_param ('hoge'), 'fuga';
+  is $app->bare_param ('foo'), 'bar';
+  is $app->bare_param ('abc'), '';
+  is $app->bare_param ('def'), '';
+  eq_or_diff $app->bare_param_list ('fage')->to_a, [];
+  eq_or_diff $app->bare_param_list ('hoge')->to_a, ['fuga'];
+  eq_or_diff $app->bare_param_list ('foo')->to_a, ['bar', 'baz'];
+  eq_or_diff $app->bare_param_list ('abc')->to_a, [''];
+  eq_or_diff $app->bare_param_list ('def')->to_a, [''];
 } # _text_param_from_query
 
-sub _text_param_from_body : Test(10) {
+sub _text_param_from_body : Test(20) {
   my $stdin = 'hoge=fuga&FOO=foo&foo=bar&foo=baz&abc=&def';
   my $http = with_cgi_env {
     Wanage::HTTP->new_cgi;
@@ -103,9 +113,19 @@ sub _text_param_from_body : Test(10) {
   eq_or_diff $app->text_param_list ('foo')->to_a, ['bar', 'baz'];
   eq_or_diff $app->text_param_list ('abc')->to_a, [''];
   eq_or_diff $app->text_param_list ('def')->to_a, [''];
+  is $app->bare_param ('fage'), undef;
+  is $app->bare_param ('hoge'), 'fuga';
+  is $app->bare_param ('foo'), 'bar';
+  is $app->bare_param ('abc'), '';
+  is $app->bare_param ('def'), '';
+  eq_or_diff $app->bare_param_list ('fage')->to_a, [];
+  eq_or_diff $app->bare_param_list ('hoge')->to_a, ['fuga'];
+  eq_or_diff $app->bare_param_list ('foo')->to_a, ['bar', 'baz'];
+  eq_or_diff $app->bare_param_list ('abc')->to_a, [''];
+  eq_or_diff $app->bare_param_list ('def')->to_a, [''];
 } # _text_param_from_body
 
-sub _text_param_both : Test(2) {
+sub _text_param_both : Test(4) {
   my $stdin = 'hoge=fuga';
   my $http = with_cgi_env {
     Wanage::HTTP->new_cgi;
@@ -115,9 +135,11 @@ sub _text_param_both : Test(2) {
   my $app = Wanage::App->new_from_http ($http);
   is $app->text_param ('hoge'), 'abc';
   eq_or_diff $app->text_param_list ('hoge')->to_a, ['abc', 'fuga'];
+  is $app->bare_param ('hoge'), 'abc';
+  eq_or_diff $app->bare_param_list ('hoge')->to_a, ['abc', 'fuga'];
 } # _text_param_both
 
-sub _text_param_utf8 : Test(12) {
+sub _text_param_utf8 : Test(24) {
   my $http = with_cgi_env {
     Wanage::HTTP->new_cgi;
   } {QUERY_STRING => 'hoge=%E4%B8%80&fuga=%84%B8%81&%E4%B8%80=abc&%80=%00'};
@@ -135,9 +157,21 @@ sub _text_param_utf8 : Test(12) {
   eq_or_diff $app->text_param_list ("\x{4E00}")->to_a, ['abc'];
   eq_or_diff $app->text_param_list ("\x80")->to_a, [];
   eq_or_diff $app->text_param_list ("\x{FFFD}")->to_a, [];
+  is $app->bare_param ('hoge'), "\xE4\xB8\x80";
+  is $app->bare_param ('fuga'), "\x84\xB8\x81";
+  is $app->bare_param ("\xE4\xB8\x80"), 'abc';
+  is $app->bare_param ("\x{4E00}"), undef;
+  is $app->bare_param ("\x80"), "\x00";
+  is $app->bare_param ("\x{FFFD}"), undef;
+  eq_or_diff $app->bare_param_list ('hoge')->to_a, ["\xE4\xB8\x80"];
+  eq_or_diff $app->bare_param_list ('fuga')->to_a, ["\x84\xB8\x81"];
+  eq_or_diff $app->bare_param_list ("\xE4\xB8\x80")->to_a, ['abc'];
+  eq_or_diff $app->bare_param_list ("\x{4E00}")->to_a, [];
+  eq_or_diff $app->bare_param_list ("\x80")->to_a, ["\x00"];
+  eq_or_diff $app->bare_param_list ("\x{FFFD}")->to_a, [];
 } # _text_param_utf8
 
-sub _text_param_list : Test(2) {
+sub _text_param_list : Test(5) {
   my $http = with_cgi_env {
     Wanage::HTTP->new_cgi;
   } {QUERY_STRING => 'hoge=fuga&FOO=foo&foo=bar&foo=baz&abc=&def'};
@@ -145,6 +179,10 @@ sub _text_param_list : Test(2) {
   my $list = $app->text_param_list ('hoge');
   isa_list_ok $list;
   is $app->text_param_list ('hoge'), $list;
+  my $list2 = $app->bare_param_list ('hoge');
+  isa_list_ok $list2;
+  is $app->bare_param_list ('hoge'), $list2;
+  isnt $list2, $list;
 } # _text_param_list
 
 ## ------ Response construction ------

@@ -54,6 +54,24 @@ sub text_param_list ($$) {
   };
 } # text_param_list
 
+sub bare_param ($$) {
+  my $proto = $_[0]->{http};
+  return (($proto->query_params->{$_[1]} ||
+           $proto->request_body_params->{$_[1]} ||
+           [])->[0]);
+} # bare_param
+
+sub bare_param_list ($$) {
+  return $_[0]->{bare_param_list}->{$_[1]} ||= do {
+    my $proto = $_[0]->{http};
+    require List::Ish;
+    List::Ish->new ([
+      @{$proto->query_params->{$_[1]} or []},
+      @{$proto->request_body_params->{$_[1]} or []},
+    ]);
+  };
+} # bare_param_list
+
 ## ------ Response construction ------
 
 sub htescape ($) {
