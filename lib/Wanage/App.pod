@@ -321,6 +321,38 @@ C<$Wanage::App::MaxContentLength>, whose default is C<1024 * 1024>
 
 =back
 
+=item $app->requires_mime_type ({$allowed_type => 1, ...})
+
+Check whether the MIME type of the request is one of known types or
+not.  If it is not a known type, the C<415> Unsupported MIME Type
+error is thrown.
+
+The list of allowed MIME types can be specified as the argument.  If
+it is not specified, the C<$Wanage::App::AllowedMIMETypes> value is
+used instead.  In either case, the list must be supplied as a hash
+reference where keys are lowercase-normalized form of MIME types and
+values are true values.  The MIME types cannot contain parameters; Any
+parameters are ignored for the purpose of this method.  The default
+list is: C<< {'application/x-www-form-urlencoded' => 1,
+'multipart/form-data' => 1} >>.
+
+If there is no request-body, or the length of request-body is zero,
+this method does not throw when the MIME type is not specified in the
+C<Content-Type:> header.  Otherwise, the request has to contain a
+C<Content-Type:> header which contains one of allowed MIME types.
+
+=item $app->requires_request_method ({$allowed_method => 1, ...})
+
+Check whether the request method is one of supported methods or not.
+If it is not a known type, the C<405> Method Not Allowed error is
+thrown.
+
+The list of allowed methods can be specified as the argument.  If it
+is not specified, the C<$Wanage::App::AllowedRequestMethods> value is
+used instead.  In either case, the list must be supplied as a hash
+reference where keys are request methods and values are true values.
+The default list is: C<< {GET => 1, HEAD => 1, POST => 1} >>.
+
 =back
 
 =head1 SEE ALSO

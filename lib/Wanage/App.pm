@@ -220,6 +220,36 @@ sub requires_valid_content_length ($;%) {
   }
 } # requires_valid_content_length
 
+our $AllowedMIMETypes = {
+  'application/x-www-form-urlencoded' => 1,
+  'multipart/form-data' => 1,
+};
+
+sub requires_mime_type ($;$) {
+  my $self = shift;
+  my $allowed = shift || $AllowedMIMETypes;
+  my $mime = $self->http->request_mime_type->value || '';
+  if (not $mime and not $self->http->request_body_length) {
+    ;
+  } elsif ($allowed->{$mime}) {
+    ;
+  } else {
+    $self->throw_error (415);
+  }
+} # requires_mime_type
+
+our $AllowedRequestMethods = {
+  'GET' => 1, 'HEAD' => 1, 'POST' => 1,
+};
+
+sub requires_request_method ($;$) {
+  my $self = shift;
+  my $allowed = shift || $AllowedRequestMethods;
+  unless ($allowed->{$self->http->request_method}) {
+    $self->throw_error (405);
+  }
+} # requires_request_method
+
 1;
 
 =head1 LICENSE

@@ -775,6 +775,288 @@ sub _requires_valid_content_length_eq_max : Test(1) {
   is $out, "Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\nok";
 } # _requires_valid_content_length_eq_max
 
+sub _requires_mime_type_no_request_body : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_mime_type;
+    $app->send_plain_text ('ok');
+  });
+  is $out, "Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\nok";
+} # _requires_mime_type_no_request_body
+
+sub _requires_mime_type_empty_request_body : Test(1) {
+  my $in = '';
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } { 
+    CONTENT_LENGTH => length $in,
+  }, $in, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_mime_type;
+    $app->send_plain_text ('ok');
+  });
+  is $out, "Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\nok";
+} # _requires_mime_type_empty_request_body
+
+sub _requires_mime_type_formdata : Test(5) {
+  my $in = 'abc';
+  my $out = '';
+  for my $mime (
+    'application/x-www-form-urlencoded',
+    'application/x-www-form-urlencoded; charset=utf-8',
+    'application/x-www-form-URLEncoded',
+    ' multipart/form-data',
+    'multipart/form-data;boundary=abcde',
+  ) {
+    my $http = with_cgi_env { Wanage::HTTP->new_cgi } { 
+      CONTENT_TYPE => $mime,
+      CONTENT_LENGTH => length $in,
+    }, $in, $out;
+    my $app = Wanage::App->new_from_http ($http);
+    $app->execute (sub {
+      $app->requires_mime_type;
+      $app->send_plain_text ('ok');
+    });
+    is $out, "Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\nok";
+  }
+} # _requires_mime_type_formdata
+
+sub _requires_mime_type_unknown : Test(5) {
+  my $in = 'abc';
+  my $out = '';
+  for my $mime (
+    undef,
+    'broken',
+    'text/plain',
+    'application/octet-stream',
+  ) {
+    my $http = with_cgi_env { Wanage::HTTP->new_cgi } { 
+      CONTENT_TYPE => $mime,
+      CONTENT_LENGTH => length $in,
+    }, $in, $out;
+    my $app = Wanage::App->new_from_http ($http);
+    $app->execute (sub {
+      $app->requires_mime_type;
+      $app->send_plain_text ('ok');
+    });
+    is $out, "Status: 415 Unsupported Media Type
+Content-Type: text/plain; charset=us-ascii
+
+415";
+  }
+} # _requires_mime_type_unknown
+
+sub _requires_mime_type_custom_known : Test(5) {
+  my $in = 'abc';
+  my $out = '';
+  for my $mime (
+    'text/plain',
+    'TEXT/PLAIN',
+    'text/Plain; charset=utf-8',
+    'multipart/mixed ',
+    'Multipart/mixed;boundary=foo',
+  ) {
+    my $http = with_cgi_env { Wanage::HTTP->new_cgi } { 
+      CONTENT_TYPE => $mime,
+      CONTENT_LENGTH => length $in,
+    }, $in, $out;
+    my $app = Wanage::App->new_from_http ($http);
+    $app->execute (sub {
+      $app->requires_mime_type ({'text/plain' => 1, 'multipart/mixed' => 1});
+      $app->send_plain_text ('ok');
+    });
+    is $out, "Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\nok";
+  }
+} # _requires_mime_type_custom_known
+
+sub _requires_mime_type_custom_unknown : Test(5) {
+  my $in = 'abc';
+  my $out = '';
+  for my $mime (
+    undef,
+    'broken',
+    'application/octet-stream',
+    'multipart/form-data',
+    'application/x-www-form-urlencoded',
+  ) {
+    my $http = with_cgi_env { Wanage::HTTP->new_cgi } { 
+      CONTENT_TYPE => $mime,
+      CONTENT_LENGTH => length $in,
+    }, $in, $out;
+    my $app = Wanage::App->new_from_http ($http);
+    $app->execute (sub {
+      $app->requires_mime_type ({
+        'text/plain' => 1,
+        'application/xhtml+xml' => 1,
+      });
+      $app->send_plain_text ('ok');
+    });
+    is $out, "Status: 415 Unsupported Media Type
+Content-Type: text/plain; charset=us-ascii
+
+415";
+  }
+} # _requires_mime_type_custom_unknown
+
+sub _requires_mime_type_custom_default_known : Test(5) {
+  local $Wanage::App::AllowedMIMETypes = {
+    'text/plain' => 1, 'multipart/mixed' => 1,
+  };
+  my $in = 'abc';
+  my $out = '';
+  for my $mime (
+    'text/plain',
+    'TEXT/PLAIN',
+    'text/Plain; charset=utf-8',
+    'multipart/mixed ',
+    'Multipart/mixed;boundary=foo',
+  ) {
+    my $http = with_cgi_env { Wanage::HTTP->new_cgi } { 
+      CONTENT_TYPE => $mime,
+      CONTENT_LENGTH => length $in,
+    }, $in, $out;
+    my $app = Wanage::App->new_from_http ($http);
+    $app->execute (sub {
+      $app->requires_mime_type;
+      $app->send_plain_text ('ok');
+    });
+    is $out, "Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\nok";
+  }
+} # _requires_mime_type_custom_default_known
+
+sub _requires_mime_type_custom_default_unknown : Test(5) {
+  local $Wanage::App::AllowedMIMETypes = {
+    'text/plain' => 1,
+    'application/xhtml+xml' => 1,
+  };
+  my $in = 'abc';
+  my $out = '';
+  for my $mime (
+    undef,
+    'broken',
+    'application/octet-stream',
+    'multipart/form-data',
+    'application/x-www-form-urlencoded',
+  ) {
+    my $http = with_cgi_env { Wanage::HTTP->new_cgi } { 
+      CONTENT_TYPE => $mime,
+      CONTENT_LENGTH => length $in,
+    }, $in, $out;
+    my $app = Wanage::App->new_from_http ($http);
+    $app->execute (sub {
+      $app->requires_mime_type;
+      $app->send_plain_text ('ok');
+    });
+    is $out, "Status: 415 Unsupported Media Type
+Content-Type: text/plain; charset=us-ascii
+
+415";
+  }
+} # _requires_mime_type_custom_default_unknown
+
+sub _requires_request_method_allowed : Test(3) {
+  for my $request_method (qw(GET HEAD POST)) {
+    my $out = '';
+    my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+      REQUEST_METHOD => $request_method,
+    }, undef, $out;
+    my $app = Wanage::App->new_from_http ($http);
+    $app->execute (sub {
+      $app->requires_request_method;
+      $app->send_plain_text ('ok');
+    });
+    is $out, "Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\nok";
+  }
+} # _requires_request_method_allowed
+
+sub _requires_request_method_not_allowed : Test(4) {
+  for my $request_method (qw(PUT DELETE OPTIONS CONNECT)) {
+    my $out = '';
+    my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+      REQUEST_METHOD => $request_method,
+    }, undef, $out;
+    my $app = Wanage::App->new_from_http ($http);
+    $app->execute (sub {
+      $app->requires_request_method;
+      $app->send_plain_text ('ok');
+    });
+    is $out, "Status: 405 Method Not Allowed
+Content-Type: text/plain; charset=us-ascii
+
+405";
+  }
+} # _requires_request_method_not_allowed
+
+sub _requires_request_method_allowed_custom : Test(3) {
+  for my $request_method (qw(FOO BAR)) {
+    my $out = '';
+    my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+      REQUEST_METHOD => $request_method,
+    }, undef, $out;
+    my $app = Wanage::App->new_from_http ($http);
+    $app->execute (sub {
+      $app->requires_request_method ({FOO => 1, BAR => 2});
+      $app->send_plain_text ('ok');
+    });
+    is $out, "Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\nok";
+  }
+} # _requires_request_method_allowed_custom
+
+sub _requires_request_method_not_allowed_custom : Test(2) {
+  for my $request_method (qw(GET foo)) {
+    my $out = '';
+    my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+      REQUEST_METHOD => $request_method,
+    }, undef, $out;
+    my $app = Wanage::App->new_from_http ($http);
+    $app->execute (sub {
+      $app->requires_request_method ({FOO => 1, BAR => 1});
+      $app->send_plain_text ('ok');
+    });
+    is $out, "Status: 405 Method Not Allowed
+Content-Type: text/plain; charset=us-ascii
+
+405";
+  }
+} # _requires_request_method_not_allowed_custom
+
+sub _requires_request_method_allowed_custom_default : Test(3) {
+  local $Wanage::App::AllowedRequestMethods = {FOO => 1, BAR => 1};
+  for my $request_method (qw(FOO BAR)) {
+    my $out = '';
+    my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+      REQUEST_METHOD => $request_method,
+    }, undef, $out;
+    my $app = Wanage::App->new_from_http ($http);
+    $app->execute (sub {
+      $app->requires_request_method;
+      $app->send_plain_text ('ok');
+    });
+    is $out, "Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\nok";
+  }
+} # _requires_request_method_allowed_custom_default
+
+sub _requires_request_method_not_allowed_custom_default : Test(2) {
+  local $Wanage::App::AllowedRequestMethods = {FOO => 1, BAR => 1};
+  for my $request_method (qw(GET foo)) {
+    my $out = '';
+    my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+      REQUEST_METHOD => $request_method,
+    }, undef, $out;
+    my $app = Wanage::App->new_from_http ($http);
+    $app->execute (sub {
+      $app->requires_request_method;
+      $app->send_plain_text ('ok');
+    });
+    is $out, "Status: 405 Method Not Allowed
+Content-Type: text/plain; charset=us-ascii
+
+405";
+  }
+} # _requires_request_method_not_allowed_custom_default
+
 __PACKAGE__->runtests;
 
 1;
