@@ -173,6 +173,28 @@ sub throw_error ($$;%) {
 
 ## ------ Validation rules ------
 
+our $AllowedURLSchemes ||= {
+  http => 1,
+  https => 1,
+};
+
+sub requires_valid_url_scheme ($) {
+  my $url = $_[0]->{http}->url;
+  unless ($AllowedURLSchemes->{$url->{scheme}}) {
+    $_[0]->throw_error (400, reason_phrase => 'Unsupported URL Scheme');
+  }
+} # requires_valid_url_scheme
+
+our $AllowedHostnamePattern ||= qr/.*/;
+
+sub requires_valid_hostname ($) {
+  my $url = $_[0]->{http}->url;
+  if (not defined $url->{host} or 
+      not $url->{host} =~ /^$AllowedHostnamePattern$/) {
+    $_[0]->throw_error (400, reason_phrase => 'Bad hostname');
+  }
+} # requires_valid_hostname
+
 our $MaxContentLength ||= 1024 * 1024;
 
 sub requires_valid_content_length ($;%) {

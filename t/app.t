@@ -469,6 +469,126 @@ X-Hoge: Fuga
 
 ## ------ Validation ------
 
+sub _requires_valid_url_scheme_http : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    REQUEST_URI => q<http://foo/bar>,
+  }, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_valid_url_scheme;
+    $app->send_plain_text ('ok');
+  });
+  is $out, "Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\nok";
+} # _requires_valid_url_scheme_http
+
+sub _requires_valid_url_scheme_https : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    REQUEST_URI => q<https://foo/bar>,
+  }, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_valid_url_scheme;
+    $app->send_plain_text ('ok');
+  });
+  is $out, "Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\nok";
+} # _requires_valid_url_scheme_https
+
+sub _requires_valid_url_scheme_ftp : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    REQUEST_URI => q<ftp://foo/bar>,
+  }, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_valid_url_scheme;
+    $app->send_plain_text ('ok');
+  });
+  is $out, "Status: 400 Unsupported URL Scheme
+Content-Type: text/plain; charset=us-ascii
+
+400";
+} # _requires_valid_url_scheme_ftp
+
+sub _requires_valid_url_scheme_https_custom : Test(1) {
+  local $Wanage::App::AllowedURLSchemes = {hoge => 1};
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    REQUEST_URI => q<https://foo/bar>,
+  }, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_valid_url_scheme;
+    $app->send_plain_text ('ok');
+  });
+  is $out, "Status: 400 Unsupported URL Scheme
+Content-Type: text/plain; charset=us-ascii
+
+400";
+} # _requires_valid_url_scheme_https_custom
+
+sub _requires_valid_hostname : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    REQUEST_URI => q<https://foo/bar>,
+  }, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_valid_hostname;
+    $app->send_plain_text ('ok');
+  });
+  is $out, "Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\nok";
+} # _requires_valid_hostname
+
+sub _requires_valid_hostname_custom_true : Test(1) {
+  local $Wanage::App::AllowedHostnamePattern = qr/^hoge.fuga$/;
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    REQUEST_URI => q<https://hoge.fuga/bar>,
+  }, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_valid_hostname;
+    $app->send_plain_text ('ok');
+  });
+  is $out, "Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\nok";
+} # _requires_valid_hostname_custom_true
+
+sub _requires_valid_hostname_custom_false : Test(1) {
+  local $Wanage::App::AllowedHostnamePattern = qr/^hoge.fuga$/;
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    REQUEST_URI => q<https://hoge.fugaa/bar>,
+  }, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_valid_hostname;
+    $app->send_plain_text ('ok');
+  });
+  is $out, "Status: 400 Bad hostname
+Content-Type: text/plain; charset=us-ascii
+
+400";
+} # _requires_valid_hostname_custom_false
+
+sub _requires_valid_hostname_custom_false_no_host : Test(1) {
+  local $Wanage::App::AllowedHostnamePattern = qr/^hoge.fuga$/;
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    REQUEST_URI => q<about:blank>,
+  }, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_valid_hostname;
+    $app->send_plain_text ('ok');
+  });
+  is $out, "Status: 400 Bad hostname
+Content-Type: text/plain; charset=us-ascii
+
+400";
+} # _requires_valid_hostname_custom_false_no_host
+
 sub _requires_valid_content_length_no_request_body : Test(1) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;

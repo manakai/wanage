@@ -273,6 +273,26 @@ the C<execute> method described above.
 
 =over 4
 
+=item $app->requires_valid_url_scheme
+
+Check whether the URL scheme of the request is supported by
+application or not.
+
+The list of valid URL schemes are provided as hash reference
+C<$Wanage::App::AllowedURLSchemes>, where keys are normalized URL
+schemes and values are true values.  By default, the value is C<<
+{http => 1, https => 1} >>.
+
+=item $app->requires_valid_hostname
+
+Check whether the host component of the request URL is supported by
+application or not.
+
+Whether the host is valid or not is determined by whether the
+canonicalized representation of host matches the regular expression
+C<$Wanage::App::AllowedHostname>.  By default, the regular expression
+is C<.*>, i.e. any host is allowed.
+
 =item $app->requires_valid_content_length (%args)
 
 Check the length of the request-body and throw C<413> Request-body Too
