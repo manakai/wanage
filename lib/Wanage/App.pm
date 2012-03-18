@@ -111,6 +111,48 @@ sub send_error ($$;%) {
   $proto->close_response_body;
 } # send_error
 
+## ------ Throw-or-process application model ------
+
+sub execute ($$;%) {
+  my ($self, $code, %args) = @_;
+  eval {
+    $code->();
+    1;
+  } or do {
+    if ($@ and ref $@ and $@->isa ('Wanage::App::Done')) {
+      ;
+    } else {
+      warn $@;
+      if ($self->http->response_headers_sent) {
+        ;
+      } else {
+        $self->send_error (500);
+      }
+    }
+  };
+} # execute
+
+sub throw ($) {
+  die bless {}, 'Wanage::App::Done';
+} # throw
+
+{
+  package Wanage::App::Done;
+  our $VERSION = '1.0';
+}
+
+sub throw_redirect ($$;%) {
+  my $self = shift;
+  $self->send_redirect (@_);
+  $self->throw;
+} # throw_redirect
+
+sub throw_error ($$;%) {
+  my $self = shift;
+  $self->send_error (@_);
+  $self->throw;
+} # throw_error
+
 1;
 
 =head1 LICENSE

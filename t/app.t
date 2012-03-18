@@ -301,6 +301,134 @@ Content-Type: text/plain; charset=us-ascii
 410};
 } # _send_error_with_code_and_reason_utf8
 
+## ------ Throw-or-process ------
+
+sub _execute_done : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->http->set_response_header ('X-Hoge' => 'Fuga');
+    $app->send_plain_text ("\x{4000}abc");
+  });
+  is $out, qq{Status: 200 OK
+Content-Type: text/plain; charset=utf-8
+X-Hoge: Fuga
+
+\xE4\x80\x80abc};
+} # _execute_done
+
+sub _execute_perl_error : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->http->set_response_header ('X-Hoge' => 'Fuga');
+    not_found_method ();
+  });
+  is $out, qq{Status: 500 Internal Server Error
+Content-Type: text/plain; charset=us-ascii
+X-Hoge: Fuga
+
+500};
+} # _execute_perl_error
+
+sub _execute_perl_error_sent : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->http->set_response_header ('X-Hoge' => 'Fuga');
+    $app->send_html ("abc");
+    not_found_method ();
+  });
+  is $out, qq{Status: 200 OK
+Content-Type: text/html; charset=utf-8
+X-Hoge: Fuga
+
+abc};
+} # _execute_perl_error_sent
+
+sub _execute_died : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->http->set_response_header ('X-Hoge' => 'Fuga');
+    die "abc def";
+  });
+  is $out, qq{Status: 500 Internal Server Error
+Content-Type: text/plain; charset=us-ascii
+X-Hoge: Fuga
+
+500};
+} # _execute_died
+
+sub _execute_thrown : Test(2) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->http->set_response_header ('X-Hoge' => 'Fuga');
+    $app->throw;
+    $app->send_plain_text ("aqbc");
+  });
+  is $out, qq{};
+  $app->http->close_response_body;
+  is $out, qq{Status: 200 OK
+X-Hoge: Fuga
+
+};
+} # _execute_thrown
+
+sub _throw_outside_execute : Test(2) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->http->set_response_header ('X-Hoge' => 'Fuga');
+  dies_ok {
+    $app->throw;
+  };
+  is $out, qq{};
+} # _throw_outside_execute
+
+sub _throw_redirect : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    REQUEST_URI => q<http://hoge/>,
+  }, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->http->set_response_header ('X-Hoge' => 'Fuga');
+    $app->throw_redirect (q<http://abc/hoge/fuga>);
+    $app->send_plain_text ("aqbc");
+  });
+  is $out, qq{Status: 302 Found
+Content-Type: text/html; charset=utf-8
+X-Hoge: Fuga
+Location: http://abc/hoge/fuga
+
+<!DOCTYPE HTML><title>Moved</title><a href="http://abc/hoge/fuga">Moved</a>};
+} # _throw_redirect
+
+sub _throw_error : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    REQUEST_URI => q<http://hoge/>,
+  }, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->http->set_response_header ('X-Hoge' => 'Fuga');
+    $app->throw_error (501);
+    $app->send_plain_text ("aqbc");
+  });
+  is $out, qq{Status: 501 Not Implemented
+Content-Type: text/plain; charset=us-ascii
+X-Hoge: Fuga
+
+501};
+} # _throw_error
+
 __PACKAGE__->runtests;
 
 1;

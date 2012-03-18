@@ -422,6 +422,10 @@ sub send_response_headers ($) {
   $_[0]->{response_headers_sent} = 1;
 } # send_response_headers
 
+sub response_headers_sent ($) {
+  return $_[0]->{response_headers_sent};
+} # response_headers_sent
+
 sub send_response_body_as_text ($) {
   $_[0]->send_response_headers unless $_[0]->{response_headers_sent};
   $_[0]->{interface}->send_response_body (encode 'utf-8', $_[1]);

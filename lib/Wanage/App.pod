@@ -185,6 +185,60 @@ Examples:
 
 =back
 
+=head2 Throw-or-process application model
+
+The application object supports the throw-or-process application
+model, that is, the application may throw an exception to signal the
+completion of the construction of the response, in the middle of
+processing code, to precent from the subsequent lines being executed.
+This feature might be useful when the application detects an error in
+the input such that it wants to stop the processing at the beginning
+of a long method.
+
+Example:
+
+  $app->execute (sub {
+    my $object = My::Object->find_by_id ($app->text_param ('id'));
+    $app->throw_error (404) unless $object;
+
+    $app->send_html ($object->as_html);
+  });
+
+In this example, if the C<id> parameter identifies a valid object, the
+HTML representation of the object is sent to the client with C<200>
+status.  Otherwise, a C<404> error response is sent.  The C<send_html>
+method is not invoked in this case.
+
+=over 4
+
+=item $app->execute (CODE)
+
+Execute the specified code reference.  The code should construct the
+response, with optional invocation of the C<throw> method.
+
+The code should not throw any other exception.  If it does, the
+exeception is reported by C<warn>.  Additionally, if the response
+headers are not sent yet, a C<500> Internal Server Error response is
+sent.  (If the response headers have already sent, it cannot be
+changed to an error response anymore.)
+
+=item $app->throw
+
+Throw a signal that the response construction has been done.  This
+method should be invoked after the response has been sent.
+
+=item $app->throw_redirect (ARGS)
+
+Send a redirect response and then throw.  This method is equivalent to
+invocations of C<send_redirect> and C<throw> methods.
+
+=item $app->throw_error (ARGS)
+
+Send an error response and then throw.  This method is equivalent to
+invocations of C<send_error> and C<throw> methods.
+
+=back
+
 =head1 SEE ALSO
 
 L<Wanage::HTTP>.

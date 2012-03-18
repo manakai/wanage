@@ -629,16 +629,18 @@ sub _send_response_methods_psgi : Test(1) {
                        ["ab\x20\nxzyz", "0"]];
 } # _send_response_methods_psgi
 
-sub _set_status_cgi : Test(4) {
+sub _set_status_cgi : Test(6) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
   ng $http->send_response;
   is $out, '';
   $http->set_status (402 => "Test\n1");
   $http->set_status (103 => "Hoge \x00fuga\x0D");
+  ng $http->response_headers_sent;
   $http->send_response_body_as_ref (\"");
   dies_here_ok { $http->set_status (501) };
   eq_or_diff $out, "Status: 103 Hoge \x00fuga \n\n";
+  ok $http->response_headers_sent;
 } # _set_status_cgi
 
 sub _set_status_default_text_cgi : Test(3) {
@@ -724,7 +726,7 @@ sub _send_response_body_as_text : Test(1) {
       encode 'utf-8', "\x{4340}abc\xAc\xFE\x45\x00ab";
 } # _send_response_body_as_text
 
-sub _send_response_body_as_ref : Test(1) {
+sub _send_response_body_as_ref : Test(2) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
   $http->send_response_body_as_ref (\"\xFEabc");
@@ -732,9 +734,10 @@ sub _send_response_body_as_ref : Test(1) {
   $http->send_response_body_as_ref (\"");
   $http->send_response_body_as_ref (\"0");
   is $out, "Status: 200 OK\n\n\xFEabc\xAc\xFE\x45\x00ab0";
+  ok $http->response_headers_sent;
 } # _send_response_body_as_ref
 
-sub _close_response_body : Test(7) {
+sub _close_response_body : Test(8) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
   $http->close_response_body;
@@ -745,7 +748,8 @@ sub _close_response_body : Test(7) {
   dies_here_ok { $http->send_response_body_as_ref (\"") };
   dies_here_ok { $http->send_response_body_as_text ("") };
   dies_here_ok { $http->close_response_body };
-} # _close_response_body
+  ok $http->response_headers_sent;}
+ # _close_response_body
 
 sub _send_response_psgi_streamable_multiple : Test(3) {
   my $http = Wanage::HTTP->new_from_psgi_env

@@ -438,6 +438,10 @@ methods above.  Exactly when they are sent to the server (and then the
 client) depends on the interface.  This method can be invoked only
 once.
 
+=item BOOL = $http->response_headers_sent
+
+Return whether the response headers are sent to the server or not.
+
 =item $http->send_response_body_as_text ($text)
 
 Send a text of character strings as part of the response body, by
