@@ -345,6 +345,63 @@
          },
          "version" : "6.62"
       },
+      "JSON::XS" : {
+         "dist" : "JSON-XS-2.32",
+         "module" : "JSON::XS",
+         "mymeta" : {
+            "abstract" : "unknown",
+            "author" : [
+               "unknown"
+            ],
+            "dynamic_config" : 0,
+            "generated_by" : "ExtUtils::MakeMaker version 6.58, CPAN::Meta::Converter version 2.110930001, CPAN::Meta::Converter version 2.112150",
+            "license" : [
+               "unknown"
+            ],
+            "meta-spec" : {
+               "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+               "version" : "2"
+            },
+            "name" : "JSON-XS",
+            "no_index" : {
+               "directory" : [
+                  "t",
+                  "inc"
+               ]
+            },
+            "prereqs" : {
+               "build" : {
+                  "requires" : {
+                     "ExtUtils::MakeMaker" : 0
+                  }
+               },
+               "configure" : {
+                  "requires" : {
+                     "ExtUtils::MakeMaker" : 0
+                  }
+               },
+               "runtime" : {
+                  "requires" : {
+                     "common::sense" : 0
+                  }
+               }
+            },
+            "release_status" : "stable",
+            "version" : "2.32"
+         },
+         "name" : "JSON::XS",
+         "pathname" : "M/ML/MLEHMANN/JSON-XS-2.32.tar.gz",
+         "provides" : {
+            "JSON::XS" : {
+               "file" : "JSON/XS.pm",
+               "version" : "2.32"
+            },
+            "JSON::XS::Boolean" : {
+               "file" : "JSON/XS.pm"
+            }
+         },
+         "version" : "2.32"
+      },
       "MRO::Compat" : {
          "dist" : "MRO-Compat-0.11",
          "module" : "MRO::Compat",
@@ -1307,6 +1364,58 @@
             }
          },
          "version" : "1.104"
+      },
+      "common::sense" : {
+         "dist" : "common-sense-3.4",
+         "module" : "common::sense",
+         "mymeta" : {
+            "abstract" : "unknown",
+            "author" : [
+               "unknown"
+            ],
+            "dynamic_config" : 0,
+            "generated_by" : "ExtUtils::MakeMaker::JSONMETA version 7.000, CPAN::Meta::Converter version 2.112150",
+            "license" : [
+               "unknown"
+            ],
+            "meta-spec" : {
+               "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+               "version" : "2"
+            },
+            "name" : "common-sense",
+            "no_index" : {
+               "directory" : [
+                  "t",
+                  "inc"
+               ]
+            },
+            "prereqs" : {
+               "build" : {
+                  "requires" : {
+                     "ExtUtils::MakeMaker" : 0
+                  }
+               },
+               "configure" : {
+                  "requires" : {
+                     "ExtUtils::MakeMaker" : 0
+                  }
+               },
+               "runtime" : {
+                  "requires" : {}
+               }
+            },
+            "release_status" : "stable",
+            "version" : "3.4"
+         },
+         "name" : "common::sense",
+         "pathname" : "M/ML/MLEHMANN/common-sense-3.4.tar.gz",
+         "provides" : {
+            "common::sense" : {
+               "file" : "common/sense.pm",
+               "version" : "3.4"
+            }
+         },
+         "version" : "3.4"
       }
    },
    "version" : "0.9"

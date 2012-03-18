@@ -1,4 +1,5 @@
-PERL_PATH = local/dummy/path/to/perl/bin
+PERL_VERSION = latest
+PERL_PATH = $(abspath local/perlbrew/perls/perl-$(PERL_VERSION)/bin)
 PROVE = prove
 
 all:
@@ -17,7 +18,7 @@ safetest: local-submodules carton-install config/perl/libs.txt
 
 Makefile-setupenv: Makefile.setupenv
 	make --makefile Makefile.setupenv setupenv-update \
-	    SETUPENV_MIN_REVISION=20120313
+	    SETUPENV_MIN_REVISION=20120318
 
 Makefile.setupenv:
 	wget -O $@ https://raw.github.com/wakaba/perl-setupenv/master/Makefile.setupenv
