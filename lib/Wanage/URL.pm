@@ -29,6 +29,15 @@ sub resolve_string ($$) {
   return $_[0]->new_from_parsed_url (resolve_url $_[1], $_[0]);
 } # resolve_string
 
+sub set_scheme ($$) {
+  $_[0]->{scheme} = $_[1];
+  $_[0]->{scheme_normalized} = $_[1];
+} # set_scheme
+
+sub clone ($) {
+  return bless {%{$_[0]}}, ref $_[0];
+} # clone
+
 sub stringify ($) {
   return serialize_parsed_url $_[0]; # or undef
 } # stringify

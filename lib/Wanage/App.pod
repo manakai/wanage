@@ -283,6 +283,16 @@ C<$Wanage::App::AllowedURLSchemes>, where keys are normalized URL
 schemes and values are true values.  By default, the value is C<<
 {http => 1, https => 1} >>.
 
+=item $app->requires_https
+
+Check whether the URL scheme of the request is C<https> or not.
+
+If the request URL scheme is I<not> C<https> and is a safe method
+(i.e. C<GET> or C<HEAD>), the request is redirected to the C<https>
+URL with same authority, path, query, and fragment components as the
+request.  If the method is not safe, a C<400> error is returned
+instead.
+
 =item $app->requires_valid_hostname
 
 Check whether the host component of the request URL is supported by

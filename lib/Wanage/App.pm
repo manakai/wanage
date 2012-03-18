@@ -185,6 +185,20 @@ sub requires_valid_url_scheme ($) {
   }
 } # requires_valid_url_scheme
 
+sub requires_https ($) {
+  my $self = shift;
+  my $url = $self->{http}->url;
+  if ($url->{scheme} eq 'https') {
+    #
+  } elsif ($self->{http}->request_method_is_safe) {
+    $url = $url->clone;
+    $url->set_scheme ('https');
+    $self->throw_redirect ($url->stringify);
+  } else {
+    $self->throw_error (400, reason_phrase => 'Unsupported URL scheme');
+  }
+} # requires_https
+
 our $AllowedHostnamePattern ||= qr/.*/;
 
 sub requires_valid_hostname ($) {

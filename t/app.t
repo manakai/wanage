@@ -528,6 +528,93 @@ Content-Type: text/plain; charset=us-ascii
 400";
 } # _requires_valid_url_scheme_https_custom
 
+sub _requires_https_https : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    REQUEST_URI => q<https://foo/bar>,
+  }, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_https;
+    $app->send_plain_text ('ok');
+  });
+  is $out, "Status: 200 OK
+Content-Type: text/plain; charset=utf-8
+
+ok";
+} # _requires_https_https
+
+sub _requires_https_http_get : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    REQUEST_URI => q<http://foo/bar>,
+    REQUEST_METHOD => 'GET',
+  }, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_https;
+    $app->send_plain_text ('ok');
+  });
+  is $out, q{Status: 302 Found
+Content-Type: text/html; charset=utf-8
+Location: https://foo/bar
+
+<!DOCTYPE HTML><title>Moved</title><a href="https://foo/bar">Moved</a>};
+} # _requires_https_http_get
+
+sub _requires_https_ftp_get : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    REQUEST_URI => q<ftp://foo/bar>,
+    REQUEST_METHOD => 'GET',
+  }, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_https;
+    $app->send_plain_text ('ok');
+  });
+  is $out, q{Status: 302 Found
+Content-Type: text/html; charset=utf-8
+Location: https://foo/bar
+
+<!DOCTYPE HTML><title>Moved</title><a href="https://foo/bar">Moved</a>};
+} # _requires_https_ftp_get
+
+sub _requires_https_about_get : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    REQUEST_URI => q<about:blank>,
+    REQUEST_METHOD => 'GET',
+  }, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_https;
+    $app->send_plain_text ('ok');
+  });
+  is $out, q{Status: 302 Found
+Content-Type: text/html; charset=utf-8
+Location: https:blank
+
+<!DOCTYPE HTML><title>Moved</title><a href="https:blank">Moved</a>};
+} # _requires_https_about_get
+
+sub _requires_https_http_post : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    REQUEST_URI => q<http://foo/bar>,
+    REQUEST_METHOD => 'POST',
+  }, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_https;
+    $app->send_plain_text ('ok');
+  });
+  is $out, q{Status: 400 Unsupported URL scheme
+Content-Type: text/plain; charset=us-ascii
+
+400};
+} # _requires_https_http_post
+
 sub _requires_valid_hostname : Test(1) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {

@@ -49,6 +49,16 @@ Resolve a relative URL against the base URL.  The base URL must be a
 canonical URL; otherwise the result is undefined.  This method return
 a new URL object.
 
+=item $url->set_scheme ($scheme)
+
+Set the URL scheme.  The argument must be a new URL scheme in the
+lowercase normalized form.  It must not include C<:> separator.
+
+=item $url2 = $url->clone
+
+Create a new instance of C<Wanage::URL> object with same value as the
+current object.
+
 =item $url_as_string = $url->stringify
 
 Return the string representation of the URL.  If the URL is invalid,

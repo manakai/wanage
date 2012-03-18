@@ -49,6 +49,24 @@ sub _resolve_string : Test(3) {
   is $url->stringify, q<https://hoge.fuga/ab/cd/ef>;
 } # resolve_string
 
+sub _set_scheme : Test(3) {
+  my $url = Wanage::URL->new_from_string (q<https://hoge.fuga/ab/cd/ef>);
+  $url->set_scheme ('about');
+  is $url->stringify, q<about://hoge.fuga/ab/cd/ef>;
+  is $url->{scheme_normalized}, 'about';
+  is $url->{scheme}, 'about';
+} # _set_scheme
+
+sub _clone : Test(5) {
+  my $url = Wanage::URL->new_from_string (q<https://hoge.fuga/ab/cd/ef>);
+  my $url2 = $url->clone;
+  isnt $url2, $url;
+  isa_ok $url2, 'Wanage::URL';
+  is $url2->stringify, $url->stringify;
+  is $url2->{scheme_normalized}, 'https';
+  ok $url2->{is_hierarchical};
+} # _clone
+
 sub _stringify : Test(2) {
   my $url = Wanage::URL->new_from_string (q<http://ho>);
   is ref $url->stringify, '';
