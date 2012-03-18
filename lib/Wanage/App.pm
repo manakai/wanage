@@ -246,6 +246,8 @@ sub requires_request_method ($;$) {
   my $self = shift;
   my $allowed = shift || $AllowedRequestMethods;
   unless ($allowed->{$self->http->request_method}) {
+    $self->http->set_response_header
+        (Allow => join ',', sort grep { $allowed->{$_} } keys %$allowed);
     $self->throw_error (405);
   }
 } # requires_request_method

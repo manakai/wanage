@@ -984,6 +984,7 @@ sub _requires_request_method_not_allowed : Test(4) {
     });
     is $out, "Status: 405 Method Not Allowed
 Content-Type: text/plain; charset=us-ascii
+Allow: GET,HEAD,POST
 
 405";
   }
@@ -1017,6 +1018,7 @@ sub _requires_request_method_not_allowed_custom : Test(2) {
     });
     is $out, "Status: 405 Method Not Allowed
 Content-Type: text/plain; charset=us-ascii
+Allow: BAR,FOO
 
 405";
   }
@@ -1052,6 +1054,7 @@ sub _requires_request_method_not_allowed_custom_default : Test(2) {
     });
     is $out, "Status: 405 Method Not Allowed
 Content-Type: text/plain; charset=us-ascii
+Allow: BAR,FOO
 
 405";
   }
