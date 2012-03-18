@@ -22,10 +22,11 @@ sub _version : Test(1) {
   ok $Wanage::App::Role::JSON::VERSION;
 } # _version
 
-sub _request_json : Test(14) {
+sub _request_json : Test(16) {
   for (
     [undef, undef],
     ['' => undef],
+    ['""' => ''],
     ['1244' => 1244],
     ['"acd \uAA0a"' => "acd \x{AA0A}"],
     ['{"abc":"\uFEAA"}' => {abc => "\x{FEAA}"}],
