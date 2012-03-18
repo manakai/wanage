@@ -153,6 +153,19 @@ sub throw_error ($$;%) {
   $self->throw;
 } # throw_error
 
+## ------ Validation rules ------
+
+our $MaxContentLength ||= 1024 * 1024;
+
+sub requires_valid_content_length ($;%) {
+  my ($self, %args) = @_;
+  my $max = $args{max} || $MaxContentLength;
+  my $length = $self->{http}->request_body_length;
+  unless ($length <= $max) {
+    $self->throw_error (413);
+  }
+} # requires_valid_content_length
+
 1;
 
 =head1 LICENSE

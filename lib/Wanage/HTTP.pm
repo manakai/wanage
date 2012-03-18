@@ -241,6 +241,10 @@ sub request_ims ($) {
 
 # ---- Request body ----
 
+sub request_body_length ($) {
+  return $_[0]->{interface}->get_meta_variable ('CONTENT_LENGTH') || 0;
+} # request_body_length
+
 sub request_body_as_ref ($) {
   return $_[0]->{request_body_as_ref}
       ||= $_[0]->{interface}->get_request_body_as_ref;

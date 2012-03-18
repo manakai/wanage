@@ -429,6 +429,95 @@ X-Hoge: Fuga
 501};
 } # _throw_error
 
+## ------ Validation ------
+
+sub _requires_valid_content_length_no_request_body : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_valid_content_length;
+    $app->send_plain_text ('ok');
+  });
+  is $out, "Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\nok";
+} # _requires_valid_content_length_no_request_body
+
+sub _requires_valid_content_length_zero : Test(1) {
+  my $in = '';
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    CONTENT_LENGTH => length $in,
+  }, $in, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_valid_content_length;
+    $app->send_plain_text ('ok');
+  });
+  is $out, "Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\nok";
+} # _requires_valid_content_length_zero
+
+sub _requires_valid_content_length_short : Test(1) {
+  my $in = 'abcde';
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    CONTENT_LENGTH => length $in,
+  }, $in, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_valid_content_length;
+    $app->send_plain_text ('ok');
+  });
+  is $out, "Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\nok";
+} # _requires_valid_content_length_short
+
+sub _requires_valid_content_length_long : Test(1) {
+  my $in = 'a' x (1024 * 1024 + 1);
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    CONTENT_LENGTH => length $in,
+  }, $in, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_valid_content_length;
+    $app->send_plain_text ('ok');
+  });
+  is $out, "Status: 413 Request Entity Too Large
+Content-Type: text/plain; charset=us-ascii
+
+413";
+} # _requires_valid_content_length_long
+
+sub _requires_valid_content_length_short_but_max : Test(1) {
+  my $in = 'abcde';
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    CONTENT_LENGTH => length $in,
+  }, $in, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_valid_content_length (max => 4);
+    $app->send_plain_text ('ok');
+  });
+  is $out, "Status: 413 Request Entity Too Large
+Content-Type: text/plain; charset=us-ascii
+
+413";
+} # _requires_valid_content_length_short_but_max
+
+sub _requires_valid_content_length_eq_max : Test(1) {
+  my $in = 'abcde';
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    CONTENT_LENGTH => length $in,
+  }, $in, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_valid_content_length (max => 5);
+    $app->send_plain_text ('ok');
+  });
+  is $out, "Status: 200 OK\nContent-Type: text/plain; charset=utf-8\n\nok";
+} # _requires_valid_content_length_eq_max
+
 __PACKAGE__->runtests;
 
 1;

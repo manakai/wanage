@@ -239,6 +239,35 @@ invocations of C<send_error> and C<throw> methods.
 
 =back
 
+=head2 Validation methods
+
+Following methods can be used to validate the request data.  They
+throw appropriate error response when the request data is not
+acceptable.  Therefore, they must be used within the code executed in
+the C<execute> method described above.
+
+=over 4
+
+=item $app->requires_valid_content_length (%args)
+
+Check the length of the request-body and throw C<413> Request-body Too
+Large error response if it is too large.
+
+Folowing option is available:
+
+=over 4
+
+=item max => $max_length
+
+The maximum number of bytes allowed by the application.  If this
+option is not specified, the value of the global variable
+C<$Wanage::App::MaxContentLength>, whose default is C<1024 * 1024>
+(i.e. 1MB), is used.
+
+=back
+
+=back
+
 =head1 SEE ALSO
 
 L<Wanage::HTTP>.

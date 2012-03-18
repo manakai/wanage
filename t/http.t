@@ -451,14 +451,15 @@ sub _request_ims : Test(8) {
 
 # ------ Request body -----
 
-sub _request_body_as_ref_no_body : Test(2) {
+sub _request_body_as_ref_no_body : Test(4) {
   my $https = new_https_for_interfaces;
   for my $http (@$https) {
     is $http->request_body_as_ref, undef;
+    is $http->request_body_length, 0;
   }
 } # _request_body_as_ref_no_body
 
-sub _request_body_as_ref_with_body : Test(4) {
+sub _request_body_as_ref_with_body : Test(6) {
   my $https = new_https_for_interfaces
       env => {CONTENT_LENGTH => 10},
       request_body => "abc\x40\x9F\xCDaaagewgeeee";
@@ -466,20 +467,22 @@ sub _request_body_as_ref_with_body : Test(4) {
     my $ref = $http->request_body_as_ref;
     is $$ref, "abc\x40\x9F\xCDaaag";
     is $http->request_body_as_ref, $ref;
+    is $http->request_body_length, 10;
   }
 } # _request_body_as_ref_with_body
 
-sub _request_body_as_ref_with_body_too_short : Test(4) {
+sub _request_body_as_ref_with_body_too_short : Test(6) {
   my $https = new_https_for_interfaces
       env => {CONTENT_LENGTH => 100},
       request_body => "abc\x40\x9F\xCDaaagewgeeee";
   for my $http (@$https) {
     dies_here_ok { $http->request_body_as_ref };
     dies_here_ok { $http->request_body_as_ref };
+    is $http->request_body_length, 100;
   }
 } # _request_body_as_ref_with_body_too_short
 
-sub _request_body_as_ref_zero_body : Test(4) {
+sub _request_body_as_ref_zero_body : Test(6) {
   my $https = new_https_for_interfaces
       env => {CONTENT_LENGTH => 0},
       request_body => "";
@@ -487,6 +490,7 @@ sub _request_body_as_ref_zero_body : Test(4) {
     my $ref = $http->request_body_as_ref;
     is $$ref, "";
     is $http->request_body_as_ref, $ref;
+    is $http->request_body_length, 0;
   }
 } # _request_body_as_ref_zero_body
 

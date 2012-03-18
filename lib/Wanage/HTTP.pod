@@ -292,6 +292,12 @@ reference is returned.
 
 Applications should not modify the hash reference.
 
+=item $length = $http->request_body_length
+
+Return the number of request body.  It is the value of the
+C<CONTENT_LENGTH> metavariable if the interface is CGI.  The method
+return zero (C<0>) if there is no request body.
+
 =back
 
 =head2 Response
