@@ -85,6 +85,12 @@ The parameter names and values are interpreted as UTF-8 texts.  The
 argument must be a character string.  The return value, if it is not
 C<undef>, is a character string.
 
+This method ignores the C<_charset_> hack, which is a willful
+violation to the HTML Standard, which defines the decoding algorithm
+for C<application/x-www-form-urlencoded>.  If your application has to
+support non-UTF-8 character encodings, you have to define your own
+method to decode such data.
+
 =item $list = $app->text_param_list ($name)
 
 Return the list (L<List::Ish>) object containing the parameter values
@@ -98,6 +104,12 @@ The parameter names and values are interpreted as UTF-8 texts.  The
 argument must be a character string.  The returned list contains zero
 or more character strings.
 
+This method ignores the C<_charset_> hack, which is a willful
+violation to the HTML Standard, which defines the decoding algorithm
+for C<application/x-www-form-urlencoded>.  If your application has to
+support non-UTF-8 character encodings, you have to define your own
+method to decode such data.
+
 =item $value = $app->bare_param ($name)
 
 Return the value for the parameter whose name is given as the
@@ -109,6 +121,12 @@ no parameter with the specified name, the C<undef> value is returned.
 The parameter names and values are interpreted as octet-streams.  The
 argument must be a byte string.  The return value, if it is not
 C<undef>, is a byte string.
+
+This method does not decode any character encoding in use, which is a
+willful violation to the HTML Standard, which defines the decoding
+algorithm for C<application/x-www-form-urlencoded>, and RFC 2388 and
+MIME, which defines the semantics for C<multipart/form-data> entity
+and any entity-body within it.
 
 =item $list = $app->bare_param_list ($name)
 
@@ -122,6 +140,12 @@ specified name, an empty list is returned.
 The parameter names and values are interpreted as octet-streams.  The
 argument must be a byte string.  The returned list contains zero or
 more byte strings.
+
+This method does not decode any character encoding in use, which is a
+willful violation to the HTML Standard, which defines the decoding
+algorithm for C<application/x-www-form-urlencoded>, and RFC 2388 and
+MIME, which defines the semantics for C<multipart/form-data> entity
+and any entity-body within it.
 
 =back
 
