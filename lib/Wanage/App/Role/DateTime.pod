@@ -1,0 +1,53 @@
+=head1 NAME
+
+Wanage::App::Role::DateTime - Wanage application - DateTime module
+
+=head1 SYNOPSIS
+
+  package My::Wanage::App;
+  use base qw(Wanage::App::Role::DateTime Wanage::App);
+
+  $app = My::Wanage::App->new_from_http ($http);
+  $dt = $app->epoch_param_as_datetime ('hoge');
+
+=head1 DESCRIPTION
+
+The C<Wanage::App::Role::DateTime> module defines additional methods
+for handling date-time data as L<DateTime> objects in L<Wanage::App>
+API.  This module is intended to be used a superclass of some subclass
+of L<Wanage::App>.
+
+=head1 METHOD
+
+=over 4
+
+=item $datetime = $app->epoch_param_as_datetime ($name)
+
+Decode request parameter (i.e. C<application/x-www-form-urlencoded> or
+C<multipart/form-data> encoded form data set in query parameters and
+request-body) with the specified name as epoch (so-called Unix time or
+C<time_t>) and return as a L<DateTime> object.
+
+If the parameter values is not an integer (or is too large), the
+C<undef> value is returned.
+
+=back
+
+=head1 SEE ALSO
+
+L<DateTime>.
+
+L<Wanage::App>.
+
+=head1 AUTHOR
+
+Wakaba <w@wuika.fam.cx>.
+
+=head1 LICENSE
+
+Copyright 2012 Wakaba <w@suika.fam.cx>.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut

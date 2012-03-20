@@ -5,7 +5,7 @@ Wanage::App::Role::JSON - Wanage application - JSON module
 =head1 SYNOPSIS
 
   package My::Wanage::App;
-  use base qw(Wanage::App Wanage::App::Role::JSON);
+  use base qw(Wanage::App::Role::JSON Wanage::App);
 
   $app = My::Wanage::App->new_from_http ($http);
   print Dumper $app->request_json;
