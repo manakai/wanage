@@ -387,18 +387,15 @@ sub _request_cookies : Test(72) {
   }
 } # _request_cookies
 
-sub _request_auth : Test(32) {
+sub _request_auth : Test(36) {
   for my $test (
     [undef, {}],
     ['' => {}],
     ['Basic' => {}],
     ['Basic abc!xyz' => {}],
-    ['Basic abc=',
-     {auth_scheme => 'basic', userid => "i\xB7", password => undef}],
-    ['BASIC abc=',
-     {auth_scheme => 'basic', userid => "i\xB7", password => undef}],
-    ['basic abc=',
-     {auth_scheme => 'basic', userid => "i\xB7", password => undef}],
+    ['Basic abc=', {}],
+    ['BASIC abc=', {}],
+    ['basic abc=', {}],
     ['basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==',
      {auth_scheme => 'basic', userid => "Aladdin", password => 'open sesame'}],
     ['Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==',
@@ -413,6 +410,9 @@ sub _request_auth : Test(32) {
     ['basic YWdlYXdnYXdnYWVmIGFnZXdnZWFmZXdhZ2FnZmV3OmdhZWFnZUpXd2dld2dhZ0d3Z2FnYWVhIGFlZmFnZWVlZWVlZWUgYWdld2dld2FnYXdnYWVld2E=',
      {auth_scheme => 'basic', userid => "ageawgawgaef agewgeafewagagfew",
       password => 'gaeageJWwgewgagGwgagaea aefageeeeeeee agewgewagawgaeewa'}],
+    ['Basic aG9nZTrkuIA=' => {auth_scheme => 'basic', userid => 'hoge',
+                              password => encode 'utf-8', "\x{4E00}"}],
+    ['Basic aG9nZQ==' => {}],
     ['Hoge fuga="" abc', {}],
     ['notbasic QWxhZGRpbjpvcGVuIHNlc2FtZQ', {}],
   ) {
@@ -997,7 +997,7 @@ sub _set_response_auth : Test(30) {
     [['Basic', realm => 'hoge'], 'Basic realm="hoge"'],
     [['BASIC', realm => 'hoge'], 'Basic realm="hoge"'],
     [['basic', realm => 'hoge fuga'], 'Basic realm="hoge fuga"'],
-    [['basic', realm => 'abc\de'], 'Basic realm="abc\de"'],
+    [['basic', realm => 'abc\de'], 'Basic realm="abc_de"'],
     [['basic', realm => 'ab"cd'], 'Basic realm="ab_cd"'],
     [['basic', realm => "\x0D\x0A"], qq{Basic realm="\x0D\x0A"}],
     [['basic', realm => "\x90\xFE"], qq{Basic realm="\xc2\x90\xc3\xbe"}],

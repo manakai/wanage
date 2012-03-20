@@ -353,6 +353,35 @@ used instead.  In either case, the list must be supplied as a hash
 reference where keys are request methods and values are true values.
 The default list is: C<< {GET => 1, HEAD => 1, POST => 1} >>.
 
+=item $app->requires_basic_auth ({$userid => $password, ...}, %args)
+
+Check whether the request contains a credentials of HTTP Basic
+authentication whose userid-password pair is contained in the hash
+reference given as the argument.
+
+The argument must be a hash reference where key-value pairs represent
+the allowed userid-password pairs.  Values of userid and password must
+be byte strings.  It should only contain ASCII printable characters
+for HTTP compliance and interoperability.  The userid cannot contain
+the C<:> character.
+
+If the request does not contain credentials for Basic authentication,
+or it does contain a wrong or inappropriate credentials, a C<401>
+Authorization Required response is thrown.
+
+Following option is available:
+
+=over 4
+
+=item realm => $string
+
+A short string that represents the realm, the scope of the
+authentication.  Unless this option is specified, the realm is set to
+the empty string.  If specified, the realm can only contain printable
+ASCII characters other than C<"> and C<\>.
+
+=back
+
 =back
 
 =head1 SEE ALSO

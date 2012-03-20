@@ -182,10 +182,10 @@ sub request_auth ($) {
     require MIME::Base64;
     my $decoded = MIME::Base64::decode_base64 ($auth);
     my ($userid, $password) = split /:/, $decoded, 2;
-    return {auth_scheme => 'basic', userid => $userid, password => $password};
-  } else {
-    return {};
+    return {auth_scheme => 'basic', userid => $userid, password => $password}
+        if defined $password;
   }
+  return {};
 } # request_auth
 
 sub request_cache_control ($) {
@@ -361,7 +361,7 @@ sub set_response_auth {
   $auth_scheme =~ tr/A-Z/a-z/; ## ASCII case-insensitive.
   $args{realm} = '' unless defined $args{realm};
   if ($auth_scheme eq 'basic') {
-    $args{realm} =~ tr/"/_/;
+    $args{realm} =~ tr/"\\/__/;
     $self->add_response_header
         ('WWW-Authenticate' => 'Basic realm="' . (_u8 $args{realm}) . '"');
   } else {

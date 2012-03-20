@@ -1060,6 +1060,303 @@ Allow: BAR,FOO
   }
 } # _requires_request_method_not_allowed_custom_default
 
+sub _requires_basic_auth_empty : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_basic_auth;
+    $app->send_plain_text ('ok');
+  });
+  is $out, q{Status: 401 Unauthorized
+Content-Type: text/plain; charset=us-ascii
+WWW-Authenticate: Basic realm=""
+
+401 Authorization required};
+} # _requires_basic_auth_empty
+
+sub _requires_basic_auth_no_auth : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_basic_auth ({foo => 123});
+    $app->send_plain_text ('ok');
+  });
+  is $out, q{Status: 401 Unauthorized
+Content-Type: text/plain; charset=us-ascii
+WWW-Authenticate: Basic realm=""
+
+401 Authorization required};
+} # _requires_basic_auth_no_auth
+
+sub _requires_basic_auth_not_found : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    HTTP_AUTHORIZATION => 'Basic Zm9vOmJhcg==',
+  }, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_basic_auth ({bar => 123});
+    $app->send_plain_text ('ok');
+  });
+  is $out, q{Status: 401 Unauthorized
+Content-Type: text/plain; charset=us-ascii
+WWW-Authenticate: Basic realm=""
+
+401 Authorization required};
+} # _requires_basic_auth_not_found
+
+sub _requires_basic_auth_bad_password : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    HTTP_AUTHORIZATION => 'Basic Zm9vOmJhcg==',
+  }, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_basic_auth ({foo => 123});
+    $app->send_plain_text ('ok');
+  });
+  is $out, q{Status: 401 Unauthorized
+Content-Type: text/plain; charset=us-ascii
+WWW-Authenticate: Basic realm=""
+
+401 Authorization required};
+} # _requires_basic_auth_bad_password
+
+sub _requires_basic_auth_found : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    HTTP_AUTHORIZATION => 'Basic Zm9vOmJhcg==',
+  }, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_basic_auth ({foo => 'bar'});
+    $app->send_plain_text ('ok');
+  });
+  is $out, q{Status: 200 OK
+Content-Type: text/plain; charset=utf-8
+
+ok};
+} # _requires_basic_auth_found
+
+sub _requires_basic_auth_found_empty_password : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    HTTP_AUTHORIZATION => 'Basic Zm9vOg==',
+  }, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_basic_auth ({foo => ''});
+    $app->send_plain_text ('ok');
+  });
+  is $out, q{Status: 200 OK
+Content-Type: text/plain; charset=utf-8
+
+ok};
+} # _requires_basic_auth_found_empty_password
+
+sub _requires_basic_auth_not_found_empty_password : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    HTTP_AUTHORIZATION => 'Basic Zm9vOg==',
+  }, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_basic_auth ({foo => 'bar'});
+    $app->send_plain_text ('ok');
+  });
+  is $out, q{Status: 401 Unauthorized
+Content-Type: text/plain; charset=us-ascii
+WWW-Authenticate: Basic realm=""
+
+401 Authorization required};
+} # _requires_basic_auth_not_found_empty_password
+
+sub _requires_basic_auth_found_empty_user : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    HTTP_AUTHORIZATION => 'Basic OmhvZ2U=',
+  }, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_basic_auth ({'' => 'hoge'});
+    $app->send_plain_text ('ok');
+  });
+  is $out, q{Status: 200 OK
+Content-Type: text/plain; charset=utf-8
+
+ok};
+} # _requires_basic_auth_found_empty_user
+
+sub _requires_basic_auth_not_found_empty_user : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    HTTP_AUTHORIZATION => 'Basic OmhvZ2U=',
+  }, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_basic_auth ({'' => 'bar'});
+    $app->send_plain_text ('ok');
+  });
+  is $out, q{Status: 401 Unauthorized
+Content-Type: text/plain; charset=us-ascii
+WWW-Authenticate: Basic realm=""
+
+401 Authorization required};
+} # _requires_basic_auth_not_found_empty_user
+
+sub _requires_basic_auth_found_empty_password : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    HTTP_AUTHORIZATION => 'Basic Zm9vOg==',
+  }, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_basic_auth ({foo => ''});
+    $app->send_plain_text ('ok');
+  });
+  is $out, q{Status: 200 OK
+Content-Type: text/plain; charset=utf-8
+
+ok};
+} # _requires_basic_auth_found_empty_password
+
+sub _requires_basic_auth_not_found_utf8 : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    HTTP_AUTHORIZATION => 'Basic aG9nZTrkuIA=',
+  }, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_basic_auth ({hoge => "\x{4E00}"});
+    $app->send_plain_text ('ok');
+  });
+  is $out, q{Status: 401 Unauthorized
+Content-Type: text/plain; charset=us-ascii
+WWW-Authenticate: Basic realm=""
+
+401 Authorization required};
+} # _requires_basic_auth_not_found_utf8
+
+sub _requires_basic_auth_utf8_bytes : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    HTTP_AUTHORIZATION => 'Basic aG9nZTrkuIA=',
+  }, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_basic_auth ({hoge => encode 'utf-8', "\x{4E00}"});
+    $app->send_plain_text ('ok');
+  });
+  is $out, q{Status: 200 OK
+Content-Type: text/plain; charset=utf-8
+
+ok};
+} # _requires_basic_auth_utf8_bytes
+
+sub _requires_basic_auth_realm_empty : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    HTTP_AUTHORIZATION => 'Basic Zm9vOmJhcg==',
+  }, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_basic_auth ({foo => 123}, realm => '');
+    $app->send_plain_text ('ok');
+  });
+  is $out, q{Status: 401 Unauthorized
+Content-Type: text/plain; charset=us-ascii
+WWW-Authenticate: Basic realm=""
+
+401 Authorization required};
+} # _requires_basic_auth_realm_empty
+
+sub _requires_basic_auth_realm_zero : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    HTTP_AUTHORIZATION => 'Basic Zm9vOmJhcg==',
+  }, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_basic_auth ({foo => 123}, realm => '0');
+    $app->send_plain_text ('ok');
+  });
+  is $out, q{Status: 401 Unauthorized
+Content-Type: text/plain; charset=us-ascii
+WWW-Authenticate: Basic realm="0"
+
+401 Authorization required};
+} # _requires_basic_auth_realm_zero
+
+sub _requires_basic_auth_realm_non_empty : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    HTTP_AUTHORIZATION => 'Basic Zm9vOmJhcg==',
+  }, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_basic_auth ({foo => 123}, realm => '123 abc');
+    $app->send_plain_text ('ok');
+  });
+  is $out, q{Status: 401 Unauthorized
+Content-Type: text/plain; charset=us-ascii
+WWW-Authenticate: Basic realm="123 abc"
+
+401 Authorization required};
+} # _requires_basic_auth_realm_non_empty
+
+sub _requires_basic_auth_realm_utf8 : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    HTTP_AUTHORIZATION => 'Basic Zm9vOmJhcg==',
+  }, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_basic_auth ({foo => 123}, realm => "\x{4e00}");
+    $app->send_plain_text ('ok');
+  });
+  is $out, encode 'utf-8', qq{Status: 401 Unauthorized
+Content-Type: text/plain; charset=us-ascii
+WWW-Authenticate: Basic realm="\x{4E00}"
+
+401 Authorization required};
+} # _requires_basic_auth_realm_utf8
+
+sub _requires_basic_auth_realm_bytes : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    HTTP_AUTHORIZATION => 'Basic Zm9vOmJhcg==',
+  }, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_basic_auth ({foo => 123}, realm => "\x9F\xC1\xFF");
+    $app->send_plain_text ('ok');
+  });
+  is $out, encode 'utf-8', qq{Status: 401 Unauthorized
+Content-Type: text/plain; charset=us-ascii
+WWW-Authenticate: Basic realm="\x9F\xC1\xFF"
+
+401 Authorization required};
+} # _requires_basic_auth_realm_bytes
+
+sub _requires_basic_auth_realm_quotation : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    HTTP_AUTHORIZATION => 'Basic Zm9vOmJhcg==',
+  }, undef, $out;
+  my $app = Wanage::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_basic_auth ({foo => 123}, realm => '"ab\c');
+    $app->send_plain_text ('ok');
+  });
+  is $out, q{Status: 401 Unauthorized
+Content-Type: text/plain; charset=us-ascii
+WWW-Authenticate: Basic realm="_ab_c"
+
+401 Authorization required};
+} # _requires_basic_auth_realm_quotation
+
 __PACKAGE__->runtests;
 
 1;

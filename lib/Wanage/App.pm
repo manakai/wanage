@@ -252,6 +252,29 @@ sub requires_request_method ($;$) {
   }
 } # requires_request_method
 
+sub requires_basic_auth ($$;%) {
+  my ($self, $allowed, %args) = @_;
+  my $http = $self->http;
+
+  my $auth = $http->request_auth;
+  if ($auth->{auth_scheme} and $auth->{auth_scheme} eq 'basic') {
+    my $password = $allowed->{$auth->{userid}};
+    if (defined $password and
+        defined $auth->{password} and
+        $password eq $auth->{password}) {
+      return;
+    }
+  }
+
+  $http->set_status (401);
+  $http->set_response_auth ('basic', realm => $args{realm});
+  $http->set_response_header
+      ('Content-Type' => 'text/plain; charset=us-ascii');
+  $http->send_response_body_as_ref (\'401 Authorization required');
+  $http->close_response_body;
+  $self->throw;
+} # requires_basic_auth
+
 1;
 
 =head1 LICENSE
