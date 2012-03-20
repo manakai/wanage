@@ -1,0 +1,57 @@
+=head1 NAME
+
+Wanage::HTTP::MultipartFormData - A multipart/form-data Parser
+
+=head1 SYNOPSIS
+
+  use Wanage::HTTP::MultipartFormData;
+  my $formdata = Wanage::HTTP::MultipartFormData
+      ->new_from_boundary ($boundary);
+  $formdata->read_from_handle ($fh, $length);
+  $params = $formdata->as_params_hashref;
+  $uploads = $formdata->as_uploads_hashref;
+
+=head1 DESCRIPTION
+
+The C<Wanage::HTTP::MultipartFormData> module implements a parser
+for C<multipart/form-data> encoded form-data.
+
+This module is not intended to be used standalone; It is internally
+invoked from L<Wanage::HTTP> module.
+
+=head1 SEE ALSO
+
+L<Wanage::HTTP>.
+
+RFC 2046 - Multipurpose Internet Mail Extensions (MIME) Part Two:
+Media Types <http://tools.ietf.org/html/rfc2046>.
+
+RFC 2388 - Returning Values from Forms: multipart/form-data
+<http://tools.ietf.org/html/rfc2388>.
+
+RFC 2616 - Hypertext Transfer Protocol -- HTTP/1.1 - Multipart Types
+<http://tools.ietf.org/html/rfc2616#section-3.7.2>.
+
+HTML Standard - Multipart form data
+<http://www.whatwg.org/specs/web-apps/current-work/#multipart-form-data>.
+
+SuikaWiki:multipart/form-data
+<http://suika.fam.cx/~wakaba/wiki/sw/n/multipart+form-data>.
+
+=head1 AUTHOR
+
+Wakaba <w@suika.fam.cx>.
+
+=head1 ACKNOWLEDGEMENTS
+
+Many parts of this module are taken from L<HTTP::Body> authored by
+Christian Hansen, C<ch@ngmedia.com>.
+
+=head1 LICENSE
+
+Copyright 2012 Wakaba <w@suika.fam.cx>.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
