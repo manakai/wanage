@@ -2,8 +2,8 @@ package test::Wanage::HTTP::Date;
 use strict;
 use warnings;
 use Path::Class;
-use lib file (__FILE__)->dir->parent->subdir ('lib')->stringify;
-use lib glob file (__FILE__)->dir->parent->subdir ('modules', '*', 'lib')->stringify;
+use lib file (__FILE__)->dir->parent->parent->subdir ('lib')->stringify;
+use lib glob file (__FILE__)->dir->parent->parent->subdir ('modules', '*', 'lib')->stringify;
 use Wanage::HTTP::Date;
 use base qw(Test::Class);
 use Test::More;
@@ -51,7 +51,7 @@ sub _parse_http_date : Test(28) {
   }
 } # _parse_http_date
 
-my $data_d = file (__FILE__)->dir->subdir ('data');
+my $data_d = file (__FILE__)->dir->parent->subdir ('data');
 
 sub _examples : Tests {
   my $json = file2perl $data_d->file ('http-state-dates', 'examples.json');
