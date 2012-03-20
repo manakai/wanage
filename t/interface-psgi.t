@@ -89,6 +89,30 @@ sub _get_request_body_as_ref_second_call : Test(1) {
   };
 } # _get_request_body_as_ref_second_call
 
+sub _get_request_body_as_handle : Test(3) {
+  my $env = new_psgi_env {CONTENT_LENGTH => 10},
+      input_data => 'abcdefghjoilahgwegea';
+  my $psgi = Wanage::Interface::PSGI->new_from_psgi_env ($env);
+  my $fh = $psgi->get_request_body_as_handle;
+  is scalar <$fh>, 'abcdefghjoilahgwegea';
+  dies_here_ok {
+    $psgi->get_request_body_as_ref;
+  };
+  dies_here_ok {
+    $psgi->get_request_body_as_handle;
+  };
+} # _get_request_body_as_handle
+
+sub _get_request_body_as_handle_after_ref : Test(1) {
+  my $env = new_psgi_env {CONTENT_LENGTH => 10},
+      input_data => 'abcdefghjoilahgwegea';
+  my $psgi = Wanage::Interface::PSGI->new_from_psgi_env ($env);
+  $psgi->get_request_body_as_ref;
+  dies_here_ok {
+    $psgi->get_request_body_as_handle;
+  };
+} # _get_request_body_as_handle_after_ref
+
 sub _get_request_header_content_length : Test(6) {
   my $env = new_psgi_env {CONTENT_LENGTH => 10, HTTP_CONTENT_LENGTH => 20};
   my $psgi = Wanage::Interface::PSGI->new_from_psgi_env ($env);

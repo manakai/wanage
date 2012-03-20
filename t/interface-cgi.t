@@ -128,6 +128,30 @@ sub _get_request_body_as_ref_second_call : Test(1) {
   };
 } # _get_request_body_as_ref_second_call
 
+sub _get_request_body_as_handle : Test(3) {
+  my $cgi = with_cgi_env {
+    Wanage::Interface::CGI->new_from_main;
+  } {CONTENT_LENGTH => 10}, 'abcdefghjoilahgwegea';
+  my $fh = $cgi->get_request_body_as_handle;
+  is scalar <$fh>, 'abcdefghjoilahgwegea';
+  dies_here_ok {
+    $cgi->get_request_body_as_ref;
+  };
+  dies_here_ok {
+    $cgi->get_request_body_as_handle;
+  };
+} # _get_request_body_as_handle
+
+sub _get_request_body_as_handle_after_ref : Test(1) {
+  my $cgi = with_cgi_env {
+    Wanage::Interface::CGI->new_from_main;
+  } {CONTENT_LENGTH => 10}, 'abcdefghjoilahgwegea';
+  $cgi->get_request_body_as_ref;
+  dies_here_ok {
+    $cgi->get_request_body_as_handle;
+  };
+} # _get_request_body_as_handle
+
 sub _get_request_header_content_length : Test(6) {
   my $cgi = with_cgi_env {
     Wanage::Interface::CGI->new_from_main;

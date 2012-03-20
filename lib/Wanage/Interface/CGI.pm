@@ -44,6 +44,14 @@ sub get_request_body_as_ref ($) {
   return \$buf;
 } # get_request_body_as_ref
 
+sub get_request_body_as_handle ($) {
+  my $length = $_[0]->{env}->{CONTENT_LENGTH};
+  return undef unless defined $length;
+  croak "Request body has already been read" if $_[0]->{request_body_read};
+  $_[0]->{request_body_read} = 1;
+  return $_[0]->{request_body_handle};
+} # get_request_body_as_handle
+
 # ------ Response ------
 
 sub set_status ($$;$) {

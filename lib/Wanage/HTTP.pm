@@ -250,21 +250,43 @@ sub request_body_as_ref ($) {
       ||= $_[0]->{interface}->get_request_body_as_ref;
 } # request_body_as_ref
 
+sub _request_body_as_multipart_form_data ($) {
+  $_[0]->{request_body_as_multipart_form_data} ||= do {
+    require Wanage::HTTP::MultipartFormData;
+    my $boundary = $_[0]->request_mime_type->params->{boundary};
+    $boundary = '' unless defined $boundary;
+    my $formdata = Wanage::HTTP::MultipartFormData->new_from_boundary
+        ($boundary);
+    $formdata->read_from_handle
+        ($_[0]->{interface}->get_request_body_as_handle,
+         $_[0]->{interface}->get_meta_variable ('CONTENT_LENGTH') || 0);
+    $formdata;
+  };
+} # _request_body_as_multipart_form_data
+
 sub request_body_params ($) {
   return $_[0]->{request_body_params} ||= do {
-    my $ct = [split /;/, $_[0]->get_request_header ('Content-Type') || '', 2]->[0] || '';
-    $ct =~ s/[\x09\x0A\x0D\x20]+\z//;
-    $ct =~ tr/A-Z/a-z/; ## ASCII case-insensitive.
+    my $ct = $_[0]->request_mime_type->value;
     if ($ct eq 'application/x-www-form-urlencoded') {
       parse_form_urlencoded_b ${$_[0]->request_body_as_ref || \''};
     } elsif ($ct eq 'multipart/form-data') {
-      # XXX
-      {};
+      $_[0]->_request_body_as_multipart_form_data->as_params_hashref;
     } else {
       {};
     }
   };
 } # request_body_params
+
+sub request_uploads ($) {
+  return $_[0]->{request_uploads} ||= do {
+    my $ct = $_[0]->request_mime_type->value;
+    if ($ct eq 'multipart/form-data') {
+      $_[0]->_request_body_as_multipart_form_data->as_uploads_hashref;
+    } else {
+      {};
+    }
+  };
+} # request_uploads
 
 # ------ Response construction ------
 

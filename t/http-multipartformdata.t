@@ -8,8 +8,9 @@ use base qw(Test::Class);
 use Test::MoreMore;
 use Wanage::HTTP::MultipartFormData;
 
-sub _version : Test(1) {
+sub _version : Test(2) {
   ok $Wanage::HTTP::MultipartFormData::VERSION;
+  ok $Wanage::HTTP::MultipartFormData::Upload::VERSION;
 } # _version
 
 sub _parse : Test(48) {
@@ -22,8 +23,8 @@ sub _parse : Test(48) {
     ['abc', qq{--abc\x0D\x0AContent-Disposition: form-data; name="aa"\x0D\x0A\x0D\x0Axyz\x0D\x0A--abc\x0D\x0AContent-Disposition: form-data; name="aa"\x0D\x0A\x0D\x0Abbbb\x0D\x0A--abc--\x0D\x0A}, {aa => ["xyz", "bbbb"]}, {}],
     ['abc def', qq{--abc def\x0D\x0AContent-Disposition: form-data; name="aa"\x0D\x0A\x0D\x0Axyz\x0D\x0A--abc def--\x0D\x0A}, {aa => ["xyz"]}, {}],
     ['abcd', qq{--abcd\x0D\x0AContent-Disposition: form-data; name="aa"\x0D\x0A\x0D\x0Axyz\x0D\x0A--abc--\x0D\x0A--abcd--\x0D\x0A}, {aa => ["xyz\x0D\x0A--abc--"]}, {}],
-    ['abc', qq{--abc\x0D\x0AContent-Disposition: form-data; name="\xE4\x80\x80"\x0D\x0A\x0D\x0Axyz\x0D\x0A--abc--\x0D\x0A}, {"\x{4000}" => ["xyz"]}, {}],
-    ['abc', qq{--abc\x0D\x0AContent-Disposition: form-data; name="aa"\x0D\x0A\x0D\x0Axyz\xE4\x80\x80\x0D\x0A--abc--\x0D\x0A}, {aa => ["xyz\x{4000}"]}, {}],
+    ['abc', qq{--abc\x0D\x0AContent-Disposition: form-data; name="\xE4\x80\x80"\x0D\x0A\x0D\x0Axyz\x0D\x0A--abc--\x0D\x0A}, {"\xe4\x{80}\x{80}" => ["xyz"]}, {}],
+    ['abc', qq{--abc\x0D\x0AContent-Disposition: form-data; name="aa"\x0D\x0A\x0D\x0Axyz\xE4\x80\x80\x0D\x0A--abc--\x0D\x0A}, {aa => ["xyz\xe4\x{80}\x{80}"]}, {}],
     ['abc', qq{\x0D\x0A--abc\x0D\x0AContent-Disposition: form-data; name="aa"\x0D\x0A\x0D\x0Axyz\x0D\x0A--abc--\x0D\x0A}, {aa => ["xyz"]}, {}],
     ['abc', qq{zzz\x0D\x0A--abc\x0D\x0AContent-Disposition: form-data; name="aa"\x0D\x0A\x0D\x0Axyz\x0D\x0A--abc--\x0D\x0A}, {aa => ["xyz"]}, {}],
     ['abc', qq{Content-Disposition: form-data; name="bb"\x0D\x0A\x0D\x0Azzz\x0D\x0A--abc\x0D\x0AContent-Disposition: form-data; name="aa"\x0D\x0A\x0D\x0Axyz\x0D\x0A--abc--\x0D\x0A}, {aa => ["xyz"]}, {}],
@@ -50,7 +51,7 @@ sub _parse : Test(48) {
   }
 } # _parse
 
-sub _parse_file_upload : Test(10) {
+sub _parse_file_upload : Test(17) {
   my $boundary = "abcdef";
   my $data = qq{--abcdef\x0D\x0AContent-Disposition: form-data; name="name 2"; filename="fuga\\hoge.txt"\x0D\x0A\x0D\x0Aabc\x00\xFE\xcb--abc--xyz\x0D\x0A--abcdef--\x0D\x0A};
   open my $fh, '<', \$data;
@@ -72,6 +73,14 @@ sub _parse_file_upload : Test(10) {
   is scalar file ($upload->{temp_file_name})->slurp, "abc\x00\xFE\xcb--abc--xyz";
   is $upload->{filename}, 'fuga\hoge.txt';
   is $upload->{name}, 'name 2';
+
+  isa_ok $upload, 'Wanage::HTTP::MultipartFormData::Upload';
+  is $upload->name, 'name 2';
+  is $upload->filename, 'fuga\hoge.txt';
+  is $upload->size, 16;
+  is $upload->mime_type->value, undef;
+  eq_or_diff $upload->mime_type->params, {};
+  is scalar $upload->as_f->slurp, "abc\x00\xFE\xcb--abc--xyz";
 } # _parse_file_upload
 
 sub _parse_file_upload_2 : Test(10) {
@@ -98,9 +107,9 @@ sub _parse_file_upload_2 : Test(10) {
   is $upload->{name}, 'name 2';
 } # _parse_file_upload_2
 
-sub _parse_file_upload_multiple : Test(10) {
+sub _parse_file_upload_multiple : Test(12) {
   my $boundary = "abcdef";
-  my $data = qq{--abcdef\x0D\x0Acontent-type: text/html; charset=us-ascii\x0D\x0AContent-Disposition: form-data; name="name 2"; filename="fuga\\hoge.txt"\x0D\x0A\x0D\x0Aabc\x00\xFE\xcb--abc--xyz\x0D\x0A--abcdef\x0D\x0AContent-Disposition:form-data; name="name 2"; filename="hpoge.txt"\x0D\x0A\x0D\x0Aabx\xE0\x81\x0D\x0A--abcdef\x0D\x0AContent-Disposition: form-data; name="name 2"; filename=""\x0D\x0A\x0D\x0A\x0D\x0A--abcdef--};
+  my $data = qq{--abcdef\x0D\x0Acontent-type: text/HTMl; Charset=us-Ascii\x0D\x0AContent-Disposition: form-data; name="name 2"; filename="fuga\\hoge.txt"\x0D\x0A\x0D\x0Aabc\x00\xFE\xcb--abc--xyz\x0D\x0A--abcdef\x0D\x0AContent-Disposition:form-data; name="name 2"; filename="hpoge.txt"\x0D\x0A\x0D\x0Aabx\xE0\x81\x0D\x0A--abcdef\x0D\x0AContent-Disposition: form-data; name="name 2"; filename=""\x0D\x0A\x0D\x0A\x0D\x0A--abcdef--};
   open my $fh, '<', \$data;
   my $length = length $data;
   my $formdata = Wanage::HTTP::MultipartFormData->new_from_boundary
@@ -117,6 +126,9 @@ sub _parse_file_upload_multiple : Test(10) {
   is $upload_list->[0]->{filename}, 'fuga\hoge.txt';
   is scalar file ($upload_list->[1]->{temp_file_name})->slurp, "abx\xE0\x81";
   is $upload_list->[1]->{filename}, 'hpoge.txt';
+
+  is $upload_list->[0]->mime_type->value, "text/html";
+  eq_or_diff $upload_list->[0]->mime_type->params, {charset => 'us-Ascii'};
 
   undef $formdata;
   ng -f $upload_list->[0]->{temp_file_name};

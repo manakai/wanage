@@ -521,7 +521,7 @@ sub _request_body_as_ref_zero_body : Test(6) {
   }
 } # _request_body_as_ref_zero_body
 
-sub _request_body_params_no_body : Test(16) {
+sub _request_body_params_no_body : Test(32) {
   for my $ct (
     undef,
     'application/x-hoge-fuga',
@@ -533,11 +533,15 @@ sub _request_body_params_no_body : Test(16) {
       my $params = $http->request_body_params;
       eq_or_diff $params, {};
       is $http->request_body_params, $params;
+      
+      my $uploads = $http->request_uploads;
+      eq_or_diff $uploads, {};
+      is $http->request_uploads, $uploads;
     }
   }
 } # _request_body_params_no_body
 
-sub _request_body_params_zero_body : Test(16) {
+sub _request_body_params_zero_body : Test(32) {
   for my $ct (
     undef,
     'application/x-hoge-fuga',
@@ -551,11 +555,15 @@ sub _request_body_params_zero_body : Test(16) {
       my $params = $http->request_body_params;
       eq_or_diff $params, {};
       is $http->request_body_params, $params;
+      
+      my $uploads = $http->request_uploads;
+      eq_or_diff $uploads, {};
+      is $http->request_uploads, $uploads;
     }
   }
 } # _request_body_params_zero_body
 
-sub _request_body_params_zero_with_body_bad_type : Test(8) {
+sub _request_body_params_zero_with_body_bad_type : Test(16) {
   for my $ct (
     undef,
     'application/x-hoge-fuga',
@@ -567,11 +575,15 @@ sub _request_body_params_zero_with_body_bad_type : Test(8) {
       my $params = $http->request_body_params;
       eq_or_diff $params, {};
       is $http->request_body_params, $params;
+      
+      my $uploads = $http->request_uploads;
+      eq_or_diff $uploads, {};
+      is $http->request_uploads, $uploads;
     }
   }
 } # _request_body_params_with_body_bad_type
 
-sub _request_body_params_zero_with_body_with_type : Test(16) {
+sub _request_body_params_zero_with_body_with_type : Test(32) {
   for my $ct (
     'application/x-www-form-urlencoded',
     'Application/x-www-form-URLencoded',
@@ -585,9 +597,43 @@ sub _request_body_params_zero_with_body_with_type : Test(16) {
       my $params = $http->request_body_params;
       eq_or_diff $params, {hogfe => ['fauga'], abc => ['def']};
       is $http->request_body_params, $params;
+      
+      my $uploads = $http->request_uploads;
+      eq_or_diff $uploads, {};
+      is $http->request_uploads, $uploads;
     }
   }
 } # _request_body_params_with_body_with_type
+
+sub _request_body_params_form_data : Test(22) {
+  my $boundary = 'abc.def';
+  my $mime = 'multipart/form-data; boundary=' . $boundary;
+  my $data = qq{--$boundary\x0D\x0AContent-Disposition: form-data; name="abcA"\x0D\x0A\x0D\x0AAhgx\xFE\x0D\x0A--$boundary\x0D\x0AContent-Disposition: form-data; name="bsd\xFE\xEC"\x0D\x0A\x0D\x0Azzzzz\x0D\x0A--$boundary\x0D\x0AContent-Disposition: form-data; name="aaaa"; filename="xyz"\x0D\x0A\x0D\x0Aaaabbb\x0D\x0A--$boundary--\x0D\x0A};
+  my $https = new_https_for_interfaces
+      env => {
+        CONTENT_TYPE => $mime,
+        CONTENT_LENGTH => length $data,
+      },
+      request_body => $data;
+  for my $http (@$https) {
+    my $params = $http->request_body_params;
+    eq_or_diff $params, {abcA => ["Ahgx\xFE"],
+                         "bsd\xFE\xEC" => ["zzzzz"]};
+    is $http->request_body_params, $params;
+
+    my $uploads = $http->request_uploads;
+    eq_or_diff [keys %$uploads], ['aaaa'];
+    is ref $uploads->{aaaa}, 'ARRAY';
+    my $upload = $uploads->{aaaa}->[0];
+    isa_ok $upload, 'Wanage::HTTP::MultipartFormData::Upload';
+    is $upload->name, 'aaaa';
+    is $upload->filename, 'xyz';
+    is $upload->size, 6;
+    is $upload->as_f->slurp, 'aaabbb';
+    is $upload->mime_type->value, undef;
+    is $http->request_uploads, $uploads;
+  }
+} # _request_body_params_form_data
 
 # ------ Response ------
 

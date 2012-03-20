@@ -2,6 +2,7 @@ Carp
 DateTime
 Encode
 Exporter::Lite
+File::Temp
 IO::Handle
 Path::Class
 Scalar::Util

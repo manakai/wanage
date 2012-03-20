@@ -2,7 +2,6 @@ package Wanage::HTTP::MultipartFormData;
 use strict;
 use warnings;
 our $VERSION = '1.0';
-use Encode;
 use File::Temp;
 
 sub new_from_boundary ($$) {
@@ -152,10 +151,10 @@ sub process_last_body_part ($;%) {
   unless ($part->{headers_parsed}) {
     my $disp = $part->{content_disposition} || '';
     if ($disp =~ / name="([^"]*)"/) {
-      $part->{name} = decode 'utf-8', $1;
+      $part->{name} = $1;
     }
     if ($disp =~ / filename="([^"]*)"/) {
-      $part->{filename} = decode 'utf-8', $1;
+      $part->{filename} = $1;
       $part->{is_file} = 1;
     }
     delete $part->{content_disposition};
@@ -182,9 +181,7 @@ sub process_last_body_part ($;%) {
 
   if ($args{done}) {
     $part->{fh}->close if $part->{fh};
-    $part->{value} = decode 'utf-8', $part->{data} if defined $part->{data};
     delete $part->{fh};
-    delete $part->{data};
     delete $part->{headers_parsed};
     delete $part->{incomplete};
   }
@@ -197,7 +194,7 @@ sub as_params_hashref ($) {
     next if $part->{incomplete};
     next if $part->{is_file};
     next unless defined $part->{name};
-    push @{$hashref->{$part->{name}} ||= []}, $part->{value};
+    push @{$hashref->{$part->{name}} ||= []}, $part->{data};
   }
   return $hashref;
 } # as_params_hashref
@@ -216,9 +213,38 @@ sub as_uploads_hashref ($) {
         # temp_file_name
         # content_type
         # content_length
+    bless $part, 'Wanage::HTTP::MultipartFormData::Upload'
+        if ref $part eq 'HASH';
   }
   return $hashref;
 } # as_uploads_hashref
+
+package Wanage::HTTP::MultipartFormData::Upload;
+our $VERSION = '1.0';
+use Encode;
+
+sub name ($) {
+  return $_[0]->{name};
+} # name
+
+sub filename ($) {
+  return $_[0]->{decoded_filename} ||= decode 'utf-8', $_[0]->{filename};
+} # filename
+
+sub size ($) {
+  return $_[0]->{content_length};
+} # size
+
+sub mime_type ($) {
+  require Wanage::HTTP::MIMEType;
+  return $_[0]->{mime_type} ||= Wanage::HTTP::MIMEType->new_from_content_type
+      ($_[0]->{content_type});
+} # mime_type
+
+sub as_f ($) {
+  require Path::Class;
+  return $_[0]->{temp_f} ||= Path::Class::file ($_[0]->{temp_file_name});
+} # as_f
 
 1;
 

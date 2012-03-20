@@ -293,17 +293,69 @@ returned.  Otherwise, the C<undef> value is returned.
 
 Return the hash reference which contains name-value pairs contained in
 the request body, if the MIME type of the body is
-C<application/x-www-form-urlencoded>.
+C<application/x-www-form-urlencoded> or C<multipart/form-data>.
 
 The values in the hash are represented as array references of values
-to preserve duplicate parameters in the query.  The values are B<byte
-strings> and not decoded by any character encoding.
+to preserve duplicate parameters in the body.  The names and values
+are B<byte strings> and not decoded by any character encoding (This is
+a willful violation to applicable specifications).
 
 If there is no request body, or if the MIME type of the request body
-is different from C<application/x-www-form-urlencoded>, an empty hash
-reference is returned.
+is different from C<application/x-www-form-urlencoded> or
+C<multipart/form-data>, an empty hash reference is returned.
+
+Files in C<multipart/form-data> are not included in this hash
+reference.
 
 Applications should not modify the hash reference.
+
+=item $uploads = $http->request_uploads
+
+Return the hash reference which contains files uploaded using the
+request-body, if the MIME type of the body is C<multipart/form-data>.
+
+If there is no request body, or if the MIME type of the request body
+is different from C<multipart/form-data>, an empty hash reference is
+returned.
+
+The keys of the hash represents the field names in the request-body.
+They are B<byte strings> and not decoded by any character encoding
+(This is a willful violation to applicable specifications).  The
+values in the hash are represented as array references of values to
+preserve multiple files with same field name in the body.  The actual
+value is an object representing the file, which has following methods:
+
+=over 4
+
+=item $string = $upload->filename
+
+Return the file name of the uploaded file, possibly an empty string,
+as specified in the C<filename> parameter of the
+C<Content-Disposition:> header of the entity-body.  It is a
+B<character string>, decoded as UTF-8.  (This is a willful violation
+to MIME and C<multipart/form-data> specifications as they are ignored
+by everyone on the earth, and to HTML Standard which specifies the
+C<_charset_> hack, as we does not support any character encoding other
+than UTF-8.)
+
+=item $bytes = $upload->size
+
+Return the byte length of the file.
+
+=item $mime = $upload->mime_type
+
+Return the L<Wanage::HTTP::MIMEType> object representing the MIME type
+of the file, as specified in the C<Content-Type:> header of the
+entity-body.
+
+=item $f = $upload->as_f
+
+Return a L<Path::Class::File> object representing the uploaded file.
+It identifies a file placed within the temporary directory created by
+L<File::Temp>.  The file will be removed when the HTTP object (not the
+upload object!) is discarded by Perl.
+
+=back
 
 =item $length = $http->request_body_length
 
