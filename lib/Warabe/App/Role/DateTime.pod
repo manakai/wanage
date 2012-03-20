@@ -1,21 +1,21 @@
 =head1 NAME
 
-Wanage::App::Role::DateTime - Wanage application - DateTime module
+Warabe::App::Role::DateTime - Warabe Web Application API - DateTime module
 
 =head1 SYNOPSIS
 
-  package My::Wanage::App;
-  use base qw(Wanage::App::Role::DateTime Wanage::App);
+  package My::Warabe::App;
+  use base qw(Warabe::App::Role::DateTime Warabe::App);
 
-  $app = My::Wanage::App->new_from_http ($http);
+  $app = My::Warabe::App->new_from_http ($http);
   $dt = $app->epoch_param_as_datetime ('hoge');
 
 =head1 DESCRIPTION
 
-The C<Wanage::App::Role::DateTime> module defines additional methods
-for handling date-time data as L<DateTime> objects in L<Wanage::App>
+The C<Warabe::App::Role::DateTime> module defines additional methods
+for handling date-time data as L<DateTime> objects in L<Warabe::App>
 API.  This module is intended to be used a superclass of some subclass
-of L<Wanage::App>.
+of L<Warabe::App>.
 
 =head1 METHOD
 
@@ -37,7 +37,7 @@ C<undef> value is returned.
 
 L<DateTime>.
 
-L<Wanage::App>.
+L<Warabe::App>.
 
 =head1 AUTHOR
 

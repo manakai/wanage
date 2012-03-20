@@ -1,4 +1,4 @@
-package Wanage::App::Role::JSON;
+package Warabe::App::Role::JSON;
 use strict;
 use warnings;
 our $VERSION = '1.0';

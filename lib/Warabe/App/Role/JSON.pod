@@ -1,21 +1,21 @@
 =head1 NAME
 
-Wanage::App::Role::JSON - Wanage application - JSON module
+Warabe::App::Role::JSON - Warabe Web Application API - JSON module
 
 =head1 SYNOPSIS
 
-  package My::Wanage::App;
-  use base qw(Wanage::App::Role::JSON Wanage::App);
+  package My::Warabe::App;
+  use base qw(Warabe::App::Role::JSON Warabe::App);
 
-  $app = My::Wanage::App->new_from_http ($http);
+  $app = My::Warabe::App->new_from_http ($http);
   print Dumper $app->request_json;
   $app->send_json ({hoge => 'fuga'});
 
 =head1 DESCRIPTION
 
-The C<Wanage::App::Role::JSON> module defines additional methods for
-handling JSON data in L<Wanage::App> API.  This module is intended to
-be used a superclass of some subclass of L<Wanage::App>.
+The C<Warabe::App::Role::JSON> module defines additional methods for
+handling JSON data in L<Warabe::App> API.  This module is intended to
+be used a superclass of some subclass of L<Warabe::App>.
 
 =head1 METHODS
 
@@ -47,7 +47,7 @@ L<JSON::Functions::XS>.
 RFC 4627 - The application/json Media Type for JavaScript Object
 Notation (JSON) <http://tools.ietf.org/html/rfc4627>.
 
-L<Wanage::App>.
+L<Warabe::App>.
 
 =head1 AUTHOR
 

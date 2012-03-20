@@ -1,4 +1,4 @@
-package Wanage::App;
+package Warabe::App;
 use strict;
 use warnings;
 our $VERSION = '1.0';
@@ -137,7 +137,7 @@ sub execute ($$;%) {
     $code->();
     1;
   } or do {
-    if ($@ and ref $@ and $@->isa ('Wanage::App::Done')) {
+    if ($@ and ref $@ and $@->isa ('Warabe::App::Done')) {
       ;
     } else {
       warn $@;
@@ -151,11 +151,11 @@ sub execute ($$;%) {
 } # execute
 
 sub throw ($) {
-  die bless {}, 'Wanage::App::Done';
+  die bless {}, 'Warabe::App::Done';
 } # throw
 
 {
-  package Wanage::App::Done;
+  package Warabe::App::Done;
   our $VERSION = '1.0';
 }
 

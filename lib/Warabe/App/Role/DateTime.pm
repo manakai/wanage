@@ -1,4 +1,4 @@
-package Wanage::App::Role::DateTime;
+package Warabe::App::Role::DateTime;
 use strict;
 use warnings;
 our $VERSION = '1.0';

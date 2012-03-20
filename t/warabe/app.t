@@ -1,25 +1,25 @@
-package test::Wanage::App;
+package test::Warabe::App;
 use strict;
 use warnings;
 use Path::Class;
-use lib file (__FILE__)->dir->parent->subdir ('lib')->stringify;
-use lib glob file (__FILE__)->dir->parent->subdir ('modules', '*', 'lib')->stringify;
-use lib file (__FILE__)->dir->parent->subdir ('t', 'lib')->stringify;
+use lib file (__FILE__)->dir->parent->parent->subdir ('lib')->stringify;
+use lib glob file (__FILE__)->dir->parent->parent->subdir ('modules', '*', 'lib')->stringify;
+use lib file (__FILE__)->dir->parent->parent->subdir ('t', 'lib')->stringify;
 use Test::Wanage::Envs;
 use base qw(Test::Class);
-use Wanage::App;
+use Warabe::App;
 use Wanage::HTTP;
 use Test::MoreMore;
 use Encode;
 
 sub _version : Test(1) {
-  ok $Wanage::App::VERSION;
+  ok $Warabe::App::VERSION;
 } # _version
 
 sub _new_from_http : Test(3) {
   my $http = with_cgi_env { Wanage::HTTP->new_cgi };
-  my $app = Wanage::App->new_from_http ($http);
-  isa_ok $app, 'Wanage::App';
+  my $app = Warabe::App->new_from_http ($http);
+  isa_ok $app, 'Warabe::App';
   my $http2 = $app->http;
   isa_ok $http2, 'Wanage::HTTP';
   is $http2, $http;
@@ -62,7 +62,7 @@ sub _path_segments : Test(60) {
   ) {
     my $http = with_cgi_env { Wanage::HTTP->new_cgi }
         {REQUEST_URI => $test->[0], SERVER_NAME => 'hoge', SERVER_PORT => 80};
-    my $app = Wanage::App->new_from_http ($http);
+    my $app = Warabe::App->new_from_http ($http);
     my $paths = $app->path_segments;
     isa_list_ok $paths;
     eq_or_diff $paths->to_a, $test->[1];
@@ -73,7 +73,7 @@ sub _text_param_from_query : Test(20) {
   my $http = with_cgi_env {
     Wanage::HTTP->new_cgi;
   } {QUERY_STRING => 'hoge=fuga&FOO=foo&foo=bar&foo=baz&abc=&def'};
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   is $app->text_param ('fage'), undef;
   is $app->text_param ('hoge'), 'fuga';
   is $app->text_param ('foo'), 'bar';
@@ -102,7 +102,7 @@ sub _text_param_from_body : Test(20) {
     Wanage::HTTP->new_cgi;
   } {CONTENT_TYPE => 'application/x-www-form-urlencoded',
      CONTENT_LENGTH => length $stdin}, $stdin;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   is $app->text_param ('fage'), undef;
   is $app->text_param ('hoge'), 'fuga';
   is $app->text_param ('foo'), 'bar';
@@ -132,7 +132,7 @@ sub _text_param_both : Test(4) {
   } {QUERY_STRING => 'hoge=abc',
      CONTENT_TYPE => 'application/x-www-form-urlencoded',
      CONTENT_LENGTH => length $stdin}, $stdin;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   is $app->text_param ('hoge'), 'abc';
   eq_or_diff $app->text_param_list ('hoge')->to_a, ['abc', 'fuga'];
   is $app->bare_param ('hoge'), 'abc';
@@ -143,7 +143,7 @@ sub _text_param_utf8 : Test(24) {
   my $http = with_cgi_env {
     Wanage::HTTP->new_cgi;
   } {QUERY_STRING => 'hoge=%E4%B8%80&fuga=%84%B8%81&%E4%B8%80=abc&%80=%00'};
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   is $app->text_param ('hoge'), "\x{4E00}";
   is $app->text_param ('fuga'), "\x{FFFD}\x{FFFD}\x{FFFD}";
   is $app->text_param ("\xE4\xB8\x80"), undef;
@@ -175,7 +175,7 @@ sub _text_param_list : Test(5) {
   my $http = with_cgi_env {
     Wanage::HTTP->new_cgi;
   } {QUERY_STRING => 'hoge=fuga&FOO=foo&foo=bar&foo=baz&abc=&def'};
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   my $list = $app->text_param_list ('hoge');
   isa_list_ok $list;
   is $app->text_param_list ('hoge'), $list;
@@ -190,7 +190,7 @@ sub _text_param_list : Test(5) {
 sub _send_plain_text : Test(2) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->send_plain_text ("\x{5000}\x{fe}\x{50}\x00");
   dies_here_ok {
     $app->send_response_body_as_ref (\'abcde');
@@ -204,7 +204,7 @@ Content-Type: text/plain; charset=utf-8
 sub _send_html : Test(2) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->send_html ("\x{5000}\x{fe}\x{50}\x00");
   dies_here_ok {
     $app->send_response_body_as_ref (\'abcde');
@@ -221,7 +221,7 @@ sub _send_redirect_no_args : Test(1) {
     HTTPS => 1,
     REQUEST_URI => q<https://hogehoge.test:0123/foo/b%61r/baz?a=b&c=">,
   }, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->send_redirect;
   eq_or_diff $out, q{Status: 302 Found
 Content-Type: text/html; charset=utf-8
@@ -236,7 +236,7 @@ sub _send_redirect_relative : Test(1) {
     HTTPS => 1,
     REQUEST_URI => q<https://hogehoge.test:0123/foo/b%61r/baz?a=b&c=">,
   }, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->send_redirect (q<../hoge/fug&a>);
   eq_or_diff $out, q{Status: 302 Found
 Content-Type: text/html; charset=utf-8
@@ -251,7 +251,7 @@ sub _send_redirect_abspath : Test(1) {
     HTTPS => 1,
     REQUEST_URI => q<https://hogehoge.test:0123/foo/b%61r/baz?a=b&c=">,
   }, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->send_redirect (q</hoge/fuga#abc>);
   eq_or_diff $out, q{Status: 302 Found
 Content-Type: text/html; charset=utf-8
@@ -266,7 +266,7 @@ sub _send_redirect_absurl : Test(1) {
     HTTPS => 1,
     REQUEST_URI => q<https://hogehoge.test:0123/foo/b%61r/baz?a=b&c=">,
   }, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->send_redirect (q<httP://abc.TEST/hoge/fuga#abc>);
   eq_or_diff $out, q{Status: 302 Found
 Content-Type: text/html; charset=utf-8
@@ -283,7 +283,7 @@ sub _send_redirect_filtered : Test(1) {
   }, undef, $out;
   {
     package test::_send_redirect_response_filtered::app;
-    push our @ISA, qw(Wanage::App);
+    push our @ISA, qw(Warabe::App);
     sub redirect_url_filter {
       my $url = $_[1];
       $url->{scheme} = 'ftp';
@@ -303,7 +303,7 @@ Location: ftp://abc.test/hoge/fuga/HOGE#abc
 sub _send_error_no_args : Test(1) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->send_error;
   eq_or_diff $out, q{Status: 400 Bad Request
 Content-Type: text/plain; charset=us-ascii
@@ -314,7 +314,7 @@ Content-Type: text/plain; charset=us-ascii
 sub _send_error_with_code : Test(1) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->send_error (410);
   eq_or_diff $out, q{Status: 410 Gone
 Content-Type: text/plain; charset=us-ascii
@@ -325,7 +325,7 @@ Content-Type: text/plain; charset=us-ascii
 sub _send_error_with_code_and_reason : Test(1) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->send_error (410, reason_phrase => "The page was\nremoved!");
   eq_or_diff $out, q{Status: 410 The page was removed!
 Content-Type: text/plain; charset=us-ascii
@@ -336,7 +336,7 @@ Content-Type: text/plain; charset=us-ascii
 sub _send_error_with_code_and_reason_utf8 : Test(1) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->send_error (410, reason_phrase => "\x{5000}\x{5100}\x00");
   eq_or_diff $out, encode 'utf-8', qq{Status: 410 \x{5000}\x{5100}\x00
 Content-Type: text/plain; charset=us-ascii
@@ -349,7 +349,7 @@ Content-Type: text/plain; charset=us-ascii
 sub _execute_done : Test(1) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->http->set_response_header ('X-Hoge' => 'Fuga');
     $app->send_plain_text ("\x{4000}abc");
@@ -364,7 +364,7 @@ X-Hoge: Fuga
 sub _execute_perl_error : Test(1) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->http->set_response_header ('X-Hoge' => 'Fuga');
     not_found_method ();
@@ -379,7 +379,7 @@ X-Hoge: Fuga
 sub _execute_perl_error_sent : Test(1) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->http->set_response_header ('X-Hoge' => 'Fuga');
     $app->send_html ("abc");
@@ -395,7 +395,7 @@ abc};
 sub _execute_died : Test(1) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->http->set_response_header ('X-Hoge' => 'Fuga');
     die "abc def";
@@ -410,7 +410,7 @@ X-Hoge: Fuga
 sub _execute_thrown : Test(2) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->http->set_response_header ('X-Hoge' => 'Fuga');
     $app->throw;
@@ -427,7 +427,7 @@ X-Hoge: Fuga
 sub _throw_outside_execute : Test(2) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->http->set_response_header ('X-Hoge' => 'Fuga');
   dies_ok {
     $app->throw;
@@ -440,7 +440,7 @@ sub _throw_redirect : Test(1) {
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
     REQUEST_URI => q<http://hoge/>,
   }, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->http->set_response_header ('X-Hoge' => 'Fuga');
     $app->throw_redirect (q<http://abc/hoge/fuga>);
@@ -459,7 +459,7 @@ sub _throw_error : Test(1) {
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
     REQUEST_URI => q<http://hoge/>,
   }, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->http->set_response_header ('X-Hoge' => 'Fuga');
     $app->throw_error (501);
@@ -479,7 +479,7 @@ sub _requires_valid_url_scheme_http : Test(1) {
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
     REQUEST_URI => q<http://foo/bar>,
   }, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->requires_valid_url_scheme;
     $app->send_plain_text ('ok');
@@ -492,7 +492,7 @@ sub _requires_valid_url_scheme_https : Test(1) {
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
     REQUEST_URI => q<https://foo/bar>,
   }, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->requires_valid_url_scheme;
     $app->send_plain_text ('ok');
@@ -506,7 +506,7 @@ sub _requires_valid_url_scheme_ftp : Test(1) {
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
     REQUEST_URI => q<ftp://foo/bar>,
   }, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->requires_valid_url_scheme;
     $app->send_plain_text ('ok');
@@ -518,12 +518,12 @@ Content-Type: text/plain; charset=us-ascii
 } # _requires_valid_url_scheme_ftp
 
 sub _requires_valid_url_scheme_https_custom : Test(1) {
-  local $Wanage::App::AllowedURLSchemes = {hoge => 1};
+  local $Warabe::App::AllowedURLSchemes = {hoge => 1};
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
     REQUEST_URI => q<https://foo/bar>,
   }, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->requires_valid_url_scheme;
     $app->send_plain_text ('ok');
@@ -540,7 +540,7 @@ sub _requires_https_https : Test(1) {
     HTTPS => 1,
     REQUEST_URI => q<https://foo/bar>,
   }, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->requires_https;
     $app->send_plain_text ('ok');
@@ -557,7 +557,7 @@ sub _requires_https_http_get : Test(1) {
     REQUEST_URI => q<http://foo/bar>,
     REQUEST_METHOD => 'GET',
   }, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->requires_https;
     $app->send_plain_text ('ok');
@@ -576,7 +576,7 @@ sub _requires_https_ftp_get : Test(1) {
     REQUEST_URI => q<ftp://foo/bar>,
     REQUEST_METHOD => 'GET',
   }, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->requires_https;
     $app->send_plain_text ('ok');
@@ -594,7 +594,7 @@ sub _requires_https_about_get : Test(1) {
     REQUEST_URI => q<about:blank>,
     REQUEST_METHOD => 'GET',
   }, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->requires_https;
     $app->send_plain_text ('ok');
@@ -612,7 +612,7 @@ sub _requires_https_http_post : Test(1) {
     REQUEST_URI => q<http://foo/bar>,
     REQUEST_METHOD => 'POST',
   }, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->requires_https;
     $app->send_plain_text ('ok');
@@ -629,7 +629,7 @@ sub _requires_valid_hostname : Test(1) {
     HTTPS => 1,
     REQUEST_URI => q<https://foo/bar>,
   }, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->requires_valid_hostname;
     $app->send_plain_text ('ok');
@@ -638,13 +638,13 @@ sub _requires_valid_hostname : Test(1) {
 } # _requires_valid_hostname
 
 sub _requires_valid_hostname_custom_true : Test(1) {
-  local $Wanage::App::AllowedHostnamePattern = qr/^hoge.fuga$/;
+  local $Warabe::App::AllowedHostnamePattern = qr/^hoge.fuga$/;
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
     HTTPS => 1,
     REQUEST_URI => q<https://hoge.fuga/bar>,
   }, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->requires_valid_hostname;
     $app->send_plain_text ('ok');
@@ -653,13 +653,13 @@ sub _requires_valid_hostname_custom_true : Test(1) {
 } # _requires_valid_hostname_custom_true
 
 sub _requires_valid_hostname_custom_false : Test(1) {
-  local $Wanage::App::AllowedHostnamePattern = qr/^hoge.fuga$/;
+  local $Warabe::App::AllowedHostnamePattern = qr/^hoge.fuga$/;
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
     HTTPS => 1,
     REQUEST_URI => q<https://hoge.fugaa/bar>,
   }, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->requires_valid_hostname;
     $app->send_plain_text ('ok');
@@ -672,12 +672,12 @@ Content-Type: text/plain; charset=us-ascii
 
 sub _requires_valid_hostname_custom_false_no_host : Test(1) {
   local $Wanage::Interface::UseRequestURLScheme = 1;
-  local $Wanage::App::AllowedHostnamePattern = qr/^hoge.fuga$/;
+  local $Warabe::App::AllowedHostnamePattern = qr/^hoge.fuga$/;
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
     REQUEST_URI => q<about:blank>,
   }, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->requires_valid_hostname;
     $app->send_plain_text ('ok');
@@ -691,7 +691,7 @@ Content-Type: text/plain; charset=us-ascii
 sub _requires_valid_content_length_no_request_body : Test(1) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->requires_valid_content_length;
     $app->send_plain_text ('ok');
@@ -705,7 +705,7 @@ sub _requires_valid_content_length_zero : Test(1) {
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
     CONTENT_LENGTH => length $in,
   }, $in, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->requires_valid_content_length;
     $app->send_plain_text ('ok');
@@ -719,7 +719,7 @@ sub _requires_valid_content_length_short : Test(1) {
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
     CONTENT_LENGTH => length $in,
   }, $in, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->requires_valid_content_length;
     $app->send_plain_text ('ok');
@@ -733,7 +733,7 @@ sub _requires_valid_content_length_long : Test(1) {
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
     CONTENT_LENGTH => length $in,
   }, $in, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->requires_valid_content_length;
     $app->send_plain_text ('ok');
@@ -750,7 +750,7 @@ sub _requires_valid_content_length_short_but_max : Test(1) {
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
     CONTENT_LENGTH => length $in,
   }, $in, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->requires_valid_content_length (max => 4);
     $app->send_plain_text ('ok');
@@ -767,7 +767,7 @@ sub _requires_valid_content_length_eq_max : Test(1) {
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
     CONTENT_LENGTH => length $in,
   }, $in, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->requires_valid_content_length (max => 5);
     $app->send_plain_text ('ok');
@@ -778,7 +778,7 @@ sub _requires_valid_content_length_eq_max : Test(1) {
 sub _requires_mime_type_no_request_body : Test(1) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->requires_mime_type;
     $app->send_plain_text ('ok');
@@ -792,7 +792,7 @@ sub _requires_mime_type_empty_request_body : Test(1) {
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } { 
     CONTENT_LENGTH => length $in,
   }, $in, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->requires_mime_type;
     $app->send_plain_text ('ok');
@@ -814,7 +814,7 @@ sub _requires_mime_type_formdata : Test(5) {
       CONTENT_TYPE => $mime,
       CONTENT_LENGTH => length $in,
     }, $in, $out;
-    my $app = Wanage::App->new_from_http ($http);
+    my $app = Warabe::App->new_from_http ($http);
     $app->execute (sub {
       $app->requires_mime_type;
       $app->send_plain_text ('ok');
@@ -836,7 +836,7 @@ sub _requires_mime_type_unknown : Test(5) {
       CONTENT_TYPE => $mime,
       CONTENT_LENGTH => length $in,
     }, $in, $out;
-    my $app = Wanage::App->new_from_http ($http);
+    my $app = Warabe::App->new_from_http ($http);
     $app->execute (sub {
       $app->requires_mime_type;
       $app->send_plain_text ('ok');
@@ -862,7 +862,7 @@ sub _requires_mime_type_custom_known : Test(5) {
       CONTENT_TYPE => $mime,
       CONTENT_LENGTH => length $in,
     }, $in, $out;
-    my $app = Wanage::App->new_from_http ($http);
+    my $app = Warabe::App->new_from_http ($http);
     $app->execute (sub {
       $app->requires_mime_type ({'text/plain' => 1, 'multipart/mixed' => 1});
       $app->send_plain_text ('ok');
@@ -885,7 +885,7 @@ sub _requires_mime_type_custom_unknown : Test(5) {
       CONTENT_TYPE => $mime,
       CONTENT_LENGTH => length $in,
     }, $in, $out;
-    my $app = Wanage::App->new_from_http ($http);
+    my $app = Warabe::App->new_from_http ($http);
     $app->execute (sub {
       $app->requires_mime_type ({
         'text/plain' => 1,
@@ -901,7 +901,7 @@ Content-Type: text/plain; charset=us-ascii
 } # _requires_mime_type_custom_unknown
 
 sub _requires_mime_type_custom_default_known : Test(5) {
-  local $Wanage::App::AllowedMIMETypes = {
+  local $Warabe::App::AllowedMIMETypes = {
     'text/plain' => 1, 'multipart/mixed' => 1,
   };
   my $in = 'abc';
@@ -917,7 +917,7 @@ sub _requires_mime_type_custom_default_known : Test(5) {
       CONTENT_TYPE => $mime,
       CONTENT_LENGTH => length $in,
     }, $in, $out;
-    my $app = Wanage::App->new_from_http ($http);
+    my $app = Warabe::App->new_from_http ($http);
     $app->execute (sub {
       $app->requires_mime_type;
       $app->send_plain_text ('ok');
@@ -927,7 +927,7 @@ sub _requires_mime_type_custom_default_known : Test(5) {
 } # _requires_mime_type_custom_default_known
 
 sub _requires_mime_type_custom_default_unknown : Test(5) {
-  local $Wanage::App::AllowedMIMETypes = {
+  local $Warabe::App::AllowedMIMETypes = {
     'text/plain' => 1,
     'application/xhtml+xml' => 1,
   };
@@ -944,7 +944,7 @@ sub _requires_mime_type_custom_default_unknown : Test(5) {
       CONTENT_TYPE => $mime,
       CONTENT_LENGTH => length $in,
     }, $in, $out;
-    my $app = Wanage::App->new_from_http ($http);
+    my $app = Warabe::App->new_from_http ($http);
     $app->execute (sub {
       $app->requires_mime_type;
       $app->send_plain_text ('ok');
@@ -962,7 +962,7 @@ sub _requires_request_method_allowed : Test(3) {
     my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
       REQUEST_METHOD => $request_method,
     }, undef, $out;
-    my $app = Wanage::App->new_from_http ($http);
+    my $app = Warabe::App->new_from_http ($http);
     $app->execute (sub {
       $app->requires_request_method;
       $app->send_plain_text ('ok');
@@ -977,7 +977,7 @@ sub _requires_request_method_not_allowed : Test(4) {
     my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
       REQUEST_METHOD => $request_method,
     }, undef, $out;
-    my $app = Wanage::App->new_from_http ($http);
+    my $app = Warabe::App->new_from_http ($http);
     $app->execute (sub {
       $app->requires_request_method;
       $app->send_plain_text ('ok');
@@ -996,7 +996,7 @@ sub _requires_request_method_allowed_custom : Test(3) {
     my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
       REQUEST_METHOD => $request_method,
     }, undef, $out;
-    my $app = Wanage::App->new_from_http ($http);
+    my $app = Warabe::App->new_from_http ($http);
     $app->execute (sub {
       $app->requires_request_method ({FOO => 1, BAR => 2});
       $app->send_plain_text ('ok');
@@ -1011,7 +1011,7 @@ sub _requires_request_method_not_allowed_custom : Test(2) {
     my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
       REQUEST_METHOD => $request_method,
     }, undef, $out;
-    my $app = Wanage::App->new_from_http ($http);
+    my $app = Warabe::App->new_from_http ($http);
     $app->execute (sub {
       $app->requires_request_method ({FOO => 1, BAR => 1});
       $app->send_plain_text ('ok');
@@ -1025,13 +1025,13 @@ Allow: BAR,FOO
 } # _requires_request_method_not_allowed_custom
 
 sub _requires_request_method_allowed_custom_default : Test(3) {
-  local $Wanage::App::AllowedRequestMethods = {FOO => 1, BAR => 1};
+  local $Warabe::App::AllowedRequestMethods = {FOO => 1, BAR => 1};
   for my $request_method (qw(FOO BAR)) {
     my $out = '';
     my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
       REQUEST_METHOD => $request_method,
     }, undef, $out;
-    my $app = Wanage::App->new_from_http ($http);
+    my $app = Warabe::App->new_from_http ($http);
     $app->execute (sub {
       $app->requires_request_method;
       $app->send_plain_text ('ok');
@@ -1041,13 +1041,13 @@ sub _requires_request_method_allowed_custom_default : Test(3) {
 } # _requires_request_method_allowed_custom_default
 
 sub _requires_request_method_not_allowed_custom_default : Test(2) {
-  local $Wanage::App::AllowedRequestMethods = {FOO => 1, BAR => 1};
+  local $Warabe::App::AllowedRequestMethods = {FOO => 1, BAR => 1};
   for my $request_method (qw(GET foo)) {
     my $out = '';
     my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
       REQUEST_METHOD => $request_method,
     }, undef, $out;
-    my $app = Wanage::App->new_from_http ($http);
+    my $app = Warabe::App->new_from_http ($http);
     $app->execute (sub {
       $app->requires_request_method;
       $app->send_plain_text ('ok');
@@ -1063,7 +1063,7 @@ Allow: BAR,FOO
 sub _requires_basic_auth_empty : Test(1) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->requires_basic_auth;
     $app->send_plain_text ('ok');
@@ -1078,7 +1078,7 @@ WWW-Authenticate: Basic realm=""
 sub _requires_basic_auth_no_auth : Test(1) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->requires_basic_auth ({foo => 123});
     $app->send_plain_text ('ok');
@@ -1095,7 +1095,7 @@ sub _requires_basic_auth_not_found : Test(1) {
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
     HTTP_AUTHORIZATION => 'Basic Zm9vOmJhcg==',
   }, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->requires_basic_auth ({bar => 123});
     $app->send_plain_text ('ok');
@@ -1112,7 +1112,7 @@ sub _requires_basic_auth_bad_password : Test(1) {
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
     HTTP_AUTHORIZATION => 'Basic Zm9vOmJhcg==',
   }, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->requires_basic_auth ({foo => 123});
     $app->send_plain_text ('ok');
@@ -1129,7 +1129,7 @@ sub _requires_basic_auth_found : Test(1) {
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
     HTTP_AUTHORIZATION => 'Basic Zm9vOmJhcg==',
   }, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->requires_basic_auth ({foo => 'bar'});
     $app->send_plain_text ('ok');
@@ -1145,7 +1145,7 @@ sub _requires_basic_auth_found_empty_password : Test(1) {
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
     HTTP_AUTHORIZATION => 'Basic Zm9vOg==',
   }, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->requires_basic_auth ({foo => ''});
     $app->send_plain_text ('ok');
@@ -1161,7 +1161,7 @@ sub _requires_basic_auth_not_found_empty_password : Test(1) {
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
     HTTP_AUTHORIZATION => 'Basic Zm9vOg==',
   }, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->requires_basic_auth ({foo => 'bar'});
     $app->send_plain_text ('ok');
@@ -1178,7 +1178,7 @@ sub _requires_basic_auth_found_empty_user : Test(1) {
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
     HTTP_AUTHORIZATION => 'Basic OmhvZ2U=',
   }, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->requires_basic_auth ({'' => 'hoge'});
     $app->send_plain_text ('ok');
@@ -1194,7 +1194,7 @@ sub _requires_basic_auth_not_found_empty_user : Test(1) {
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
     HTTP_AUTHORIZATION => 'Basic OmhvZ2U=',
   }, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->requires_basic_auth ({'' => 'bar'});
     $app->send_plain_text ('ok');
@@ -1211,7 +1211,7 @@ sub _requires_basic_auth_found_empty_password : Test(1) {
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
     HTTP_AUTHORIZATION => 'Basic Zm9vOg==',
   }, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->requires_basic_auth ({foo => ''});
     $app->send_plain_text ('ok');
@@ -1227,7 +1227,7 @@ sub _requires_basic_auth_not_found_utf8 : Test(1) {
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
     HTTP_AUTHORIZATION => 'Basic aG9nZTrkuIA=',
   }, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->requires_basic_auth ({hoge => "\x{4E00}"});
     $app->send_plain_text ('ok');
@@ -1244,7 +1244,7 @@ sub _requires_basic_auth_utf8_bytes : Test(1) {
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
     HTTP_AUTHORIZATION => 'Basic aG9nZTrkuIA=',
   }, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->requires_basic_auth ({hoge => encode 'utf-8', "\x{4E00}"});
     $app->send_plain_text ('ok');
@@ -1260,7 +1260,7 @@ sub _requires_basic_auth_realm_empty : Test(1) {
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
     HTTP_AUTHORIZATION => 'Basic Zm9vOmJhcg==',
   }, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->requires_basic_auth ({foo => 123}, realm => '');
     $app->send_plain_text ('ok');
@@ -1277,7 +1277,7 @@ sub _requires_basic_auth_realm_zero : Test(1) {
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
     HTTP_AUTHORIZATION => 'Basic Zm9vOmJhcg==',
   }, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->requires_basic_auth ({foo => 123}, realm => '0');
     $app->send_plain_text ('ok');
@@ -1294,7 +1294,7 @@ sub _requires_basic_auth_realm_non_empty : Test(1) {
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
     HTTP_AUTHORIZATION => 'Basic Zm9vOmJhcg==',
   }, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->requires_basic_auth ({foo => 123}, realm => '123 abc');
     $app->send_plain_text ('ok');
@@ -1311,7 +1311,7 @@ sub _requires_basic_auth_realm_utf8 : Test(1) {
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
     HTTP_AUTHORIZATION => 'Basic Zm9vOmJhcg==',
   }, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->requires_basic_auth ({foo => 123}, realm => "\x{4e00}");
     $app->send_plain_text ('ok');
@@ -1328,7 +1328,7 @@ sub _requires_basic_auth_realm_bytes : Test(1) {
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
     HTTP_AUTHORIZATION => 'Basic Zm9vOmJhcg==',
   }, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->requires_basic_auth ({foo => 123}, realm => "\x9F\xC1\xFF");
     $app->send_plain_text ('ok');
@@ -1345,7 +1345,7 @@ sub _requires_basic_auth_realm_quotation : Test(1) {
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
     HTTP_AUTHORIZATION => 'Basic Zm9vOmJhcg==',
   }, undef, $out;
-  my $app = Wanage::App->new_from_http ($http);
+  my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
     $app->requires_basic_auth ({foo => 123}, realm => '"ab\c');
     $app->send_plain_text ('ok');

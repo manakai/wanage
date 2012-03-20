@@ -1,10 +1,10 @@
-package test::Wanage::App::Role::DateTime;
+package test::Warabe::App::Role::DateTime;
 use strict;
 use warnings;
 use Path::Class;
-use lib file (__FILE__)->dir->parent->subdir ('lib')->stringify;
-use lib glob file (__FILE__)->dir->parent->subdir ('modules', '*', 'lib')->stringify;
-use lib file (__FILE__)->dir->parent->subdir ('t', 'lib')->stringify;
+use lib file (__FILE__)->dir->parent->parent->subdir ('lib')->stringify;
+use lib glob file (__FILE__)->dir->parent->parent->subdir ('modules', '*', 'lib')->stringify;
+use lib file (__FILE__)->dir->parent->parent->subdir ('t', 'lib')->stringify;
 use base qw(Test::Class);
 use Test::MoreMore;
 use Test::Wanage::Envs;
@@ -12,14 +12,14 @@ use Encode;
 use Wanage::HTTP;
 
 {
-  package test::Wanage::App::Role::DateTime::App::DateTime;
-  use base qw(Wanage::App::Role::DateTime Wanage::App);
+  package test::Warabe::App::Role::DateTime::App::DateTime;
+  use base qw(Warabe::App::Role::DateTime Warabe::App);
 }
 
-our $APP_CLASS = 'test::Wanage::App::Role::DateTime::App::DateTime';
+our $APP_CLASS = 'test::Warabe::App::Role::DateTime::App::DateTime';
 
 sub _version : Test(1) {
-  ok $Wanage::App::Role::DateTime::VERSION;
+  ok $Warabe::App::Role::DateTime::VERSION;
 } # _version
 
 sub _epoch_param_as_datetime : Test(13) {

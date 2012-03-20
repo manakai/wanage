@@ -14,7 +14,7 @@ update-test-data:
 
 safetest: local-submodules carton-install config/perl/libs.txt
 	PATH=$(PERL_PATH):$(PATH) PERL5LIB=$(shell cat config/perl/libs.txt) \
-	    $(PROVE) t/*.t
+	    $(PROVE) t/*.t t/warabe/*.t
 
 Makefile-setupenv: Makefile.setupenv
 	make --makefile Makefile.setupenv setupenv-update \

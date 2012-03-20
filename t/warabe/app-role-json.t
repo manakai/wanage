@@ -1,10 +1,10 @@
-package test::Wanage::App::Role::JSON;
+package test::Warabe::App::Role::JSON;
 use strict;
 use warnings;
 use Path::Class;
-use lib file (__FILE__)->dir->parent->subdir ('lib')->stringify;
-use lib glob file (__FILE__)->dir->parent->subdir ('modules', '*', 'lib')->stringify;
-use lib file (__FILE__)->dir->parent->subdir ('t', 'lib')->stringify;
+use lib file (__FILE__)->dir->parent->parent->subdir ('lib')->stringify;
+use lib glob file (__FILE__)->dir->parent->parent->subdir ('modules', '*', 'lib')->stringify;
+use lib file (__FILE__)->dir->parent->parent->subdir ('t', 'lib')->stringify;
 use base qw(Test::Class);
 use Test::MoreMore;
 use Test::Wanage::Envs;
@@ -12,14 +12,14 @@ use Encode;
 use Wanage::HTTP;
 
 {
-  package test::Wanage::App::Role::JSON::App::JSON;
-  use base qw(Wanage::App::Role::JSON Wanage::App);
+  package test::Warabe::App::Role::JSON::App::JSON;
+  use base qw(Warabe::App::Role::JSON Warabe::App);
 }
 
-our $APP_CLASS = 'test::Wanage::App::Role::JSON::App::JSON';
+our $APP_CLASS = 'test::Warabe::App::Role::JSON::App::JSON';
 
 sub _version : Test(1) {
-  ok $Wanage::App::Role::JSON::VERSION;
+  ok $Warabe::App::Role::JSON::VERSION;
 } # _version
 
 sub _request_json : Test(16) {

@@ -1,6 +1,6 @@
 =head1 NAME
 
-Wanage::App - Wanage Web Application API
+Warabe::App - Warabe Web Application API
 
 =head1 SYNOPSIS
 
@@ -18,7 +18,7 @@ TBD
 
 =over 4
 
-=item $app = Wanage::App->new_from_http ($http)
+=item $app = Warabe::App->new_from_http ($http)
 
 Create and return a new application object, associated with the given
 HTTP interface object (i.e. an instance of L<Wanage::HTTP>).
@@ -186,7 +186,7 @@ set to the L<Location:> header.
 Example:
 
   package My::App;
-  use base qw(Wanage::App);
+  use base qw(Warabe::App);
   sub send_redirect_response {
     my $url = shift;
     if ($url->stringify =~ m{^http://myhost.example.com/}) {
@@ -303,7 +303,7 @@ Check whether the URL scheme of the request is supported by
 application or not.
 
 The list of valid URL schemes are provided as hash reference
-C<$Wanage::App::AllowedURLSchemes>, where keys are normalized URL
+C<$Warabe::App::AllowedURLSchemes>, where keys are normalized URL
 schemes and values are true values.  By default, the value is C<<
 {http => 1, https => 1} >>.
 
@@ -324,7 +324,7 @@ application or not.
 
 Whether the host is valid or not is determined by whether the
 canonicalized representation of host matches the regular expression
-C<$Wanage::App::AllowedHostname>.  By default, the regular expression
+C<$Warabe::App::AllowedHostname>.  By default, the regular expression
 is C<.*>, i.e. any host is allowed.
 
 =item $app->requires_valid_content_length (%args)
@@ -340,7 +340,7 @@ Folowing option is available:
 
 The maximum number of bytes allowed by the application.  If this
 option is not specified, the value of the global variable
-C<$Wanage::App::MaxContentLength>, whose default is C<1024 * 1024>
+C<$Warabe::App::MaxContentLength>, whose default is C<1024 * 1024>
 (i.e. 1MB), is used.
 
 =back
@@ -352,7 +352,7 @@ not.  If it is not a known type, the C<415> Unsupported MIME Type
 error is thrown.
 
 The list of allowed MIME types can be specified as the argument.  If
-it is not specified, the C<$Wanage::App::AllowedMIMETypes> value is
+it is not specified, the C<$Warabe::App::AllowedMIMETypes> value is
 used instead.  In either case, the list must be supplied as a hash
 reference where keys are lowercase-normalized form of MIME types and
 values are true values.  The MIME types cannot contain parameters; Any
@@ -372,7 +372,7 @@ If it is not a known type, the C<405> Method Not Allowed error is
 thrown.
 
 The list of allowed methods can be specified as the argument.  If it
-is not specified, the C<$Wanage::App::AllowedRequestMethods> value is
+is not specified, the C<$Warabe::App::AllowedRequestMethods> value is
 used instead.  In either case, the list must be supplied as a hash
 reference where keys are request methods and values are true values.
 The default list is: C<< {GET => 1, HEAD => 1, POST => 1} >>.
