@@ -24,10 +24,28 @@ Makefile.setupenv:
 	wget -O $@ https://raw.github.com/wakaba/perl-setupenv/master/Makefile.setupenv
 
 remotedev-test remotedev-reset remotedev-reset-setupenv \
-config/perl/libs.txt local-perl \
+config/perl/libs.txt local-perl generatepm \
 perl-exec perl-version \
 carton-install carton-update local-submodules: %: Makefile-setupenv
 	make --makefile Makefile.setupenv $@
+
+GENERATEPM = local/generatepm/bin/generate-pm-package
+GENERATEPM_ = $(GENERATEPM) --generate-json
+
+dist: generatepm
+	$(GENERATEPM_) config/dist/wanage.pi dist/
+	$(GENERATEPM_) config/dist/warabe-app.pi dist/
+	$(GENERATEPM_) config/dist/warabe-app-role-json.pi dist/
+	$(GENERATEPM_) config/dist/warabe-app-role-datetime.pi dist/
+
+dist-wakaba-packages: local/wakaba-packages dist
+	cp dist/*.json local/wakaba-packages/data/perl/
+	cp dist/*.tar.gz local/wakaba-packages/perl/
+	cd local/wakaba-packages && $(MAKE) all
+
+local/wakaba-packages: always
+	git clone "git@github.com:wakaba/packages.git" $@ || (cd $@ && git pull)
+	cd $@ && git submodule update --init
 
 always:
 

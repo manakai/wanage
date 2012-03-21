@@ -29,6 +29,12 @@ L<Wanage::HTTP>.
 
 L<Warabe::App>.
 
+=head1 DISTRIBUTION
+
+Latest version of these modules are available in the Git repository:
+<https://github.com/wakaba/wanage> or
+<http://suika.fam.cx/gate/git/wi/wanage.git/tree>.
+
 =head1 AUTHOR
 
 Wakaba <w@suika.fam.cx>.

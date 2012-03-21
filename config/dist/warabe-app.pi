@@ -1,0 +1,29 @@
+{
+    main_module_name => 'Warabe::App',
+    file_names => [qw(
+        lib/Warabe/App.pm
+        lib/Warabe/App.pod
+        t/warabe/app.t
+        t/lib/Test/Wanage/Envs.pm
+        config/dist/warabe.pi
+    )],
+    req_modules => {
+        'Encode' => 0,
+
+        'URL::PercentEncode' => 0,
+    },
+    t_req_modules => {
+        'Path::Class' => 0,
+        'Test::More' => 0,
+        'Test::Class' => 0,
+
+        'Test::MoreMore' => 0,
+        'Wanage::HTTP' => 0,
+    },
+    urls => {
+        git => {
+            GitHub => q<https://github.com/wakaba/wanage>,
+            Suika => q<http://suika.fam.cx/gate/git/wi/wanage.git/tree>,
+        },
+    },
+};
