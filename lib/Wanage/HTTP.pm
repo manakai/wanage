@@ -327,7 +327,7 @@ sub set_response_header ($$$) {
 } # set_response_header
 
 sub response_mime_type ($) {
-  return $_[0]->{request_mime_type} ||= do {
+  return $_[0]->{response_mime_type} ||= do {
     require Wanage::HTTP::MIMEType;
     my $headers = $_[0]->{response_headers}->{headers};
     my $mime = Wanage::HTTP::MIMEType->new_from_content_type
