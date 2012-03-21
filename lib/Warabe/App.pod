@@ -1,18 +1,78 @@
 =head1 NAME
 
-Warabe::App - Warabe Web Application API
+Warabe::App - A fundamental building block of server-side Web applications
 
 =head1 SYNOPSIS
 
-TBD
+  use Wanage::HTTP;
+  use Warabe::App;
+  
+  $http = Wanage::HTTP->new_cgi;
+  $app = Warabe::App->new_from_http ($http);
+  
+  $app->execute (sub {
+    unless ($app->path_segments->[0] eq 'hoge') {
+      $app->throw_error (404);
+    }
+    
+    $app->send_plain_text (get_data ($app->path_segments->[1]));
+  });
+  $app->send_response;
 
 =head1 DESCRIPTION
 
-TBD
+The L<Warabe::App> module is the primary component of B<Warabe>, a
+server-side Web application construction toolkit.  It provides a
+number of convinient methods handling HTTP request and response in the
+way that would be useful for typical Web applications.
+
+Warabe accesses the HTTP request and response through the interface
+provided by L<Wanage::HTTP>.  Therefore, Warabe can handle any
+server-application interface supported by L<Wanage::HTTP>, including
+CGI and PSGI.
+
+Warabe constructs higher-level operations for more concrete use cases
+on the top of APIs provided by Wanage HTTP object.  It does not mean a
+Web application using Warabe should not access Wanage HTTP object
+directly - in fact, Warabe does not provide complete access to HTTP
+request and response, as it can be easily accessed through the HTTP
+object directly from the application, if necessary.
+
+  +------+   +------+   +------+      +------+      +------+
+  |Your  |<->|Warabe|<->|Wanage|<---->|HTTP  |<---->|HTTP  |
+  |  App.|   +------+   |      | CGI  |server| HTTP |client|
+  |      |<------------>|      | PSGI |      |      |      |
+  +------+              +------+      +------+      +------+
+  
+  App.       Common     Generic       TCP/HTTP
+  specific   Web app.   HTTP          protocol
+  logic      operations interpret.    handling
+
+=head1 SUBCLASSING
+
+An application can define a subclass of L<Warabe::App> such that
+additional methods can be added to the application object.  Such a
+subclass can incorporate additional features by also inheriting plugin
+modules, such as C<Warabe::App::Role::JSON>.  Example:
+
+  package My::Warabe::App;
+  use base qw(Warabe::App::Role::JSON Warabe::App);
+  
+  sub my_user {
+    my $self = shift;
+    my $session_id = $self->http->request_cookies->{my_session};
+    ...;
+    return $user;
+  }
+
+Although there is no formal naming rule for methods, it is recommended
+for subclass-defined methods to contain a short identifier of the
+class within its name (e.g. C<my_> in the example above) to avoid
+confliction with future additions to base classes.
 
 =head1 METHODS
 
-TBD
+Following methods are available on the C<Warabe::App> object:
 
 =head2 Constructor
 

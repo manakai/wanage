@@ -1,6 +1,6 @@
 =head1 NAME
 
-Wanage::HTTP - HTTP interface for Wanage Web applications
+Wanage::HTTP - An HTTP API for server-side Web applications
 
 =head1 SYNOPSIS
 
@@ -23,10 +23,28 @@ Wanage::HTTP - HTTP interface for Wanage Web applications
 
 =head1 DESCRIPTION
 
-The C<Wanage::HTTP> module provides APIs to interpret HTTP request
-message and generate HTTP response message, using the underlying
-interface for server-application communication, including CGI and
-PSGI.
+The C<Wanage::HTTP> module provides a set of APIs for handling HTTP
+messages in server-side Web applications, namely interpretation of
+HTTP request message and generation of HTTP response message in
+response to the request, using the underlying interface for
+server-application communication such as CGI and PSGI.
+
+The Wanage HTTP object provides access to data contained in HTTP
+request message, as well as primitive methods to generate HTTP
+response, while not entirely exposing historical complexness of
+underlying interfaces to servers.  The goal of the HTTP object
+implementation is not completely modeling the HTTP request and
+response messages, but providing a set of API that is convinient and
+secure enough to build general-purpose Web applications.  Therefore,
+it does not, and will not, support full HTTP protocol features.
+
+Although it is not required, Wanage is intended to be combined with
+L<Warabe::App>, a fundamental building block of server-side Web
+applications.  Warabe defines more specific or higher-level APIs for
+typical Web application use cases, such as URL path interpretation,
+request validation, error handling, redirect response construction,
+and so on, which are all built on the top of Wanage's generic HTTP
+interface.
 
 =head1 METHODS
 
@@ -575,6 +593,8 @@ C<quoted-pair>s in C<quoted-string>s are not supported in most
 headers, as it seems not significant for Web compatibility.
 
 =head1 SEE ALSO
+
+L<Warabe::App>.
 
 RFC 2616 - Hypertext Transfer Protocol -- HTTP/1.1
 <http://tools.ietf.org/html/rfc2616>.
