@@ -1,0 +1,43 @@
+=head1 NAME
+
+Wanage and Warabe - APIs for server-side Web applications
+
+=head1 DESCRIPTION
+
+B<Wanage> and B<Warabe> are basic APIs for building server-side Web
+applications.
+
+  +------+   +------+   +------+      +------+      +------+
+  |Your  |<->|Warabe|<->|Wanage|<---->|HTTP  |<---->|HTTP  |
+  |  App.|   +------+   |      | CGI  |server| HTTP |client|
+  |      |<------------>|      | PSGI |      |      |      |
+  +------+              +------+      +------+      +------+
+  
+  App.       Common     Generic       TCP/HTTP
+  specific   Web app.   HTTP          protocol
+  logic      operations interpret.    handling
+
+They are I<not> Web application frameworks.  They only provide
+abstraction for interpretation of HTTP requests and construction of
+HTTP response in the level enough to create Web applications easily by
+just understanding how HTTP works.  They does not define how you
+organize your Web application.
+
+=head1 SEE ALSO
+
+L<Wanage::HTTP>.
+
+L<Warabe::App>.
+
+=head1 AUTHOR
+
+Wakaba <w@suika.fam.cx>.
+
+=head1 LICENSE
+
+Copyright 2012 Wakaba <w@suika.fam.cx>.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
