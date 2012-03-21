@@ -16,4 +16,9 @@ Info.pm: mkinfo.pl \
 	perl mkinfo.pl > $@
 	perl -c $@
 
+dataautoupdate: update dataautoupdate-git
+
+dataautoupdate-git:
+	git add Info.pm
+
 ## License: Public Domain.

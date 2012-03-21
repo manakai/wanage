@@ -1,5 +1,5 @@
 package Wanage::HTTP::Info;
-$VERSION = 40240438.000000;
+$VERSION = 40240608.000000;
 $ReasonPhrases = {
           '0' => '',
           '100' => 'Continue',

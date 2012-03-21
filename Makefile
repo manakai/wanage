@@ -29,6 +29,9 @@ perl-exec perl-version \
 carton-install carton-update local-submodules: %: Makefile-setupenv
 	make --makefile Makefile.setupenv $@
 
+dataautoupdate:
+	cd lib/Wanage/HTTP && $(MAKE) dataautoupdate
+
 GENERATEPM = local/generatepm/bin/generate-pm-package
 GENERATEPM_ = $(GENERATEPM) --generate-json
 
