@@ -92,6 +92,10 @@ If the C<$Wanage::HTTP::UseXForwardedScheme> variable is set to true,
 the C<X-Forwarded-Scheme:> header, if any, is used to determine the
 scheme component of the URL.
 
+If the C<$Wanage::HTTP::UseXForwardedHost> variable is set to true,
+the C<X-Forwarded-Host:> header, if any, is used to determine the
+scheme component of the URL.
+
 Unless the C<$Wanage::Interface::UseRequestURLScheme> variable is set
 to true, the URL scheme of the C<Request-URI> in the HTTP request is
 ignored, as it might not represent the actual protocol used to connect

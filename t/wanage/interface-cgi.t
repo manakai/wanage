@@ -259,6 +259,35 @@ sub _original_url_from_http_host_request_uri : Test(4) {
   is $cgi->canon_url->stringify, 'http://fuga/hoge%3Cscript%3E/fuga';
 } # _original_url_from_http_host_request_uri
 
+sub _original_url_from_http_host_request_uri_x_forwarded_host : Test(4) {
+  my $cgi = with_cgi_env {
+    Wanage::Interface::CGI->new_from_main;
+  } {SERVER_NAME => 'hoge.Fuga', SERVER_PORT => 190,
+     SCRIPT_NAME => '', PATH_INFO => '/',
+     HTTP_HOST => 'fuga:80',
+     HTTP_X_FORWARDED_HOST => 'abc:124',
+     REQUEST_URI => '/hoge<script>/fuga'};
+  isa_ok $cgi->original_url, 'Wanage::URL';
+  isa_ok $cgi->canon_url, 'Wanage::URL';
+  is $cgi->original_url->stringify, 'http://fuga:80/hoge<script>/fuga';
+  is $cgi->canon_url->stringify, 'http://fuga/hoge%3Cscript%3E/fuga';
+} # _original_url_from_http_host_request_uri_x_forwarded_host
+
+sub _original_url_from_http_host_request_uri_x_forwarded_host_en : Test(4) {
+  local $Wanage::HTTP::UseXForwardedHost = 1;
+  my $cgi = with_cgi_env {
+    Wanage::Interface::CGI->new_from_main;
+  } {SERVER_NAME => 'hoge.Fuga', SERVER_PORT => 190,
+     SCRIPT_NAME => '', PATH_INFO => '/',
+     HTTP_HOST => 'fuga:80',
+     HTTP_X_FORWARDED_HOST => 'abc:0124',
+     REQUEST_URI => '/hoge<script>/fuga'};
+  isa_ok $cgi->original_url, 'Wanage::URL';
+  isa_ok $cgi->canon_url, 'Wanage::URL';
+  is $cgi->original_url->stringify, 'http://abc:0124/hoge<script>/fuga';
+  is $cgi->canon_url->stringify, 'http://abc:124/hoge%3Cscript%3E/fuga';
+} # _original_url_from_http_host_request_uri_x_forwarded_host_en
+
 sub _original_url_from_request_uri_abs : Test(4) {
   my $cgi = with_cgi_env {
     Wanage::Interface::CGI->new_from_main;

@@ -216,6 +216,35 @@ sub _original_url_from_http_host_request_uri : Test(4) {
   is $psgi->canon_url->stringify, 'http://fuga/hoge%3Cscript%3E/fuga';
 } # _original_url_from_http_host_request_uri
 
+sub _original_url_from_http_host_request_uri_x_forwarded : Test(4) {
+  my $env = new_psgi_env {SERVER_NAME => 'hoge.Fuga', SERVER_PORT => 190,
+                          SCRIPT_NAME => '', PATH_INFO => '/',
+                          HTTP_HOST => 'fuga:80',
+                          HTTP_X_FORWARDED_HOST => 'abc:0124',
+                          REQUEST_URI => '/hoge<script>/fuga',
+                          'psgi.url_scheme' => 'http'};
+  my $psgi = Wanage::Interface::PSGI->new_from_psgi_env ($env);
+  isa_ok $psgi->original_url, 'Wanage::URL';
+  isa_ok $psgi->canon_url, 'Wanage::URL';
+  is $psgi->original_url->stringify, 'http://fuga:80/hoge<script>/fuga';
+  is $psgi->canon_url->stringify, 'http://fuga/hoge%3Cscript%3E/fuga';
+} # _original_url_from_http_host_request_uri_x_forwarded
+
+sub _original_url_from_http_host_request_uri_x_forwarded_en : Test(4) {
+  local $Wanage::HTTP::UseXForwardedHost = 1;
+  my $env = new_psgi_env {SERVER_NAME => 'hoge.Fuga', SERVER_PORT => 190,
+                          SCRIPT_NAME => '', PATH_INFO => '/',
+                          HTTP_HOST => 'fuga:80',
+                          HTTP_X_FORWARDED_HOST => 'abc:0123',
+                          REQUEST_URI => '/hoge<script>/fuga',
+                          'psgi.url_scheme' => 'http'};
+  my $psgi = Wanage::Interface::PSGI->new_from_psgi_env ($env);
+  isa_ok $psgi->original_url, 'Wanage::URL';
+  isa_ok $psgi->canon_url, 'Wanage::URL';
+  is $psgi->original_url->stringify, 'http://abc:0123/hoge<script>/fuga';
+  is $psgi->canon_url->stringify, 'http://abc:123/hoge%3Cscript%3E/fuga';
+} # _original_url_from_http_host_request_uri_x_forwarded_en
+
 sub _original_url_from_request_uri_abs : Test(4) {
   my $env = new_psgi_env {SERVER_NAME => 'hoge.Fuga', SERVER_PORT => 190,
                           SCRIPT_NAME => '', PATH_INFO => '/',

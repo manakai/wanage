@@ -64,7 +64,10 @@ sub original_url ($) {
       $parsed_url->{scheme_normalized} = $parsed_url->{scheme};
       $parsed_url->{scheme_normalized} =~ tr/A-Z/a-z/; ## ASCII case-insensitive
       
-      my $host = $handler->get_meta_variable ('HTTP_HOST')
+      my $host = ($Wanage::HTTP::UseXForwardedHost
+                      ? $handler->get_meta_variable('HTTP_X_FORWARDED_HOST') 
+                      : undef)
+          || $handler->get_meta_variable ('HTTP_HOST')
           || ($handler->get_meta_variable ('SERVER_NAME') . ':' . 
               $handler->get_meta_variable ('SERVER_PORT'));
       if ($host =~ s/:([0-9]+)\z//) {
