@@ -266,7 +266,7 @@ sub _request_body_as_multipart_form_data ($) {
 
 sub request_body_params ($) {
   return $_[0]->{request_body_params} ||= do {
-    my $ct = $_[0]->request_mime_type->value;
+    my $ct = $_[0]->request_mime_type->value || '';
     if ($ct eq 'application/x-www-form-urlencoded') {
       parse_form_urlencoded_b ${$_[0]->request_body_as_ref || \''};
     } elsif ($ct eq 'multipart/form-data') {
@@ -279,7 +279,7 @@ sub request_body_params ($) {
 
 sub request_uploads ($) {
   return $_[0]->{request_uploads} ||= do {
-    my $ct = $_[0]->request_mime_type->value;
+    my $ct = $_[0]->request_mime_type->value || '';
     if ($ct eq 'multipart/form-data') {
       $_[0]->_request_body_as_multipart_form_data->as_uploads_hashref;
     } else {
