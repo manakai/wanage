@@ -1,5 +1,5 @@
 package Wanage::HTTP::Info;
-$VERSION = 40240608.000000;
+$VERSION = 40240720.000000;
 $ReasonPhrases = {
           '0' => '',
           '100' => 'Continue',
@@ -26,7 +26,7 @@ $ReasonPhrases = {
           '305' => 'Use Proxy',
           '306' => 'Reserved',
           '307' => 'Temporary Redirect',
-          '308' => 'Resume Incomplete',
+          '308' => 'Permanent Redirect',
           '400' => 'Bad Request',
           '401' => 'Unauthorized',
           '402' => 'Payment Required',
