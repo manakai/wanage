@@ -125,7 +125,9 @@ sub send_error ($$;%) {
   $proto->set_status ($code ||= 400, $args{reason_phrase});
   $proto->set_response_header
       ('Content-Type' => 'text/plain; charset=us-ascii');
-  $proto->send_response_body_as_ref (\$code);
+  $proto->send_response_body_as_text
+      (defined $args{reason_phrase}
+           ? $code . ' ' . $args{reason_phrase} : $code);
   $proto->close_response_body;
 } # send_error
 
