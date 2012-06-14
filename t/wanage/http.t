@@ -1,6 +1,7 @@
 package test::Wanage::HTTP;
 use strict;
 use warnings;
+no warnings 'once';
 use Path::Class;
 use lib file (__FILE__)->dir->parent->parent->subdir ('lib')->stringify;
 use lib glob file (__FILE__)->dir->parent->parent->subdir ('modules', '*', 'lib')->stringify;

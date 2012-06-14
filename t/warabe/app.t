@@ -1,6 +1,7 @@
 package test::Warabe::App;
 use strict;
 use warnings;
+no warnings 'utf8';
 use Path::Class;
 use lib file (__FILE__)->dir->parent->parent->subdir ('lib')->stringify;
 use lib glob file (__FILE__)->dir->parent->parent->subdir ('modules', '*', 'lib')->stringify;
@@ -330,7 +331,8 @@ sub _send_error_with_code_and_reason : Test(1) {
   eq_or_diff $out, q{Status: 410 The page was removed!
 Content-Type: text/plain; charset=us-ascii
 
-410};
+410 The page was
+removed!};
 } # _send_error_with_code_and_reason
 
 sub _send_error_with_code_and_reason_utf8 : Test(1) {
@@ -341,7 +343,7 @@ sub _send_error_with_code_and_reason_utf8 : Test(1) {
   eq_or_diff $out, encode 'utf-8', qq{Status: 410 \x{5000}\x{5100}\x00
 Content-Type: text/plain; charset=us-ascii
 
-410};
+410 \x{5000}\x{5100}\x00};
 } # _send_error_with_code_and_reason_utf8
 
 ## ------ Throw-or-process ------
@@ -511,10 +513,10 @@ sub _requires_valid_url_scheme_ftp : Test(1) {
     $app->requires_valid_url_scheme;
     $app->send_plain_text ('ok');
   });
-  is $out, "Status: 400 Unsupported URL Scheme
+  is $out, "Status: 400 Unsupported URL scheme
 Content-Type: text/plain; charset=us-ascii
 
-400";
+400 Unsupported URL scheme";
 } # _requires_valid_url_scheme_ftp
 
 sub _requires_valid_url_scheme_https_custom : Test(1) {
@@ -528,10 +530,10 @@ sub _requires_valid_url_scheme_https_custom : Test(1) {
     $app->requires_valid_url_scheme;
     $app->send_plain_text ('ok');
   });
-  is $out, "Status: 400 Unsupported URL Scheme
+  is $out, "Status: 400 Unsupported URL scheme
 Content-Type: text/plain; charset=us-ascii
 
-400";
+400 Unsupported URL scheme";
 } # _requires_valid_url_scheme_https_custom
 
 sub _requires_https_https : Test(1) {
@@ -620,7 +622,7 @@ sub _requires_https_http_post : Test(1) {
   is $out, q{Status: 400 Unsupported URL scheme
 Content-Type: text/plain; charset=us-ascii
 
-400};
+400 Unsupported URL scheme};
 } # _requires_https_http_post
 
 sub _requires_valid_hostname : Test(1) {
@@ -667,7 +669,7 @@ sub _requires_valid_hostname_custom_false : Test(1) {
   is $out, "Status: 400 Bad hostname
 Content-Type: text/plain; charset=us-ascii
 
-400";
+400 Bad hostname";
 } # _requires_valid_hostname_custom_false
 
 sub _requires_valid_hostname_custom_false_no_host : Test(1) {
@@ -685,7 +687,7 @@ sub _requires_valid_hostname_custom_false_no_host : Test(1) {
   is $out, "Status: 400 Bad hostname
 Content-Type: text/plain; charset=us-ascii
 
-400";
+400 Bad hostname";
 } # _requires_valid_hostname_custom_false_no_host
 
 sub _requires_valid_content_length_no_request_body : Test(1) {
@@ -1206,7 +1208,7 @@ WWW-Authenticate: Basic realm=""
 401 Authorization required};
 } # _requires_basic_auth_not_found_empty_user
 
-sub _requires_basic_auth_found_empty_password : Test(1) {
+sub _requires_basic_auth_found_empty_password2 : Test(1) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
     HTTP_AUTHORIZATION => 'Basic Zm9vOg==',
@@ -1220,7 +1222,7 @@ sub _requires_basic_auth_found_empty_password : Test(1) {
 Content-Type: text/plain; charset=utf-8
 
 ok};
-} # _requires_basic_auth_found_empty_password
+} # _requires_basic_auth_found_empty_password2
 
 sub _requires_basic_auth_not_found_utf8 : Test(1) {
   my $out = '';

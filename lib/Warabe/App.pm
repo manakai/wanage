@@ -183,7 +183,7 @@ our $AllowedURLSchemes ||= {
 sub requires_valid_url_scheme ($) {
   my $url = $_[0]->{http}->url;
   unless ($AllowedURLSchemes->{$url->{scheme}}) {
-    $_[0]->throw_error (400, reason_phrase => 'Unsupported URL Scheme');
+    $_[0]->throw_error (400, reason_phrase => 'Unsupported URL scheme');
   }
 } # requires_valid_url_scheme
 
