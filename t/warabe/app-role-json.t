@@ -45,6 +45,32 @@ sub _request_json : Test(16) {
   }
 } # _request_json
 
+sub _json_param : Test(11) {
+  for (
+    [undef, undef, undef, undef],
+    ['json=1241', undef, undef, '1241'],
+    ['json="abcd"', undef, undef, 'abcd'],
+    ['json=1241&json=xyaa', undef, undef, '1241'],
+    ['json={"aaa":"bbb"}', undef, undef, {aaa => 'bbb'}],
+    ['json=[1241, 1333]', undef, undef, ['1241', '1333']],
+    ['json=%21', undef, undef, undef],
+    ['json={x', undef, undef, undef],
+    ['json={"\\u4E00":"\\u5000"}', undef, undef, {"\x{4e00}" => "\x{5000}"}],
+    ['json="abcd"', 'application/x-www-form-urlencoded', 'json=341', 'abcd'],
+    [undef, 'application/x-www-form-urlencoded', 'json=341', '341'],
+  ) {
+    my $in = $_->[2];
+    my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+      QUERY_STRING => $_->[0],
+      CONTENT_TYPE => $_->[1],
+      CONTENT_LENGTH => length $in,
+    }, $in;
+    my $app = $APP_CLASS->new_from_http ($http);
+    my $json = $app->json_param ('json');
+    eq_or_diff $json, $_->[3];
+  }
+}
+
 sub _send_json : Test(2) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;

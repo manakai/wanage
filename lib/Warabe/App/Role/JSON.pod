@@ -31,6 +31,16 @@ This method does not check the value of the C<Content-Type:> header.
 It should be done by the application if it is desired or forced to
 check the value of the header by appropriate specifications.
 
+=item $json = $app->json_param ($name)
+
+Decode request parameter (i.e. C<application/x-www-form-urlencoded> or
+C<multipart/form-data> encoded form data set in query parameters and
+request-body) with the specified name as (UTF-8 encoded) JSON and
+return as a Perl scalar value.
+
+If the parameter values is not a JSON data, the C<undef> value is
+returned.
+
 =item $app->send_json ($data)
 
 Send the given data, encoded in JSON format, as the response-body.
@@ -44,8 +54,7 @@ The C<Content-Type:> header is set to C<application/json>.
 
 L<JSON::Functions::XS>.
 
-RFC 4627 - The application/json Media Type for JavaScript Object
-Notation (JSON) <http://tools.ietf.org/html/rfc4627>.
+ECMAScript5 The JSON Object <http://es5.github.com/#x15.12>.
 
 L<Warabe::App>.
 

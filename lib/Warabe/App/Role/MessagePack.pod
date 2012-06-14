@@ -1,0 +1,59 @@
+=head1 NAME
+
+Warabe::App::Role::MessagePack - Warabe Web Application API - MessagePack module
+
+=head1 SYNOPSIS
+
+  package My::Warabe::App;
+  use base qw(Warabe::App::Role::MessagePack Warabe::App);
+
+  $app = My::Warabe::App->new_from_http ($http);
+  print Dumper $app->mp_param ('mpdata');
+
+=head1 DESCRIPTION
+
+The C<Warabe::App::Role::MessagePack> module defines additional
+methods for handling MessagePack data in L<Warabe::App> API.  This
+module is intended to be used a superclass of some subclass of
+L<Warabe::App>.
+
+=head1 METHODS
+
+=over 4
+
+=item $data = $app->mp_param ($name)
+
+Decode request parameter (i.e. C<application/x-www-form-urlencoded> or
+C<multipart/form-data> encoded form data set in query parameters and
+request-body) with the specified name as MessagePack and return as a
+Perl scalar value.
+
+If the parameter values is not a MessagePack serialized data, the
+C<undef> value is returned.
+
+Please note that, since MessagePack does not have character string
+type (which is different from byte (or octet) string type), any string
+extracted from the MessagePack data will not have utf8 flag set.
+
+=back
+
+=head1 SEE ALSO
+
+L<Data::MessagePack>.
+
+MessagePack <http://msgpack.org/>.
+
+L<Warabe::App>.
+
+=head1 AUTHOR
+
+Wakaba <w@wuika.fam.cx>.
+
+=head1 LICENSE
+
+Copyright 2012 Wakaba <w@suika.fam.cx>.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut

@@ -1,7 +1,7 @@
 package Warabe::App::Role::JSON;
 use strict;
 use warnings;
-our $VERSION = '1.0';
+our $VERSION = '2.0';
 use JSON::Functions::XS qw(perl2json_bytes json_bytes2perl);
 
 sub request_json ($) {
