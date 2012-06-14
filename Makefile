@@ -2,9 +2,18 @@ PERL_VERSION = latest
 PERL_PATH = $(abspath local/perlbrew/perls/perl-$(PERL_VERSION)/bin)
 PROVE = prove
 
+## Test:
+##     $ make test
+## Update dependency list:
+##     $ make pmb-update
+## Install dependent modules into ./local/:
+##     $ make pmb-install
+## Create tarballs for distribution:
+##     $ make dist
+
 all:
 
-test: test-data safetest
+test: test-deps test-data safetest
 
 test-data:
 	cd t/data && make all
@@ -12,7 +21,9 @@ test-data:
 update-test-data:
 	cd t/data && make update
 
-safetest: local-submodules carton-install config/perl/libs.txt
+safetest: test-deps safetest-main
+
+safetest-main:
 	PATH=$(PERL_PATH):$(PATH) PERL5LIB=$(shell cat config/perl/libs.txt) \
 	    $(PROVE) t/wanage/*.t t/warabe/*.t
 
@@ -23,11 +34,13 @@ Makefile-setupenv: Makefile.setupenv
 Makefile.setupenv:
 	wget -O $@ https://raw.github.com/wakaba/perl-setupenv/master/Makefile.setupenv
 
-remotedev-test remotedev-reset remotedev-reset-setupenv \
-config/perl/libs.txt local-perl generatepm \
+local-perl generatepm \
 perl-exec perl-version \
-carton-install carton-update local-submodules: %: Makefile-setupenv
+pmb-update pmb-install \
+: %: Makefile-setupenv
 	make --makefile Makefile.setupenv $@
+
+test-deps: pmb-install
 
 dataautoupdate:
 	cd lib/Wanage/HTTP && $(MAKE) dataautoupdate
@@ -39,6 +52,7 @@ dist: generatepm
 	$(GENERATEPM_) config/dist/wanage.pi dist/
 	$(GENERATEPM_) config/dist/warabe-app.pi dist/
 	$(GENERATEPM_) config/dist/warabe-app-role-json.pi dist/
+	$(GENERATEPM_) config/dist/warabe-app-role-messagepack.pi dist/
 	$(GENERATEPM_) config/dist/warabe-app-role-datetime.pi dist/
 
 dist-wakaba-packages: local/wakaba-packages dist

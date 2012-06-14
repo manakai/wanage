@@ -875,6 +875,82 @@
          "target" : "Data::Dumper",
          "version" : "2.131"
       },
+      "Data::MessagePack" : {
+         "dist" : "Data-MessagePack-0.41",
+         "mymeta" : {
+            "abstract" : "MessagePack serialising/deserialising",
+            "author" : [
+               "Tokuhiro Matsuno"
+            ],
+            "dynamic_config" : 0,
+            "generated_by" : "Module::Install version 1.06, CPAN::Meta::Converter version 2.120921, CPAN::Meta::Converter version 2.120351",
+            "license" : [
+               "perl_5"
+            ],
+            "meta-spec" : {
+               "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+               "version" : "2"
+            },
+            "name" : "Data-MessagePack",
+            "no_index" : {
+               "directory" : [
+                  "inc",
+                  "t",
+                  "xt"
+               ]
+            },
+            "prereqs" : {
+               "build" : {
+                  "requires" : {
+                     "Devel::PPPort" : "3.19",
+                     "ExtUtils::MakeMaker" : "6.59",
+                     "ExtUtils::ParseXS" : "2.21",
+                     "Test::More" : "0.94",
+                     "Test::Requires" : "0"
+                  }
+               },
+               "configure" : {
+                  "requires" : {
+                     "Devel::PPPort" : "3.19",
+                     "ExtUtils::MakeMaker" : "6.59",
+                     "ExtUtils::ParseXS" : "2.21"
+                  }
+               },
+               "runtime" : {
+                  "requires" : {
+                     "XSLoader" : "0.02",
+                     "perl" : "5.008001"
+                  }
+               }
+            },
+            "release_status" : "stable",
+            "resources" : {
+               "license" : [
+                  "http://dev.perl.org/licenses/"
+               ],
+               "repository" : {
+                  "url" : "http://github.com/msgpack/msgpack-perl"
+               }
+            },
+            "version" : "0.41"
+         },
+         "name" : "Data::MessagePack",
+         "pathname" : "G/GF/GFUJI/Data-MessagePack-0.41.tar.gz",
+         "provides" : {
+            "Data::MessagePack" : {
+               "file" : "Data/MessagePack.pm",
+               "version" : "0.41"
+            },
+            "Data::MessagePack::Boolean" : {
+               "file" : "Data/MessagePack/Boolean.pm"
+            },
+            "Data::MessagePack::PP" : {
+               "file" : "Data/MessagePack/PP.pm"
+            }
+         },
+         "target" : "Data::MessagePack",
+         "version" : "0.41"
+      },
       "Data::OptList" : {
          "dist" : "Data-OptList-0.107",
          "mymeta" : {
@@ -6329,6 +6405,58 @@
          },
          "target" : "DateTime::TimeZone",
          "version" : "1.45"
+      },
+      "Devel::PPPort" : {
+         "dist" : "Devel-PPPort-3.20",
+         "mymeta" : {
+            "abstract" : "Perl/Pollution/Portability",
+            "author" : [
+               "Marcus Holland-Moritz <mhx@cpan.org>"
+            ],
+            "dynamic_config" : 0,
+            "generated_by" : "ExtUtils::MakeMaker version 6.59, CPAN::Meta::Converter version 2.112150, CPAN::Meta::Converter version 2.120921, CPAN::Meta::Converter version 2.120351",
+            "license" : [
+               "perl_5"
+            ],
+            "meta-spec" : {
+               "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+               "version" : "2"
+            },
+            "name" : "Devel-PPPort",
+            "no_index" : {
+               "directory" : [
+                  "t",
+                  "inc"
+               ]
+            },
+            "prereqs" : {
+               "build" : {
+                  "requires" : {
+                     "ExtUtils::MakeMaker" : "0"
+                  }
+               },
+               "configure" : {
+                  "requires" : {
+                     "ExtUtils::MakeMaker" : "0"
+                  }
+               },
+               "runtime" : {
+                  "requires" : {}
+               }
+            },
+            "release_status" : "stable",
+            "version" : "3.20"
+         },
+         "name" : "Devel::PPPort",
+         "pathname" : "M/MH/MHX/Devel-PPPort-3.20.tar.gz",
+         "provides" : {
+            "Devel::PPPort" : {
+               "file" : "Devel/PPPort.pm",
+               "version" : "3.20"
+            }
+         },
+         "target" : "Devel::PPPort",
+         "version" : "3.20"
       },
       "Dist::CheckConflicts" : {
          "dist" : "Dist-CheckConflicts-0.02",
