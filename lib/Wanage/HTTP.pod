@@ -8,7 +8,7 @@ Wanage::HTTP - An HTTP API for server-side Web applications
   my $http = Wanage::HTTP->new_from_psgi_env ($env);
   
   print $http->url->stringify;
-  print $http->query_param->{mode};
+  print $http->query_params->{mode};
   print $http->request_method;
   print $http->get_request_header ('Accept-Language');
   print ${$http->response_body_as_ref};
