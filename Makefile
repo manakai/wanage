@@ -45,7 +45,7 @@ pmb-update pmb-install \
 : %: Makefile-setupenv
 	make --makefile Makefile.setupenv $@
 
-test-deps: pmb-install
+test-deps: local-submodules pmb-install
 
 dataautoupdate:
 	cd lib/Wanage/HTTP && $(MAKE) dataautoupdate
