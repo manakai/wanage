@@ -1,8 +1,10 @@
 #!/usr/bin/perl
 use strict;
+BEGIN {
+  my $dir_name = __FILE__; $dir_name =~ s{[^/\\]+$}{}; $dir_name ||= '.';
+  $dir_name .= '/manakai/lib'; unshift @INC, $dir_name;
+}
 use warnings;
-use Path::Class;
-use lib file (__FILE__)->dir->parent->parent->parent->subdir ('modules', 'manakai', 'lib')->stringify;
 use Data::Dumper;
 use Whatpm::HTTP::_StatusCodes;
 use Whatpm::HTTP::_Methods;

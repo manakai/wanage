@@ -6,13 +6,17 @@ update-delete:
 	rm -f Info.pm
 
 update-submodules:
-	cd ../../../modules/manakai && git pull origin master
+	-git clone git://github.com/wakaba/manakai
+	cd manakai && git pull origin master
+
+manakai/lib/Whatpm/HTTP/_Methods.pm: update-submodules
+manakai/lib/Whatpm/HTTP/_StatusCodes.pm: update-submodules
 
 _update: Info.pm
 
 Info.pm: mkinfo.pl \
-  ../../../modules/manakai/lib/Whatpm/HTTP/_Methods.pm \
-  ../../../modules/manakai/lib/Whatpm/HTTP/_StatusCodes.pm
+  manakai/lib/Whatpm/HTTP/_Methods.pm \
+  manakai/lib/Whatpm/HTTP/_StatusCodes.pm
 	perl mkinfo.pl > $@
 	perl -c $@
 
