@@ -5,6 +5,7 @@ Encode
 Exporter::Lite
 File::Temp
 IO::Handle
+MIME::Base64
 Path::Class
 Scalar::Util
 Time::Local

@@ -23,10 +23,10 @@ L<Warabe::App>.
 
 =item $data = $app->mp_param ($name)
 
-Decode request parameter (i.e. C<application/x-www-form-urlencoded> or
-C<multipart/form-data> encoded form data set in query parameters and
-request-body) with the specified name as MessagePack and return as a
-Perl scalar value.
+Decode the request parameter
+(i.e. C<application/x-www-form-urlencoded> or C<multipart/form-data>
+encoded form data set in query parameters and request-body) with the
+specified name as MessagePack and return as a Perl scalar value.
 
 If the parameter values is not a MessagePack serialized data, the
 C<undef> value is returned.
@@ -35,6 +35,22 @@ Please note that, since MessagePack does not have character string
 type (which is different from byte (or octet) string type), any string
 extracted from the MessagePack data will not have utf8 flag set.
 
+Also note that the percent-encoded data must be a MessagePack encoded
+byte stream.  This is a willful violation to the HTML Living Standard,
+which defines the C<application/x-www-form-urlencoded> data model in
+terms of characters rather than bytes.
+
+=item $data = $app->mpb64_param ($name)
+
+Decode the request parameter
+(i.e. C<application/x-www-form-urlencoded> or C<multipart/form-data>
+encoded form data set in query parameters and request-body) with the
+specified name as MessagePack data encoded in "base64url" and return
+as a Perl scalar value.
+
+If the parameter values is not a MessagePack serialized data encoded
+in the base64url format, the C<undef> value is returned.
+
 =back
 
 =head1 SEE ALSO
@@ -42,6 +58,8 @@ extracted from the MessagePack data will not have utf8 flag set.
 L<Data::MessagePack>.
 
 MessagePack <http://msgpack.org/>.
+
+base64url <http://suika.fam.cx/~wakaba/wiki/sw/n/Base64#anchor-833>.
 
 L<Warabe::App>.
 

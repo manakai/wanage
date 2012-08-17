@@ -20,6 +20,7 @@ use Test::MoreMore;
 use Test::Wanage::Envs;
 use Wanage::HTTP;
 use Data::MessagePack;
+use MIME::Base64 qw(encode_base64url);
 
 {
   package test::Warabe::App::Role::MessagePack::App::MessagePack;
@@ -54,6 +55,31 @@ sub _mp_param : Test(6) {
     }, $in;
     my $app = $APP_CLASS->new_from_http ($http);
     my $json = $app->mp_param ('json');
+    eq_or_diff $json, $_->[3];
+  }
+}
+
+sub _mpb64_param : Test(7) {
+  for (
+    [undef, undef, undef, undef],
+    ['json=1241', undef, undef, undef],
+    ['json=' . encode_base64url (Data::MessagePack->encode ("abc")), undef, undef, 'abc'],
+    ['json=' . encode_base64url (Data::MessagePack->encode ({"abc\x{FE}\x{CD}\x{4E00}" => 124})), undef, undef, {"abc\xc3\xbe\xc3\x8d\xe4\xb8\x80" => 124}],
+    ['json=' . encode_base64url (Data::MessagePack->encode ('391')),
+     'application/x-www-form-urlencoded',
+     'json=' . encode_base64url (Data::MessagePack->encode ('124')), 391],
+    [undef, 'application/x-www-form-urlencoded',
+     'json=' . encode_base64url (Data::MessagePack->encode ('xyz')), 'xyz'],
+    ['json=' . (Data::MessagePack->encode ({"abc\x{FE}\x{CD}\x{4E00}" => 124})), undef, undef, undef],
+  ) {
+    my $in = $_->[2];
+    my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+      QUERY_STRING => $_->[0],
+      CONTENT_TYPE => $_->[1],
+      CONTENT_LENGTH => defined $in ? length $in : 0,
+    }, $in;
+    my $app = $APP_CLASS->new_from_http ($http);
+    my $json = $app->mpb64_param ('json');
     eq_or_diff $json, $_->[3];
   }
 }

@@ -9,6 +9,7 @@
     )],
     req_modules => {
         'Data::MessagePack' => 0,
+        'MIME::Base64' => 0,
         'Warabe::App' => 0,
     },
     t_req_modules => {
