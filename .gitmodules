@@ -1,6 +1,3 @@
-[submodule "modules/perl-weburl"]
-	path = modules/perl-weburl
-	url = git://github.com/wakaba/perl-weburl.git
 [submodule "modules/perl-charclass"]
 	path = modules/perl-charclass
 	url = git://github.com/wakaba/perl-charclass.git
@@ -16,6 +13,9 @@
 [submodule "modules/manakai"]
 	path = modules/manakai
 	url = git://github.com/wakaba/manakai.git
-[submodule "modules/perl-test-moremore"]
-	path = modules/perl-test-moremore
-	url = git://github.com/wakaba/perl-test-moremore.git
+[submodule "modules/perl-web-encodings"]
+	path = modules/perl-web-encodings
+	url = git://github.com/wakaba/perl-web-encodings.git
+[submodule "modules/perl-web-url"]
+	path = modules/perl-web-url
+	url = git://github.com/wakaba/perl-web-url.git

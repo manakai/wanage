@@ -2,10 +2,15 @@ PERL_VERSION = latest
 PERL_PATH = $(abspath local/perlbrew/perls/perl-$(PERL_VERSION)/bin)
 PROVE = prove
 
+## $ git pull
+## $ git submodule update --init
+## 
+## ... then:
+## 
 ## Test:
 ##     $ make test
 ## Update dependency list:
-##     $ make pmb-update
+##     $ make local-submodules pmb-update
 ## Install dependent modules into ./local/:
 ##     $ make pmb-install
 ## Create tarballs for distribution:
@@ -35,7 +40,7 @@ Makefile.setupenv:
 	wget -O $@ https://raw.github.com/wakaba/perl-setupenv/master/Makefile.setupenv
 
 local-perl generatepm \
-perl-exec perl-version \
+lperl perl-exec perl-version local-submodules \
 pmb-update pmb-install \
 : %: Makefile-setupenv
 	make --makefile Makefile.setupenv $@
