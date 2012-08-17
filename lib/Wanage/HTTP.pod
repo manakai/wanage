@@ -8,7 +8,7 @@ Wanage::HTTP - An HTTP API for server-side Web applications
   my $http = Wanage::HTTP->new_from_psgi_env ($env);
   
   print $http->url->stringify;
-  print $http->query_param->{mode};
+  print $http->query_params->{mode};
   print $http->request_method;
   print $http->get_request_header ('Accept-Language');
   print ${$http->response_body_as_ref};
@@ -565,6 +565,26 @@ data to the server anymore.
 
 The C<send_response_headers> method is implicitly invoked by this
 method if it is not invoked yet.
+
+Actual behavior of this method depends on the server implementation in
+use, as described below.  Applications should not depend on any
+specific behavior.
+
+In CGI environments, closing the response body (or standard output of
+CGI script) implies that the server can close the connection to the
+client.  However, this behavior is not part of the CGI specification
+and not uniformly implemented.  Some buggy implementation is known to
+try to abort the CGI script when the standard output is closed.
+
+In PSGI environments, closing the response body (i.e. invoking C<<
+$writer->close >>) is not necessarily terminates the connection to the
+client.  At the time of writing, Twiggy does close the connection,
+while Starman and Starlet do not.  (Starman sends zero-byte chunk when
+the chunked encoding is enabled, which is interpreted as end of the
+response body by the client.  However, the connection is blocked until
+the application has been ended.  Moreover, when the chunked encoding
+is disabled, the connection to the client is not closed until the end
+of the application.)
 
 =item $return = $http->send_response (onready => CODE)
 
