@@ -13,13 +13,15 @@ Package::Stash~0.33
 Package::Stash::XS~0.25
 Try::Tiny~0.11
 Class::Load~0.20
-DateTime~0.76
+DateTime~0.77
 DateTime::Locale~0.45
-DateTime::TimeZone~1.48
+DateTime::TimeZone~1.50
 Module::Implementation~0.06
 Package::DeprecationManager~0.13
 Attribute::Params::Validate~1.07
 Time::Local~1.2300
+AnyEvent::HTTPD~0.93
+Object::Event~1.23
 Test::Tester~0.108
 MRO::Compat~0.11
 MIME::Base64~3.13
@@ -28,7 +30,9 @@ Math::Round~0.06
 File::ShareDir::Install~0.04
 Class::Accessor~0.34
 Path::Class~0.26
-inc::latest~0.4002
+inc::latest~0.4003
+AE
+AnyEvent::HTTP~2.14
 JSON::XS~2.33
 common::sense~3.6
 Exporter::Lite~0.02
@@ -40,7 +44,7 @@ Data::OptList~0.107
 Sub::Exporter~0.984
 Sub::Install~0.926
 Test::Fatal~0.010
-Unicode::Normalize~1.14
+Unicode::Normalize~1.15
 Data::Dumper~2.131
 ExtUtils::ParseXS~3.15
 Net::LibIDN~0.12
