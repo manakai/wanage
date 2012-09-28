@@ -4,9 +4,11 @@
 .*.BAK
 pod2htmi.tmp
 pod2htmd.tmp
-t/data/http-state-dates/
-Makefile.setupenv
-config/perl/Makefile.submodules
-config/perl/libs.txt
-local/
-.carton/
+/t/data/http-state-dates/
+/Makefile.setupenv
+/config/perl/Makefile.submodules
+/config/perl/libs.txt
+/local/
+/.carton/
+/perl
+/prove

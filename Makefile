@@ -40,7 +40,7 @@ Makefile.setupenv:
 	wget -O $@ https://raw.github.com/wakaba/perl-setupenv/master/Makefile.setupenv
 
 local-perl generatepm \
-lperl perl-exec perl-version local-submodules \
+lperl lprove perl-exec perl-version local-submodules \
 pmb-update pmb-install \
 : %: Makefile-setupenv
 	make --makefile Makefile.setupenv $@
