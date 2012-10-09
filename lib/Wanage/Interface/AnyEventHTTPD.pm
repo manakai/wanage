@@ -12,18 +12,19 @@ push our @ISA, qw(Wanage::Interface::Base);
 
 # ------ Constructor ------
 
-sub new_from_req ($) {
+sub new_from_httpd_and_req ($) {
   return bless {
-    req => $_[1],
+    httpd => $_[1],
+    req => $_[2],
   }, $_[0];
-} # new_from_req
+} # new_from_httpd_and_req
 
 # ------ Request data ------
 
 sub url_scheme ($) {
   return $_[0]->{url_scheme} ||= (
     $_[0]->_url_scheme_by_proxy ||
-    'http',
+    $_[0]->{httpd}->{ssl} ? 'https' : 'http',
   );
   ## Though AnyEvent::HTTPD support |ssl| option, whether the request
   ## is accessed with TLS or not cannot be detected from the request
@@ -39,6 +40,16 @@ sub get_meta_variable ($$) {
     return $_[0]->{req}->headers->{'content-type'};
   } elsif ($_[1] eq 'REQUEST_URI') {
     return '' . $_[0]->{req}->url;
+  } elsif ($_[1] eq 'REQUEST_METHOD') {
+    return $_[0]->{req}->method;
+  } elsif ($_[1] eq 'SERVER_NAME') {
+    return $_[0]->{httpd}->host;
+  } elsif ($_[1] eq 'SERVER_PORT') {
+    return $_[0]->{httpd}->port;
+  } elsif ($_[1] eq 'REMOTE_ADDR') {
+    return $_[0]->{req}->client_host;
+  } elsif ($_[1] eq 'REMOTE_PORT') {
+    return $_[0]->{req}->client_port;
   } elsif ($_[1] eq 'CONTENT_LENGTH') {
     if (defined $_[0]->{req}->content) {
       return length $_[0]->{req}->content;
