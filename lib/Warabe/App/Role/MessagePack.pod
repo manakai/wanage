@@ -51,6 +51,14 @@ as a Perl scalar value.
 If the parameter values is not a MessagePack serialized data encoded
 in the base64url format, the C<undef> value is returned.
 
+=item $app->send_mp ($data)
+
+Send the given data, encoded in MessagePack format, as the
+response-body.  The data must be a value that can be encoded into
+MessagePack.
+
+The C<Content-Type:> header is set to C<application/x-msgpack>.
+
 =back
 
 =head1 SEE ALSO

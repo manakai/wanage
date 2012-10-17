@@ -35,6 +35,13 @@ sub mpb64_param {
   }
 }
 
+sub send_mp ($$) {
+  my $http = $_[0]->http;
+  $http->set_response_header ('Content-Type' => 'application/x-msgpack');
+  $http->send_response_body_as_ref (\Data::MessagePack->new->encode ($_[1]));
+  $http->close_response_body;
+} # send_mp
+
 1;
 
 =head1 LICENSE
