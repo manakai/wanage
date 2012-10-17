@@ -6,7 +6,7 @@ use Carp;
 use Encode;
 require utf8;
 use Scalar::Util qw(weaken);
-use URL::PercentEncode qw(percent_encode_c parse_form_urlencoded_b);
+use Wanage::URL qw(percent_encode_c parse_form_urlencoded_b);
 
 our @CARP_NOT = qw(
   Wanage::Interface::CGI Wanage::Interface::PSGI
