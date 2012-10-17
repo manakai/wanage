@@ -3,7 +3,7 @@ use strict;
 use warnings;
 our $VERSION = '1.0';
 use Encode;
-use URL::PercentEncode qw(percent_decode_c);
+use Wanage::URL qw(percent_decode_c);
 
 ## ------ Constructor ------
 

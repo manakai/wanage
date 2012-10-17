@@ -1,22 +1,41 @@
-PERL_VERSION = latest
-PERL_PATH = $(abspath local/perlbrew/perls/perl-$(PERL_VERSION)/bin)
-PROVE = prove
+PROVE = ./prove
+GIT = git
 
-## $ git pull
-## $ git submodule update --init
-## 
-## ... then:
-## 
 ## Test:
 ##     $ make test
 ## Update dependency list:
-##     $ make local-submodules pmb-update
+##     $ make pmbp-update
 ## Install dependent modules into ./local/:
-##     $ make pmb-install
+##     $ make deps
 ## Create tarballs for distribution:
 ##     $ make dist
 
 all:
+
+## ------ Environment ------
+
+Makefile-setupenv: Makefile.setupenv
+	make --makefile Makefile.setupenv setupenv-update \
+	    SETUPENV_MIN_REVISION=20120930
+
+Makefile.setupenv:
+	wget -O $@ https://raw.github.com/wakaba/perl-setupenv/master/Makefile.setupenv
+
+pmb-update: pmbp-update
+pmb-install: pmbp-install
+local-perl: pmbp-install
+lperl: pmbp-install
+lprove: pmbp-install
+
+generatepm pmbp-update pmbp-install: %: Makefile-setupenv
+	make --makefile Makefile.setupenv $@
+
+git-submodules:
+	$(GIT) submodule update --init
+
+deps: git-submodules pmbp-install
+
+## ------ Tests ------
 
 test: test-deps test-data safetest
 
@@ -29,26 +48,16 @@ update-test-data:
 safetest: test-deps safetest-main
 
 safetest-main:
-	PATH=$(PERL_PATH):$(PATH) PERL5LIB=$(shell cat config/perl/libs.txt) \
-	    $(PROVE) t/wanage/*.t t/warabe/*.t
+	$(PROVE) t/wanage/*.t t/warabe/*.t
 
-Makefile-setupenv: Makefile.setupenv
-	make --makefile Makefile.setupenv setupenv-update \
-	    SETUPENV_MIN_REVISION=20120318
+test-deps: deps
 
-Makefile.setupenv:
-	wget -O $@ https://raw.github.com/wakaba/perl-setupenv/master/Makefile.setupenv
-
-local-perl generatepm \
-lperl perl-exec perl-version local-submodules \
-pmb-update pmb-install \
-: %: Makefile-setupenv
-	make --makefile Makefile.setupenv $@
-
-test-deps: local-submodules pmb-install
+## ------ Data ------
 
 dataautoupdate:
 	cd lib/Wanage/HTTP && $(MAKE) dataautoupdate
+
+## ------ Packaging ------
 
 GENERATEPM = local/generatepm/bin/generate-pm-package
 GENERATEPM_ = $(GENERATEPM) --generate-json
@@ -66,7 +75,7 @@ dist-wakaba-packages: local/wakaba-packages dist
 	cd local/wakaba-packages && $(MAKE) all
 
 local/wakaba-packages: always
-	git clone "git@github.com:wakaba/packages.git" $@ || (cd $@ && git pull)
+	$(GIT) clone "git@github.com:wakaba/packages.git" $@ || (cd $@ && git pull)
 	cd $@ && git submodule update --init
 
 always:
