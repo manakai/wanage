@@ -83,7 +83,10 @@ sub send_response_body ($$) {
   $self->send_response_headers;
   if ($self->{env}->{'psgi.streaming'}) {
     if ($self->{psgi_writer}) {
-      $self->{psgi_writer}->write ($_[1]);
+      eval {
+        $self->{psgi_writer}->write ($_[1]);
+        1;
+      } or carp $@;
     } else {
       push @{$self->{response_body} ||= []}, $_[1];
     }
@@ -113,7 +116,10 @@ sub send_response ($;%) {
       if ($self->{response_headers_sent}) {
         $self->{psgi_writer} = $_[0]->($self->{response});
         for (@{$self->{response_body} or []}) {
-          $self->{psgi_writer}->write ($_);
+          eval {
+            $self->{psgi_writer}->write ($_);
+            1;
+          } or carp $@;
         }
         delete $self->{response_body};
         if ($self->{response_body_closed}) {

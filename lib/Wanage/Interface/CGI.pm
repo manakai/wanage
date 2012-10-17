@@ -54,12 +54,6 @@ sub get_request_body_as_handle ($) {
 
 # ------ Response ------
 
-sub set_status ($$;$) {
-  croak "You can no longer set status" if $_[0]->{response_headers_sent};
-  $_[0]->{status} = $_[1];
-  $_[0]->{status_text} = $_[2];
-} # set_status
-
 sub set_response_headers ($$) {
   croak "You can no longer set response headers"
       if $_[0]->{response_headers_sent};
