@@ -10,7 +10,7 @@ use Scalar::Util qw(weaken);
 use Wanage::Interface::Base;
 push our @ISA, qw(Wanage::Interface::Base);
 
-# ------ Constructor ------
+## ------ Constructor ------
 
 sub new_from_httpd_and_req ($) {
   return bless {
@@ -19,7 +19,7 @@ sub new_from_httpd_and_req ($) {
   }, $_[0];
 } # new_from_httpd_and_req
 
-# ------ Request data ------
+## ------ Request data ------
 
 sub url_scheme ($) {
   return $_[0]->{url_scheme} ||= (
@@ -79,7 +79,7 @@ sub get_request_body_as_handle ($) {
   return $data;
 } # get_request_body_as_handle
 
-# ------ Response ------
+## ------ Response ------
 
 sub set_response_headers ($$) {
   croak "You can no longer set response headers"
@@ -158,7 +158,7 @@ sub send_response ($;%) {
   croak "Response has already been sent" if $self->{response_sent};
   $self->{response_sent} = 1;
   $code->() if $code;
-  $self->send_response_headers unless $self->{response_body_closed};;
+  $self->send_response_headers unless $self->{response_body_closed};
   $self->{req}->respond($self->{response});
   return;
 } # send_response

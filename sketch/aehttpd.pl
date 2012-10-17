@@ -10,7 +10,7 @@ use Wanage::Interface::AnyEventHTTPD;
         request => sub {
           my ($httpd, $req) = @_;
 
-          my $if = Wanage::Interface::AnyEventHTTPD->new_from_req($req);
+          my $if = Wanage::Interface::AnyEventHTTPD->new_from_httpd_and_req($httpd, $req);
           
           warn Dumper [
               $req->url,
@@ -35,14 +35,7 @@ use Wanage::Interface::AnyEventHTTPD;
               $if->send_response_body(' fuga');
               $if->close_response_body;
           });
-
-           return;
-          $req->respond ({ content => ['text/html',
-             "<html><body><h1>Hello World!</h1>"
-             . "<a href=\"/test\">another test page</a>"
-             . "</body></html>"
-          ]});
        },
     );
 
-    $httpd->run; # making a AnyEvent condition variable would also work
+    $httpd->run;
