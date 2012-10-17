@@ -84,6 +84,62 @@ sub _mpb64_param : Test(7) {
   }
 }
 
+sub _send_mp : Test(2) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
+  my $app = $APP_CLASS->new_from_http ($http);
+  $app->send_mp ({"\x{4000}ab" => [123, "xyxz"]});
+  dies_here_ok {
+    $http->send_response_body_as_ref (\'abcde');
+  };
+  eq_or_diff $out, qq{Status: 200 OK
+Content-Type: application/x-msgpack
+
+@{[Data::MessagePack->new->encode({"\xe4\x80\x80ab"=>[123,"xyxz"]})]}};
+} # _send_mp
+
+sub _send_mp_undef : Test(2) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
+  my $app = $APP_CLASS->new_from_http ($http);
+  $app->send_mp (undef);
+  dies_here_ok {
+    $http->send_response_body_as_ref (\'abcde');
+  };
+  eq_or_diff $out, qq{Status: 200 OK
+Content-Type: application/x-msgpack
+
+@{[Data::MessagePack->new->encode(undef)]}};
+} # _send_mp_undef
+
+sub _send_mp_scalar : Test(2) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
+  my $app = $APP_CLASS->new_from_http ($http);
+  $app->send_mp ("abcd\x{4000}");
+  dies_here_ok {
+    $http->send_response_body_as_ref (\'abcde');
+  };
+  eq_or_diff $out, qq{Status: 200 OK
+Content-Type: application/x-msgpack
+
+@{[Data::MessagePack->new->encode("abcd\xe4\x80\x80")]}};
+} # _set_response_mp_scalar
+
+sub _send_mp_binary : Test(2) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
+  my $app = $APP_CLASS->new_from_http ($http);
+  $app->send_mp ("abcd\xFE\x89\xDC\xED");
+  dies_here_ok {
+    $http->send_response_body_as_ref (\'abcde');
+  };
+  eq_or_diff $out, qq{Status: 200 OK
+Content-Type: application/x-msgpack
+
+@{[Data::MessagePack->new->encode("abcd\xFE\x89\xDC\xED")]}};
+} # _set_response_mp_scalar
+
 __PACKAGE__->runtests;
 
 1;
