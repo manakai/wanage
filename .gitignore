@@ -12,3 +12,5 @@ pod2htmd.tmp
 /.carton/
 /perl
 /prove
+/plackup
+/cin

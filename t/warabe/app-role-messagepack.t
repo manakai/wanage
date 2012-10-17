@@ -1,20 +1,11 @@
 package test::Warabe::App::Role::MessagePack;
 use strict;
-BEGIN {
-  my $file_name = __FILE__;
-  $file_name =~ s{[^/]+$}{};
-  $file_name ||= '.';
-  $file_name .= '/../../config/perl/libs.txt';
-  if (-f $file_name) {
-    open my $file, '<', $file_name or die "$0: $file_name: $!";
-    unshift @INC, split /:/, scalar <$file>;
-  }
-}
 use warnings;
 use Path::Class;
 use lib file (__FILE__)->dir->parent->parent->subdir ('lib')->stringify;
 use lib glob file (__FILE__)->dir->parent->parent->subdir ('modules', '*', 'lib')->stringify;
-use lib file (__FILE__)->dir->parent->parent->subdir ('t', 'lib')->stringify;
+use lib file (__FILE__)->dir->parent->parent->subdir ('t_deps', 'lib')->stringify;
+use lib glob file (__FILE__)->dir->parent->parent->subdir ('t_deps', 'modules', '*', 'lib')->stringify;
 use base qw(Test::Class);
 use Test::MoreMore;
 use Test::Wanage::Envs;

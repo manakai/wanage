@@ -6,7 +6,7 @@ use lib file (__FILE__)->dir->parent->parent->subdir ('lib')->stringify;
 use lib glob file (__FILE__)->dir->parent->parent->subdir ('modules', '*', 'lib')->stringify;
 use base qw(Test::Class);
 use Wanage::Interface::Base;
-use Test::MoreMore;
+use Test::More;
 
 sub _version : Test(1) {
   ok $Wanage::Interface::Base::VERSION;

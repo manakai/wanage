@@ -16,3 +16,6 @@
 [submodule "modules/perl-web-url"]
 	path = modules/perl-web-url
 	url = git://github.com/wakaba/perl-web-url.git
+[submodule "t_deps/modules/test-moremore"]
+	path = t_deps/modules/test-moremore
+	url = git://github.com/wakaba/perl-test-moremore
