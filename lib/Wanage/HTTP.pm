@@ -10,6 +10,7 @@ use Wanage::URL qw(percent_encode_c parse_form_urlencoded_b);
 
 our @CARP_NOT = qw(
   Wanage::Interface::CGI Wanage::Interface::PSGI
+  Wanage::Interface::AnyEventHTTPD
   Wanage::HTTP::UA Wanage::HTTP::ClientIPAddr Wanage::HTTP::MIMEType
 );
 
@@ -28,6 +29,13 @@ sub new_from_psgi_env ($$) {
     interface => Wanage::Interface::PSGI->new_from_psgi_env ($_[1]),
   }, $_[0];
 } # new_from_psgi_env
+
+sub new_from_anyeventhttpd_httpd_and_req ($$) {
+  require Wanage::Interface::AnyEventHTTPD;
+  return bless {
+    interface => Wanage::Interface::AnyEventHTTPD->new_from_httpd_and_req ($_[1], $_[2]),
+  }, $_[0];
+} # new_from_anyeventhttpd_req
 
 # ------ Request data ------
 
