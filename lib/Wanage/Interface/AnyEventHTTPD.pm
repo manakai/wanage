@@ -131,9 +131,17 @@ sub send_response_headers ($;%) {
       delete $self->{response_buffer};
       return;
     };
-    $writer->(join '', map { $$_ } @{(delete $self->{response_buffer}) or []});
-    $writer->(undef) if $self->{response_body_closed};
+    if (@{$self->{response_buffer} or []}) {
+      $writer->(join '', map { $$_ } @{(delete $self->{response_buffer}) or []});
+    } elsif ($self->{response_body_closed}) {
+      $writer->(undef);
+    } else {
+      $self->{response_writer} = $writer;
+    }
   }];
+  if ($self->{response_sent}) {
+      $self->{req}->respond($self->{response});
+  }
   
   $self->{response_headers_sent} = 1;
 } # send_response_headers
@@ -142,13 +150,22 @@ sub send_response_body ($$) {
   my $self = $_[0];
   croak "Response body is already closed" if $self->{response_body_closed};
   $self->send_response_headers;
-  push @{$self->{response_buffer} ||= []}, \($_[1]);
+  next unless length $_[1];
+  if ($self->{response_writer}) {
+    (delete $self->{response_writer})
+        ->(join '', @{(delete $self->{response_buffer}) or []}, $_[1]);
+  } else {
+    push @{$self->{response_buffer} ||= []}, \($_[1]);
+  }
 } # send_response_body
 
 sub close_response_body ($) {
   my $self = shift;
   croak "Response body is already closed" if $self->{response_body_closed};
   $self->send_response_headers;
+  if ($self->{response_writer}) {
+    (delete $self->{response_writer})->(undef);
+  }
   $self->{response_body_closed} = 1;
 } # close_response_body
 
@@ -158,8 +175,9 @@ sub send_response ($;%) {
   croak "Response has already been sent" if $self->{response_sent};
   $self->{response_sent} = 1;
   $code->() if $code;
-  $self->send_response_headers unless $self->{response_body_closed};
-  $self->{req}->respond($self->{response});
+  if ($self->{response_headers_sent}) {
+    $self->{req}->respond($self->{response});
+  }
   return;
 } # send_response
 
