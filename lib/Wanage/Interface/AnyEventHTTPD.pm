@@ -125,8 +125,7 @@ sub send_response_headers ($;%) {
       $headers->{$name} = $value;
     }
   }
-  weaken ($self = $self);
-  $self->{response} ||= [$status, $status_text, $headers, sub {
+  $self->{response} = [$status, $status_text, $headers, sub {
     my $writer = $_[0] or do {
       delete $self->{response_buffer};
       return;
@@ -140,7 +139,8 @@ sub send_response_headers ($;%) {
     }
   }];
   if ($self->{response_sent}) {
-      $self->{req}->respond($self->{response});
+    $self->{req}->respond($self->{response});
+    delete $self->{response};
   }
   
   $self->{response_headers_sent} = 1;
@@ -177,6 +177,7 @@ sub send_response ($;%) {
   $code->() if $code;
   if ($self->{response_headers_sent}) {
     $self->{req}->respond($self->{response});
+    delete $self->{response};
   }
   return;
 } # send_response
