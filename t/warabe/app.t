@@ -410,6 +410,27 @@ X-Hoge: Fuga
 500};
 } # _execute_died
 
+sub _execute_died_custom : Test(3) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
+  my $app = Warabe::App->new_from_http ($http);
+  my $errors = [];
+  $app->onexecuteerror (sub {
+    push @$errors, $_[0];
+  });
+  $app->execute (sub {
+    $app->http->set_response_header ('X-Hoge' => 'Fuga');
+    die "abc def";
+  });
+  is $out, qq{Status: 500 Internal Server Error
+Content-Type: text/plain; charset=us-ascii
+X-Hoge: Fuga
+
+500};
+  is scalar @$errors, 1;
+  like $errors->[0], qr{^abc def at };
+} # _execute_died_custom
+
 sub _execute_thrown : Test(2) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
