@@ -1381,13 +1381,31 @@ WWW-Authenticate: Basic realm="_ab_c"
 401 Authorization required};
 } # _requires_basic_auth_realm_quotation
 
+sub _close_time : Test(2) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
+  my $app = Warabe::App->new_from_http ($http);
+  my $time;
+  is $app->elapsed_time, undef;
+  $app->execute (sub {
+    $app->onclose (sub {
+      $time = $app->elapsed_time;
+      undef $app;
+    });
+    $app->send_plain_text ('ok');
+  });
+  isnt $time, undef;
+} # _close_time
+
 __PACKAGE__->runtests;
+
+$Warabe::App::DetectLeak = 1;
 
 1;
 
 =head1 LICENSE
 
-Copyright 2012 Wakaba <w@suika.fam.cx>.
+Copyright 2012 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

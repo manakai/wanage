@@ -4,11 +4,19 @@ use warnings;
 our $VERSION = '1.0';
 use Encode;
 use Wanage::URL qw(percent_decode_c);
+use Time::HiRes qw(gettimeofday tv_interval);
+use Scalar::Util qw(weaken);
 
 ## ------ Constructor ------
 
 sub new_from_http ($$) {
-  return bless {http => $_[1]}, $_[0];
+  my $self = bless {http => $_[1], start_time => [gettimeofday]}, $_[0];
+  weaken (my $app = $self);
+  $self->{http}->onclose (sub {
+    $app->{elapsed_time} = tv_interval $app->{start_time};
+    $app->onclose->();
+  });
+  return $self;
 } # new_from_http
 
 ## ------ Underlying HTTP object ------
@@ -152,6 +160,13 @@ sub execute ($$;%) {
   };
 } # execute
 
+sub onclose ($;$) {
+  if (@_ > 1) {
+    $_[0]->{onclose} = $_[1];
+  }
+  return $_[0]->{onclose} || sub { };
+} # onclose
+
 sub onexecuteerror ($;$) {
   if (@_ > 1) {
     $_[0]->{onexecuteerror} = $_[1];
@@ -160,6 +175,10 @@ sub onexecuteerror ($;$) {
     warn $_[0];
   }
 } # onexecuteerror
+
+sub elapsed_time ($) {
+  return $_[0]->{elapsed_time};
+} # elapsed_time
 
 sub throw ($) {
   die bless {}, 'Warabe::App::Done';
@@ -285,6 +304,12 @@ sub requires_basic_auth ($$;%) {
   $http->close_response_body;
   $self->throw;
 } # requires_basic_auth
+
+sub DESTROY {
+  if ($Warabe::App::DetectLeak) {
+    warn "Possible memory leak";
+  }
+}
 
 1;
 

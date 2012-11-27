@@ -364,6 +364,22 @@ the handler cannot be used to change the response.  This handler is
 intended for the hook point for reporting the exception to the
 developer, not to the user.
 
+=item CODE = $app->onclose
+
+=item $app->onclose (CODE)
+
+Specifying a code reference as the C<onclose> handler, you can hook
+when the response has been sent to the server (for sending back to the
+client).  The code reference is not expected to throw any exception.
+
+=item SECONDS = $app->elapsed_time
+
+Return the elapsed time, i.e. the time from the instantiation of the
+C<$app> object to the completion of the response, in seconds.
+
+The method returns C<undef> before the the C<onclose> handler is
+invoked as the value is by definition not available yet.
+
 =back
 
 =head2 Validation methods
@@ -496,7 +512,7 @@ Wakaba <w@suika.fam.cx>.
 
 =head1 LICENSE
 
-Copyright 2012 Wakaba <w@suika.fam.cx>.
+Copyright 2012 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
