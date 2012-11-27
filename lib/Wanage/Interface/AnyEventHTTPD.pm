@@ -85,6 +85,7 @@ sub set_response_headers ($$) {
   croak "You can no longer set response headers"
       if $_[0]->{response_headers_sent};
   $_[0]->{response_headers} = $_[1];
+  $_[0]->{has_response} = 1;
 } # set_response_headers
 
 sub send_response_headers ($;%) {
@@ -98,6 +99,7 @@ sub send_response_headers ($;%) {
     }
     return;
   }
+  $self->{has_response} = 1;
   my $handle = $self->{response_handle};
 
   my $status = $args{status};
@@ -125,6 +127,7 @@ sub send_response_headers ($;%) {
       $headers->{$name} = $value;
     }
   }
+  weaken ($self = $self);
   $self->{response} = [$status, $status_text, $headers, sub {
     my $writer = $_[0] or do {
       delete $self->{response_buffer};
@@ -134,12 +137,13 @@ sub send_response_headers ($;%) {
       $writer->(join '', map { $$_ } @{(delete $self->{response_buffer}) or []});
     } elsif ($self->{response_body_closed}) {
       $writer->(undef);
+      $self->onclose->();
     } else {
       $self->{response_writer} = $writer;
     }
   }];
   if ($self->{response_sent}) {
-    $self->{req}->respond($self->{response});
+    $self->{req}->respond ($self->{response});
     delete $self->{response};
   }
   
@@ -166,6 +170,7 @@ sub close_response_body ($) {
   if ($self->{response_writer}) {
     (delete $self->{response_writer})->(undef);
   }
+  $self->onclose->();
   $self->{response_body_closed} = 1;
 } # close_response_body
 
@@ -174,9 +179,10 @@ sub send_response ($;%) {
   my $code = $args{onready};
   croak "Response has already been sent" if $self->{response_sent};
   $self->{response_sent} = 1;
+  $self->{has_response} = 1;
   $code->() if $code;
   if ($self->{response_headers_sent}) {
-    $self->{req}->respond($self->{response});
+    $self->{req}->respond ($self->{response});
     delete $self->{response};
   }
   return;
@@ -184,8 +190,11 @@ sub send_response ($;%) {
 
 sub DESTROY {
   my $self = shift;
-  if ($self->{response_sent} and not $self->{response_headers_sent}) {
-    warn "Response is discarded before it is sent\n";
+  if ($self->{has_response}) {
+    if ($self->{response_sent} and not $self->{response_headers_sent}) {
+      warn "Response is discarded before it is sent\n";
+    }
+    $self->close_response_body unless $self->{response_body_closed};
   }
 } # DESTROY
 
@@ -193,7 +202,7 @@ sub DESTROY {
 
 =head1 LICENSE
 
-Copyright 2012 Wakaba <w@suika.fam.cx>.
+Copyright 2012 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
