@@ -862,13 +862,94 @@ sub _send_response_send_first_implicitly_closed : Test(4) {
   eq_or_diff $result, [501, [Foo => 12, Bar => 3111], ['xyz', 'abcx']];
 } # _send_response_send_first_implicitly_closed
 
+sub _onclose_nonstream_close_send : Test(1) {
+  my $psgi = Wanage::Interface::PSGI->new_from_psgi_env;
+  my $invoked;
+  $psgi->onclose (sub { $invoked = 1 });
+  $psgi->close_response_body;
+  $psgi->send_response;
+
+  ok $invoked;
+} # _onclose_nonstream_close_send
+
+sub _onclose_nonstream_onready_close : Test(1) {
+  my $psgi = Wanage::Interface::PSGI->new_from_psgi_env;
+  my $invoked;
+  $psgi->send_response (onready => sub {
+    $psgi->onclose (sub { $invoked = 1 });
+    $psgi->close_response_body;
+  });
+
+  ok $invoked;
+} # _onclose_nonstream_onready_close
+
+sub _onclose_nonstream_send_implicitclose : Test(1) {
+  my $psgi = Wanage::Interface::PSGI->new_from_psgi_env;
+  my $invoked;
+  $psgi->onclose (sub { $invoked = 1 });
+  $psgi->send_response;
+  undef $psgi;
+
+  ok $invoked;
+} # _onclose_nonstream_send_implicitclose
+
+sub _onclose_streamable_onready_close : Test(1) {
+  my $psgi = Wanage::Interface::PSGI->new_from_psgi_env
+      ({'psgi.streaming' => 1});
+  my $invoked;
+  $psgi->onclose (sub { $invoked = 1 });
+  my $result = $psgi->send_response (onready => sub {
+    $psgi->send_response_headers (status => 300);
+    $psgi->send_response_body ('661');
+    $psgi->close_response_body;
+  });
+  my $writer = Test::Wanage::Envs::PSGI::Writer->new;
+  my $res;
+  $result->(sub { $res = shift; return $writer });
+
+  ok $invoked;
+} # _onclose_streamable_onready_send
+
+sub _onclose_streamable_send_close : Test(1) {
+  my $psgi = Wanage::Interface::PSGI->new_from_psgi_env
+      ({'psgi.streaming' => 1});
+  my $invoked;
+  $psgi->onclose (sub { $invoked = 1 });
+  $psgi->send_response_headers (status => 300);
+  $psgi->send_response_body ('661');
+  $psgi->close_response_body;
+  my $result = $psgi->send_response;
+  my $writer = Test::Wanage::Envs::PSGI::Writer->new;
+  my $res;
+  $result->(sub { $res = shift; return $writer });
+
+  ok $invoked;
+} # _onclose_streamable_send_close
+
+sub _onclose_streamable_send_implicitclose : Test(1) {
+  my $psgi = Wanage::Interface::PSGI->new_from_psgi_env
+      ({'psgi.streaming' => 1});
+  my $invoked;
+  $psgi->onclose (sub { $invoked = 1 });
+  $psgi->send_response_headers (status => 300);
+  $psgi->send_response_body ('661');
+  my $result = $psgi->send_response;
+  my $writer = Test::Wanage::Envs::PSGI::Writer->new;
+  my $res;
+  $result->(sub { $res = shift; return $writer });
+  undef $psgi;
+  undef $result;
+
+  ok $invoked;
+} # _onclose_streamable_send_implicitclose
+
 __PACKAGE__->runtests;
 
 1;
 
 =head1 LICENSE
 
-Copyright 2012 Wakaba <w@suika.fam.cx>.
+Copyright 2012 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

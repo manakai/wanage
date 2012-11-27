@@ -103,6 +103,7 @@ sub close_response_body ($) {
     $self->{psgi_writer}->close;
   }
   $self->{response_body_closed} = 1;
+  $self->onclose->();
 } # close_response_body
 
 sub send_response ($;%) {
@@ -124,11 +125,15 @@ sub send_response ($;%) {
         delete $self->{response_body};
         if ($self->{response_body_closed}) {
           $self->{psgi_writer}->close;
+          $code->() if $code;
+          $self->onclose->();
+        } else {
+          $code->() if $code;
         }
       } else {
         $self->{psgi_writer_getter} = $_[0];
+        $code->() if $code;
       }
-      $code->() if $code;
     };
   } else {
     $code->() if $code;
@@ -157,7 +162,7 @@ sub DESTROY {
 
 =head1 LICENSE
 
-Copyright 2012 Wakaba <w@suika.fam.cx>.
+Copyright 2012 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
