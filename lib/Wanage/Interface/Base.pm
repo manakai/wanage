@@ -86,11 +86,18 @@ sub canon_url ($) {
   return $_[0]->{canon_url} ||= $_[0]->original_url->get_canon_url;
 } # canon_url
 
+sub onclose ($;$) {
+  if (@_ > 1) {
+    $_[0]->{onclose} = $_[1];
+  }
+  return $_[0]->{onclose} || sub { };
+} # onclose
+
 1;
 
 =head1 LICENSE
 
-Copyright 2012 Wakaba <w@suika.fam.cx>.
+Copyright 2012 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

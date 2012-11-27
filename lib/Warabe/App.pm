@@ -142,7 +142,7 @@ sub execute ($$;%) {
     if ($@ and ref $@ and $@->isa ('Warabe::App::Done')) {
       ;
     } else {
-      warn $@;
+      $self->onexecuteerror->($@);
       if ($self->http->response_headers_sent) {
         ;
       } else {
@@ -151,6 +151,15 @@ sub execute ($$;%) {
     }
   };
 } # execute
+
+sub onexecuteerror ($;$) {
+  if (@_ > 1) {
+    $_[0]->{onexecuteerror} = $_[1];
+  }
+  return $_[0]->{onexecuteerror} ||= sub {
+    warn $_[0];
+  }
+} # onexecuteerror
 
 sub throw ($) {
   die bless {}, 'Warabe::App::Done';

@@ -328,10 +328,10 @@ Execute the specified code reference.  The code should construct the
 response, with optional invocation of the C<throw> method.
 
 The code should not throw any other exception.  If it does, the
-exeception is reported by C<warn>.  Additionally, if the response
-headers are not sent yet, a C<500> Internal Server Error response is
-sent.  (If the response headers have already sent, it cannot be
-changed to an error response anymore.)
+exeception is reported to the C<onexecuteerror> handler.
+Additionally, if the response headers are not sent yet, a C<500>
+Internal Server Error response is sent.  (If the response headers have
+already sent, it cannot be changed to an error response anymore.)
 
 =item $app->throw
 
@@ -347,6 +347,22 @@ invocations of C<send_redirect> and C<throw> methods.
 
 Send an error response and then throw.  This method is equivalent to
 invocations of C<send_error> and C<throw> methods.
+
+=item CODE = $app->onexecuteerror
+
+=item $app->onexecuteerror (CODE)
+
+Specifying a code reference as the C<onexecuteerror> handler, you can
+receive the exception thrown within the C<execute> stage (not
+including ones thrown by the C<throw> method, however).
+
+The code reference is invoked with the exception, i.e. the C<$@> value
+at the time of the failure of the execution as the argument.  By
+default, the handler simply C<warn>s the exception.  The code
+reference itself is not expected to throw any exception.  In addition,
+the handler cannot be used to change the response.  This handler is
+intended for the hook point for reporting the exception to the
+developer, not to the user.
 
 =back
 

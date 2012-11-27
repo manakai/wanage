@@ -58,6 +58,7 @@ sub set_response_headers ($$) {
   croak "You can no longer set response headers"
       if $_[0]->{response_headers_sent};
   $_[0]->{response_headers} = $_[1];
+  $_[0]->{has_response} = 1;
 } # set_response_headers
 
 sub send_response_headers ($;%) {
@@ -72,6 +73,7 @@ sub send_response_headers ($;%) {
     return;
   }
   my $handle = $self->{response_handle};
+  $self->{has_response} = 1;
 
   my $status = $args{status};
   $status = 200 if not defined $status;
@@ -114,6 +116,7 @@ sub close_response_body ($) {
   ## CGI script terminated in some system.
   #$self->{response_handle}->close or die $!;
   $self->{response_body_closed} = 1;
+  $self->onclose->();
 } # close_response_body
 
 sub send_response ($;%) {
@@ -121,14 +124,18 @@ sub send_response ($;%) {
   my $code = $args{onready};
   croak "Response has already been sent" if $self->{response_sent};
   $self->{response_sent} = 1;
+  $self->{has_response} = 1;
   $code->() if $code;
   return;
 } # send_response
 
 sub DESTROY {
   my $self = shift;
-  if ($self->{response_sent} and not $self->{response_headers_sent}) {
-    warn "Response is discarded before it is sent\n";
+  if ($self->{has_response}) {
+    if ($self->{response_sent} and not $self->{response_headers_sent}) {
+      warn "Response is discarded before it is sent\n";
+    }
+    $self->close_response_body unless $self->{response_body_closed};
   }
 } # DESTROY
 
@@ -136,7 +143,7 @@ sub DESTROY {
 
 =head1 LICENSE
 
-Copyright 2012 Wakaba <w@suika.fam.cx>.
+Copyright 2012 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

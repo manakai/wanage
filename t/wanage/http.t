@@ -1197,6 +1197,27 @@ sub _set_response_disposition_sent : Test(4) {
   }
 } # _set_response_disposition_sent
 
+sub _onclose : Test(2) {
+  my $https = new_https_for_interfaces;
+  for my $http (@$https) {
+    my $invoked;
+    $http->onclose (sub { $invoked = 1 });
+    $http->send_response_headers;
+    undef $http;
+    ok $invoked;
+  }
+} # _onclose
+
+sub _onclose_no_response : Test(2) {
+  my $https = new_https_for_interfaces;
+  for my $http (@$https) {
+    my $invoked;
+    $http->onclose (sub { $invoked = 1 });
+    undef $http;
+    ng $invoked;
+  }
+} # _onclose_no_response
+
 __PACKAGE__->runtests;
 
 $Wanage::HTTP::DetectLeak = 1;

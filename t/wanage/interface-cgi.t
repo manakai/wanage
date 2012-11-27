@@ -558,6 +558,46 @@ sub _send_response_return : Test(1) {
   ng $cgi->send_response;
 } # _send_response_return
 
+sub _onclose_closed : Test(1) {
+  my $out = '';
+  my $cgi = with_cgi_env {
+    Wanage::Interface::CGI->new_from_main;
+  } {}, undef, $out;
+  my $invoked;
+  $cgi->onclose (sub { $invoked = 1 });
+  $cgi->close_response_body;
+  
+  ok $invoked;
+} # _onclose_closed
+
+sub _onclose_implicitclosed : Test(1) {
+  my $out = '';
+  my $cgi = with_cgi_env {
+    Wanage::Interface::CGI->new_from_main;
+  } {}, undef, $out;
+  my $invoked;
+  $cgi->onclose (sub { $invoked = 1 });
+  $cgi->send_response_headers;
+  undef $cgi;
+  
+  ok $invoked;
+} # _onclose_implicitclosed
+
+sub _onclose_onready_implicitclosed : Test(1) {
+  my $out = '';
+  my $cgi = with_cgi_env {
+    Wanage::Interface::CGI->new_from_main;
+  } {}, undef, $out;
+  my $invoked;
+  $cgi->send_response (onready => sub {
+    $cgi->onclose (sub { $invoked = 1 });
+    $cgi->send_response_headers;
+  });
+  undef $cgi;
+  
+  ok $invoked;
+} # _onclose_onready_implicitclosed
+
 __PACKAGE__->runtests;
 
 1;

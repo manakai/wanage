@@ -479,6 +479,10 @@ sub send_response ($;%) {
   return shift->{interface}->send_response (@_);
 } # send_response
 
+sub onclose ($;$) {
+  return shift->{interface}->onclose (@_);
+} # onclose
+
 sub DESTROY {
   if ($Wanage::HTTP::DetectLeak) {
     warn "Possible memory leak";
