@@ -99,11 +99,11 @@ sub close_response_body ($) {
   my $self = shift;
   croak "Response body is already closed" if $self->{response_body_closed};
   $self->send_response_headers;
+  $self->{response_body_closed} = 1;
+  $self->onclose->();
   if ($self->{psgi_writer}) {
     $self->{psgi_writer}->close;
   }
-  $self->{response_body_closed} = 1;
-  $self->onclose->();
 } # close_response_body
 
 sub send_response ($;%) {
