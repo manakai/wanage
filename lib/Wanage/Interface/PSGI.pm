@@ -103,6 +103,7 @@ sub close_response_body ($) {
   $self->onclose->();
   if ($self->{psgi_writer}) {
     $self->{psgi_writer}->close;
+    $self->{psgi_writer_closed_cv}->send if $self->{psgi_writer_closed_cv};
   }
 } # close_response_body
 
@@ -111,6 +112,9 @@ sub send_response ($;%) {
   my $code = $args{onready};
   croak "Response has already been sent" if $self->{response_sent};
   $self->{response_sent} = 1;
+  if (not $self->{env}->{'psgi.nonblocking'} and $AnyEvent::VERSION) {
+    $self->{psgi_writer_closed_cv} = AE::cv ();
+  }
   if ($self->{env}->{'psgi.streaming'}) {
     $self->{response} ||= [200, []];
     return sub {
@@ -125,6 +129,8 @@ sub send_response ($;%) {
         delete $self->{response_body};
         if ($self->{response_body_closed}) {
           $self->{psgi_writer}->close;
+          $self->{psgi_writer_closed_cv}->send
+              if $self->{psgi_writer_closed_cv};
           $code->() if $code;
           $self->onclose->();
         } else {
@@ -134,10 +140,12 @@ sub send_response ($;%) {
         $self->{psgi_writer_getter} = $_[0];
         $code->() if $code;
       }
+      $self->{psgi_writer_closed_cv}->recv if $self->{psgi_writer_closed_cv};
     };
   } else {
     $code->() if $code;
     $self->close_response_body unless $self->{response_body_closed};
+    $self->{psgi_writer_closed_cv}->recv if $self->{psgi_writer_closed_cv};
     return $self->{response};
   }
 } # send_response
