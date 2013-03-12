@@ -149,6 +149,8 @@ sub send_response ($;%) {
         not $self->{env}->{'psgi.nonblocking'} and
         $AnyEvent::VERSION) {
       ($self->{psgi_writer_closed_cv} = AE::cv ())->recv;
+    } elsif (not $self->{response_body_closed}) {
+      croak "Response body is not closed yet";
     }
     return $self->{response};
   } # streaming

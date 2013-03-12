@@ -650,8 +650,8 @@ sub _send_response_empty_cgi : Test(3) {
 
 sub _send_response_empty_psgi : Test(2) {
   my $http = Wanage::HTTP->new_from_psgi_env (new_psgi_env);
-  eq_or_diff $http->send_response, [200, [], []];
-  dies_here_ok { $http->close_response_body };
+  dies_here_ok { $http->send_response };
+  lives_ok { $http->close_response_body };
 } # _send_response_empty_psgi
 
 sub _send_response_empty_psgi_streamable : Test(6) {
@@ -700,6 +700,7 @@ sub _send_response_methods_psgi : Test(1) {
   $http->set_response_header ("x-Hoge fuga:" => "abc");
   $http->send_response_body_as_ref (\"ab \nxzyz");
   $http->send_response_body_as_ref (\"0");
+  $http->close_response_body;
   eq_or_diff $http->send_response, [402,
                        ['X-Hoge-Fuga' => '123',
                         'X-Hoge-fuga' => '520',
