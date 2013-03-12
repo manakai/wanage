@@ -112,9 +112,6 @@ sub send_response ($;%) {
   my $code = $args{onready};
   croak "Response has already been sent" if $self->{response_sent};
   $self->{response_sent} = 1;
-  if (not $self->{env}->{'psgi.nonblocking'} and $AnyEvent::VERSION) {
-    $self->{psgi_writer_closed_cv} = AE::cv ();
-  }
   if ($self->{env}->{'psgi.streaming'}) {
     $self->{response} ||= [200, []];
     return sub {
@@ -140,14 +137,21 @@ sub send_response ($;%) {
         $self->{psgi_writer_getter} = $_[0];
         $code->() if $code;
       }
-      $self->{psgi_writer_closed_cv}->recv if $self->{psgi_writer_closed_cv};
+      if (not $self->{response_body_closed} and
+          not $self->{env}->{'psgi.nonblocking'} and
+          $AnyEvent::VERSION) {
+        ($self->{psgi_writer_closed_cv} = AE::cv ())->recv;
+      }
     };
-  } else {
+  } else { # not streaming
     $code->() if $code;
-    $self->close_response_body unless $self->{response_body_closed};
-    $self->{psgi_writer_closed_cv}->recv if $self->{psgi_writer_closed_cv};
+    if (not $self->{response_body_closed} and
+        not $self->{env}->{'psgi.nonblocking'} and
+        $AnyEvent::VERSION) {
+      ($self->{psgi_writer_closed_cv} = AE::cv ())->recv;
+    }
     return $self->{response};
-  }
+  } # streaming
 } # send_response
 
 sub DESTROY {
