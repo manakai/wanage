@@ -150,7 +150,8 @@ sub send_response ($;%) {
         $AnyEvent::VERSION) {
       ($self->{psgi_writer_closed_cv} = AE::cv ())->recv;
     } elsif (not $self->{response_body_closed}) {
-      croak "Response body is not closed yet";
+      carp "Response body is not explicitly closed";
+      $self->close_response_body;
     }
     return $self->{response};
   } # streaming
