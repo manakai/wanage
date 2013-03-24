@@ -39,6 +39,14 @@ sub set_scheme ($$) {
   $_[0]->{scheme_normalized} = $_[1];
 } # set_scheme
 
+# $_[0] must be canonicalized
+sub ascii_origin ($) {
+  return undef unless defined $_[0]->{scheme};
+  return undef unless defined $_[0]->{host};
+  return $_[0]->{scheme} . '://' . $_[0]->{host}
+      . (defined $_[0]->{port} ? ':' . $_[0]->{port} : '');
+} # ascii_origin
+
 sub clone ($) {
   return bless {%{$_[0]}}, ref $_[0];
 } # clone
@@ -105,7 +113,7 @@ sub parse_form_urlencoded_b ($) {
 
 =head1 LICENSE
 
-Copyright 2010-2012 Wakaba <w@suika.fam.cx>.
+Copyright 2010-2013 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

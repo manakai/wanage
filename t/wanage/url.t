@@ -59,6 +59,24 @@ sub _set_scheme : Test(3) {
   is $url->{scheme}, 'about';
 } # _set_scheme
 
+sub _ascii_origin : Test(10) {
+  for (
+    [q<https://hoge.fuga/ab/cd/ef> => q<https://hoge.fuga>],
+    [q<HTTP://hoge.fuga/ab/cd/ef> => q<http://hoge.fuga>],
+    [q<https://hoge.fuga:0145/ab/cd/ef> => q<https://hoge.fuga:145>],
+    [q<http://hoge.fuga:80/ab/cd/ef> => q<http://hoge.fuga>],
+    [qq<http://hoge.\x{5e00}fuga/ab/cd/ef> => q<http://hoge.xn--fuga-py1h>],
+    [q<https:hoge.fuga/ab/cd/ef> => undef],
+    [q<about://hoge.fuga/ab/cd/ef> => undef],
+    [q<hoge://hoge.fuga/ab/cd/ef> => q<hoge://hoge.fuga>],
+    [q<https://hoge.fuga:80/ab/cd/ef> => q<https://hoge.fuga:80>],
+    [q<//hoge.fuga/ab/cd/ef> => undef],
+  ) {
+    my $url = Wanage::URL->new_from_string ($_->[0])->get_canon_url;
+    is $url->ascii_origin, $_->[1];
+  }
+} # _ascii_origin
+
 sub _clone : Test(5) {
   my $url = Wanage::URL->new_from_string (q<https://hoge.fuga/ab/cd/ef>);
   my $url2 = $url->clone;
@@ -87,7 +105,7 @@ __PACKAGE__->runtests;
 
 =head1 LICENSE
 
-Copyright 2012 Wakaba <w@suika.fam.cx>.
+Copyright 2012-2013 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

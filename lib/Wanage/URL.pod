@@ -54,6 +54,13 @@ a new URL object.
 Set the URL scheme.  The argument must be a new URL scheme in the
 lowercase normalized form.  It must not include C<:> separator.
 
+=item $string = $url->ascii_origin
+
+Return the ASCII serialization of the origin of the URL.  The URL must
+be canonicalized, otherwise the result could be wrong.  If the
+serialization of the origin is C<null>, the method returns C<undef>
+instead.
+
 =item $url2 = $url->clone
 
 Create a new instance of C<Wanage::URL> object with same value as the
@@ -74,11 +81,11 @@ L<Web::URL::Canonicalize>.
 
 =head1 AUTHOR
 
-Wakaba <w@suika.fam.cx>.
+Wakaba <wakaba@suikawiki.org>.
 
 =head1 LICENSE
 
-Copyright 2012 Wakaba <w@suika.fam.cx>.
+Copyright 2012-2013 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
