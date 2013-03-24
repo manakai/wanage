@@ -103,6 +103,7 @@ sub close_response_body ($) {
   $self->onclose->();
   if ($self->{psgi_writer}) {
     $self->{psgi_writer}->close;
+    $self->{psgi_writer_closed_cv}->send if $self->{psgi_writer_closed_cv};
   }
 } # close_response_body
 
@@ -125,6 +126,8 @@ sub send_response ($;%) {
         delete $self->{response_body};
         if ($self->{response_body_closed}) {
           $self->{psgi_writer}->close;
+          $self->{psgi_writer_closed_cv}->send
+              if $self->{psgi_writer_closed_cv};
           $code->() if $code;
           $self->onclose->();
         } else {
@@ -134,12 +137,24 @@ sub send_response ($;%) {
         $self->{psgi_writer_getter} = $_[0];
         $code->() if $code;
       }
+      if (not $self->{response_body_closed} and
+          not $self->{env}->{'psgi.nonblocking'} and
+          $AnyEvent::VERSION) {
+        ($self->{psgi_writer_closed_cv} = AE::cv ())->recv;
+      }
     };
-  } else {
+  } else { # not streaming
     $code->() if $code;
-    $self->close_response_body unless $self->{response_body_closed};
+    if (not $self->{response_body_closed} and
+        not $self->{env}->{'psgi.nonblocking'} and
+        $AnyEvent::VERSION) {
+      ($self->{psgi_writer_closed_cv} = AE::cv ())->recv;
+    } elsif (not $self->{response_body_closed}) {
+      carp "Response body is not explicitly closed";
+      $self->close_response_body;
+    }
     return $self->{response};
-  }
+  } # streaming
 } # send_response
 
 sub DESTROY {
