@@ -1381,6 +1381,169 @@ WWW-Authenticate: Basic realm="_ab_c"
 401 Authorization required};
 } # _requires_basic_auth_realm_quotation
 
+sub _requires_same_origin_no_origin : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    SERVER_NAME => 'hoge.fuga',
+    SERVER_PORT => 80,
+  }, undef, $out;
+  my $app = Warabe::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_same_origin;
+    $app->send_plain_text ('ok');
+  });
+  is $out, q{Status: 400 Bad origin
+Content-Type: text/plain; charset=us-ascii
+
+400 Bad origin};
+} # _requires_same_origin_no_origin
+
+sub _requires_same_origin_same_origin : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    HTTP_ORIGIN => 'http://hoge.fuga',
+    SERVER_NAME => 'hoge.fuga',
+    SERVER_PORT => 80,
+  }, undef, $out;
+  my $app = Warabe::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_same_origin;
+    $app->send_plain_text ('ok');
+  });
+  is $out, q{Status: 200 OK
+Content-Type: text/plain; charset=utf-8
+
+ok};
+} # _requires_same_origin_same_origin
+
+sub _requires_same_origin_same_origin_https : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    HTTP_ORIGIN => 'https://hoge.fuga',
+    HTTPS => 'on',
+    SERVER_NAME => 'hoge.fuga',
+    SERVER_PORT => 443,
+  }, undef, $out;
+  my $app = Warabe::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_same_origin;
+    $app->send_plain_text ('ok');
+  });
+  is $out, q{Status: 200 OK
+Content-Type: text/plain; charset=utf-8
+
+ok};
+} # _requires_same_origin_same_origin
+
+sub _requires_same_origin_same_origin_port : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    HTTP_ORIGIN => 'http://hoge.fuga:801',
+    SERVER_NAME => 'hoge.fuga',
+    SERVER_PORT => 801,
+  }, undef, $out;
+  my $app = Warabe::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_same_origin;
+    $app->send_plain_text ('ok');
+  });
+  is $out, q{Status: 200 OK
+Content-Type: text/plain; charset=utf-8
+
+ok};
+} # _requires_same_origin_same_origin_port
+
+sub _requires_same_origin_wrong_origin : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    SERVER_NAME => 'hoge.fuga',
+    SERVER_PORT => 80,
+    HTTP_ORIGIN => 'http://hoge.fuga.',
+  }, undef, $out;
+  my $app = Warabe::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_same_origin;
+    $app->send_plain_text ('ok');
+  });
+  is $out, q{Status: 400 Bad origin
+Content-Type: text/plain; charset=us-ascii
+
+400 Bad origin};
+} # _requires_same_origin_wrong_origin
+
+sub _requires_same_origin_wrong_port : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    SERVER_NAME => 'hoge.fuga',
+    SERVER_PORT => 80,
+    HTTP_ORIGIN => 'http://hoge.fuga:80',
+  }, undef, $out;
+  my $app = Warabe::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_same_origin;
+    $app->send_plain_text ('ok');
+  });
+  is $out, q{Status: 400 Bad origin
+Content-Type: text/plain; charset=us-ascii
+
+400 Bad origin};
+} # _requires_same_origin_wrong_origin
+
+sub _requires_same_origin_wrong_scheme : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    SERVER_NAME => 'hoge.fuga',
+    SERVER_PORT => 80,
+    HTTPS => 1,
+    HTTP_ORIGIN => 'http://hoge.fuga:80',
+  }, undef, $out;
+  my $app = Warabe::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_same_origin;
+    $app->send_plain_text ('ok');
+  });
+  is $out, q{Status: 400 Bad origin
+Content-Type: text/plain; charset=us-ascii
+
+400 Bad origin};
+} # _requires_same_origin_wrong_scheme
+
+sub _requires_same_origin_null : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    SERVER_NAME => 'hoge.fuga',
+    SERVER_PORT => 80,
+    HTTP_ORIGIN => 'null',
+  }, undef, $out;
+  my $app = Warabe::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_same_origin;
+    $app->send_plain_text ('ok');
+  });
+  is $out, q{Status: 400 Bad origin
+Content-Type: text/plain; charset=us-ascii
+
+400 Bad origin};
+} # _requires_same_origin_null
+
+sub _requires_same_origin_wrong_origins : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    SERVER_NAME => 'hoge.fuga',
+    SERVER_PORT => 80,
+    HTTP_ORIGIN => 'http://hoge.fuga,http://fuga.hoge',
+  }, undef, $out;
+  my $app = Warabe::App->new_from_http ($http);
+  $app->execute (sub {
+    $app->requires_same_origin;
+    $app->send_plain_text ('ok');
+  });
+  is $out, q{Status: 400 Bad origin
+Content-Type: text/plain; charset=us-ascii
+
+400 Bad origin};
+} # _requires_same_origin_wrong_origins
+
 sub _close_time : Test(2) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
@@ -1405,7 +1568,7 @@ $Warabe::App::DetectLeak = 1;
 
 =head1 LICENSE
 
-Copyright 2012 Wakaba <wakaba@suikawiki.org>.
+Copyright 2012-2013 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

@@ -305,17 +305,28 @@ sub requires_basic_auth ($$;%) {
   $self->throw;
 } # requires_basic_auth
 
+sub requires_same_origin ($) {
+  my $origin = $_[0]->http->get_request_header ('Origin');
+  my $url_origin = $_[0]->http->url->ascii_origin;
+  if (not defined $origin or
+      not defined $url_origin or
+      $origin =~ /,/ or
+      $origin ne $url_origin) {
+    $_[0]->throw_error (400, reason_phrase => 'Bad origin');
+  }
+} # requires_same_origin
+
 sub DESTROY {
   if ($Warabe::App::DetectLeak) {
     warn "Possible memory leak";
   }
-}
+} # DESTROY
 
 1;
 
 =head1 LICENSE
 
-Copyright 2012 Wakaba <w@suika.fam.cx>.
+Copyright 2012-2013 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
