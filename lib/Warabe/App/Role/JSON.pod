@@ -46,7 +46,10 @@ returned.
 Send the given data, encoded in JSON format, as the response-body.
 The data must be a value that can be encoded into JSON by L<JSON::XS>.
 
-The C<Content-Type:> header is set to C<application/json>.
+The C<Content-Type:> header is set to C<application/json;
+charset=utf-8>.  (Use of the C<charset> parameter, which is not
+defined by the relevant RFC, is a willful violation for compatibility
+with certain browser extensions.)
 
 =back
 
@@ -60,11 +63,11 @@ L<Warabe::App>.
 
 =head1 AUTHOR
 
-Wakaba <w@wuika.fam.cx>.
+Wakaba <wakaba@suikawiki.org>.
 
 =head1 LICENSE
 
-Copyright 2012 Wakaba <w@suika.fam.cx>.
+Copyright 2012-2013 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

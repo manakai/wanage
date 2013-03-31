@@ -81,7 +81,7 @@ sub _send_json : Test(2) {
     $http->send_response_body_as_ref (\'abcde');
   };
   eq_or_diff $out, qq{Status: 200 OK
-Content-Type: application/json
+Content-Type: application/json; charset=utf-8
 
 {"\xe4\x80\x80ab":[123,"xyxz"]}};
 } # _send_json
@@ -95,7 +95,7 @@ sub _send_json_undef : Test(2) {
     $http->send_response_body_as_ref (\'abcde');
   };
   eq_or_diff $out, qq{Status: 200 OK
-Content-Type: application/json
+Content-Type: application/json; charset=utf-8
 
 null};
 } # _send_json_undef
@@ -109,7 +109,7 @@ sub _send_json_scalar : Test(2) {
     $http->send_response_body_as_ref (\'abcde');
   };
   eq_or_diff $out, qq{Status: 200 OK
-Content-Type: application/json
+Content-Type: application/json; charset=utf-8
 
 "abcd\xe4\x80\x80"};
 } # _set_response_json_scalar
@@ -120,7 +120,7 @@ __PACKAGE__->runtests;
 
 =head1 LICENSE
 
-Copyright 2012 Wakaba <w@suika.fam.cx>.
+Copyright 2012-2013 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
