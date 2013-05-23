@@ -112,6 +112,10 @@ sub send_response ($;%) {
   my $code = $args{onready};
   croak "Response has already been sent" if $self->{response_sent};
   $self->{response_sent} = 1;
+  if ($AnyEvent::VERSION) {
+    # <http://search.cpan.org/dist/AnyEvent/lib/AnyEvent.pm#AnyEvent-%3Enow_update>
+    AnyEvent->now_update;
+  }
   if ($self->{env}->{'psgi.streaming'}) {
     $self->{response} ||= [200, []];
     return sub {
