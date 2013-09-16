@@ -7,9 +7,6 @@
 [submodule "modules/perl-json-functions-xs"]
 	path = modules/perl-json-functions-xs
 	url = git://github.com/wakaba/perl-json-functions-xs.git
-[submodule "modules/manakai"]
-	path = modules/manakai
-	url = git://github.com/wakaba/manakai.git
 [submodule "modules/perl-web-encodings"]
 	path = modules/perl-web-encodings
 	url = git://github.com/wakaba/perl-web-encodings.git
