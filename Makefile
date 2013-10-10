@@ -30,6 +30,9 @@ lprove: pmbp-install
 generatepm pmbp-update pmbp-install: %: Makefile-setupenv
 	make --makefile Makefile.setupenv $@
 
+pmbp-update: Makefile-setupenv git-submodules
+	make --makefile Makefile.setupenv $@
+
 git-submodules:
 	$(GIT) submodule update --init
 
