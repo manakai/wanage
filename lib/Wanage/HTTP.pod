@@ -602,6 +602,15 @@ by the method.  Otherwise, the handler is invoked directly by the
 method synchronously.  Therefore, if you use the C<onready> handler,
 you should not rely on exactly when the code is executed.
 
+Also note that the C<onready> code should not raise any exception.  If
+an exception is thrown, it is propagated to the caller of the code
+(which might or might not be the caller of the C<send_response>
+method).  If the code is invoked by the HTTP server module (either
+directly or indirectly), how any exception is handled depends on the
+server implementation.  THIS BEHAVIOR MIGHT BE CHANGED IN LATER
+REVISION OF THE WANAGE MODULE to improve portability and debuggability
+of the application.
+
 =item $code = $http->onclose
 
 =item $http->onclose ($code)
@@ -665,7 +674,7 @@ Wakaba <wakaba@suikawiki.org>.
 
 =head1 LICENSE
 
-Copyright 2012 Wakaba <wakaba@suikawiki.org>.
+Copyright 2012-2013 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
