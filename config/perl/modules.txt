@@ -1,6 +1,4 @@
 Carp
-Data::MessagePack
-DateTime
 Encode
 Exporter::Lite
 File::Temp
@@ -9,4 +7,3 @@ MIME::Base64
 Path::Class
 Scalar::Util
 Time::Local
-Test::Class

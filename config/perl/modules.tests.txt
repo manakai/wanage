@@ -1,3 +1,4 @@
 AnyEvent
 Starlet
+Test::Class
 Twiggy
