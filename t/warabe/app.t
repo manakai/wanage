@@ -762,7 +762,7 @@ sub _requires_valid_content_length_long : Test(1) {
     $app->requires_valid_content_length;
     $app->send_plain_text ('ok');
   });
-  is $out, "Status: 413 Request Entity Too Large
+  is $out, "Status: 413 Payload Too Large
 Content-Type: text/plain; charset=us-ascii
 
 413";
@@ -779,7 +779,7 @@ sub _requires_valid_content_length_short_but_max : Test(1) {
     $app->requires_valid_content_length (max => 4);
     $app->send_plain_text ('ok');
   });
-  is $out, "Status: 413 Request Entity Too Large
+  is $out, "Status: 413 Payload Too Large
 Content-Type: text/plain; charset=us-ascii
 
 413";
