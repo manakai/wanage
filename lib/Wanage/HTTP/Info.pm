@@ -1,5 +1,5 @@
 package Wanage::HTTP::Info;
-$VERSION = 40271329.000000;
+$VERSION = 40271346.000000;
 $ReasonPhrases = {
           '0' => '',
           '100' => 'Continue',
@@ -24,7 +24,7 @@ $ReasonPhrases = {
           '303' => 'See Other',
           '304' => 'Not Modified',
           '305' => 'Use Proxy',
-          '306' => 'Reserved',
+          '306' => '(Unused)',
           '307' => 'Temporary Redirect',
           '308' => 'Permanent Redirect',
           '400' => 'Bad Request',
@@ -40,8 +40,8 @@ $ReasonPhrases = {
           '410' => 'Gone',
           '411' => 'Length Required',
           '412' => 'Precondition Failed',
-          '413' => 'Request Entity Too Large',
-          '414' => 'Request-URI Too Long',
+          '413' => 'Payload Too Large',
+          '414' => 'URI Too Long',
           '415' => 'Unsupported Media Type',
           '416' => 'Requested Range Not Satisfiable',
           '417' => 'Expectation Failed',
