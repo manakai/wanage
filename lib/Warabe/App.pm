@@ -117,7 +117,7 @@ sub send_redirect ($$;%) {
       ->get_canon_url;
   $location_url = $self->redirect_url_filter ($location_url);
 
-  $http->set_status (302);
+  $http->set_status ($args{status} || 302);
   $http->set_response_header (Location => $location_url->stringify);
   $http->set_response_header ('Content-Type' => 'text/html; charset=utf-8');
 
