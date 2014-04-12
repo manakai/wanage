@@ -60,27 +60,4 @@ test-deps: deps
 dataautoupdate:
 	cd lib/Wanage/HTTP && $(MAKE) dataautoupdate
 
-## ------ Packaging ------
-
-GENERATEPM = local/generatepm/bin/generate-pm-package
-GENERATEPM_ = $(GENERATEPM) --generate-json
-
-dist: generatepm
-	$(GENERATEPM_) config/dist/wanage.pi dist/
-	$(GENERATEPM_) config/dist/warabe-app.pi dist/
-	$(GENERATEPM_) config/dist/warabe-app-role-json.pi dist/
-	$(GENERATEPM_) config/dist/warabe-app-role-messagepack.pi dist/
-	$(GENERATEPM_) config/dist/warabe-app-role-datetime.pi dist/
-
-dist-wakaba-packages: local/wakaba-packages dist
-	cp dist/*.json local/wakaba-packages/data/perl/
-	cp dist/*.tar.gz local/wakaba-packages/perl/
-	cd local/wakaba-packages && $(MAKE) all
-
-local/wakaba-packages: always
-	$(GIT) clone "git@github.com:wakaba/packages.git" $@ || (cd $@ && git pull)
-	cd $@ && git submodule update --init
-
-always:
-
 ## License: Public Domain.
