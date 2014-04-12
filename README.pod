@@ -4,8 +4,8 @@ Wanage and Warabe - APIs for server-side Web applications
 
 =head1 DESCRIPTION
 
-B<Wanage> and B<Warabe> are basic APIs for building server-side Web
-applications.
+B<Wanage> and B<Warabe> are lightweight protocol-wrapper API layers
+for building server-side Web applications.
 
   +------+   +------+   +------+      +------+      +------+
   |Your  |<->|Warabe|<->|Wanage|<---->|HTTP  |<---->|HTTP  |
@@ -16,6 +16,9 @@ applications.
   App.       Common     Generic       TCP/HTTP
   specific   Web app.   HTTP          protocol
   logic      operations interpret.    handling
+
+As shown in the figure, Warabe is an optional component build on top
+of Wanage.
 
 They are I<not> Web application frameworks (WAFs).  They only provide
 abstraction for interpretation of HTTP requests and construction of
@@ -39,6 +42,19 @@ Latest version of these modules are available in the Git repository:
 There are no longer snapshot release version tarballs for Wanage and
 Warabe.  You can just simply add the repository as a Git submodule of
 your Git repository, if your application is using Git.
+
+=head1 DEPENDENCIES
+
+These modules require Perl 5.8 or later.  In addition, a few non-core
+modules are required: L<Exporter::Lite>; L<Path::Class>; L<List::Ish>
+(in C<modules/perl-ooutils> submodule); L<Web::URL> (in
+C<modules/perl-web-url>; which depends on
+C<modules/perl-web-encodings> and C<modules/perl-charclass>
+submodules).
+
+If you want to use optional modules (C<Warabe::App::Role::*>), more
+module might be necessary.  See relevant documentations and source
+codes of those modules.
 
 =head1 AUTHOR
 
