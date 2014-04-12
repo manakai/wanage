@@ -11,7 +11,7 @@ notifications:
     - wakaba@suikawiki.org
   irc:
     channels:
-      - "irc@suikawiki.org#mechanize"
+      - "irc.suikawiki.org#mechanize"
     use_notice: true
 env:
   global:
