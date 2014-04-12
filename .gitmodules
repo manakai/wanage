@@ -12,11 +12,11 @@
 	track = master
 [submodule "modules/perl-web-encodings"]
 	path = modules/perl-web-encodings
-	url = git://github.com/wakaba/perl-web-encodings.git
+	url = git://github.com/manakai/perl-web-encodings.git
 	track = master
 [submodule "modules/perl-web-url"]
 	path = modules/perl-web-url
-	url = git://github.com/wakaba/perl-web-url.git
+	url = git://github.com/manakai/perl-web-url.git
 	track = master
 [submodule "t_deps/modules/test-moremore"]
 	path = t_deps/modules/test-moremore

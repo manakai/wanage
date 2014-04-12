@@ -1,11 +1,10 @@
-# -*- Makefile -*-
-
 all: all-data
 clean: clean-data
 
 WGET = wget
 CURL = curl
 GIT = git
+PERL = ./perl
 
 updatenightly: local/bin/pmbp.pl all-data
 	$(CURL) https://gist.githubusercontent.com/motemen/667573/raw/git-submodule-track | sh
@@ -34,10 +33,18 @@ pmbp-install: pmbp-upgrade
 
 ## ------ Data ------
 
-all-data:
-	cd lib/Wanage/HTTP && $(MAKE) update
-
+all-data: lib/Wanage/HTTP/Info.pm
 clean-data:
+	rm -fr local/*.json
+
+lib/Wanage/HTTP/Info.pm: bin/mkinfo.pl local/http-methods.json \
+    local/http-status-codes.json
+	$(PERL) bin/mkinfo.pl > $@
+
+local/http-methods.json:
+	$(WGET) -O $@ https://raw.githubusercontent.com/manakai/data-web-defs/master/data/http-methods.json
+local/http-status-codes.json:
+	$(WGET) -O $@ https://raw.githubusercontent.com/manakai/data-web-defs/master/data/http-status-codes.json
 
 ## ------ Tests ------
 
