@@ -17,11 +17,13 @@ applications.
   specific   Web app.   HTTP          protocol
   logic      operations interpret.    handling
 
-They are I<not> Web application frameworks.  They only provide
+They are I<not> Web application frameworks (WAFs).  They only provide
 abstraction for interpretation of HTTP requests and construction of
 HTTP response in the level enough to create Web applications easily by
 just understanding how HTTP works.  They does not define how you
-organize your Web application.
+organize your Web application.  They can be used in conjection with a
+random Perl WAF, as long as it does not prevent you from accessing raw
+HTTP request and/or response, if desired.
 
 =head1 SEE ALSO
 
@@ -32,16 +34,19 @@ L<Warabe::App>.
 =head1 DISTRIBUTION
 
 Latest version of these modules are available in the Git repository:
-<https://github.com/wakaba/wanage> or
-<http://suika.fam.cx/gate/git/wi/wanage.git/tree>.
+<https://github.com/wakaba/wanage>.
+
+There are no longer snapshot release version tarballs for Wanage and
+Warabe.  You can just simply add the repository as a Git submodule of
+your Git repository, if your application is using Git.
 
 =head1 AUTHOR
 
-Wakaba <w@suika.fam.cx>.
+Wakaba <wakaba@suikawiki.org>.
 
 =head1 LICENSE
 
-Copyright 2012 Wakaba <w@suika.fam.cx>.
+Copyright 2012-2014 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
