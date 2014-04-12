@@ -4,6 +4,7 @@ use warnings;
 use Exporter::Lite;
 
 our @EXPORT;
+$Wanage::HTTP::Sortkeys = 1;
 
 push @EXPORT, qw(with_cgi_env);
 sub with_cgi_env (&;$$$) {

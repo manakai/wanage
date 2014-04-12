@@ -487,8 +487,8 @@ sub _throw_redirect : Test(1) {
   });
   is $out, qq{Status: 302 Found
 Content-Type: text/html; charset=utf-8
-X-Hoge: Fuga
 Location: http://abc/hoge/fuga
+X-Hoge: Fuga
 
 <!DOCTYPE HTML><title>Moved</title><a href="http://abc/hoge/fuga">Moved</a>};
 } # _throw_redirect
@@ -1022,8 +1022,8 @@ sub _requires_request_method_not_allowed : Test(4) {
       $app->send_plain_text ('ok');
     });
     is $out, "Status: 405 Method Not Allowed
-Content-Type: text/plain; charset=us-ascii
 Allow: GET,HEAD,POST
+Content-Type: text/plain; charset=us-ascii
 
 405";
   }
@@ -1056,8 +1056,8 @@ sub _requires_request_method_not_allowed_custom : Test(2) {
       $app->send_plain_text ('ok');
     });
     is $out, "Status: 405 Method Not Allowed
-Content-Type: text/plain; charset=us-ascii
 Allow: BAR,FOO
+Content-Type: text/plain; charset=us-ascii
 
 405";
   }
@@ -1092,8 +1092,8 @@ sub _requires_request_method_not_allowed_custom_default : Test(2) {
       $app->send_plain_text ('ok');
     });
     is $out, "Status: 405 Method Not Allowed
-Content-Type: text/plain; charset=us-ascii
 Allow: BAR,FOO
+Content-Type: text/plain; charset=us-ascii
 
 405";
   }

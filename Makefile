@@ -1,63 +1,66 @@
-PROVE = ./prove
+all: all-data
+clean: clean-data
+
+WGET = wget
+CURL = curl
 GIT = git
+PERL = ./perl
 
-## Test:
-##     $ make test
-## Update dependency list:
-##     $ make pmbp-update
-## Install dependent modules into ./local/:
-##     $ make deps
-## Create tarballs for distribution:
-##     $ make dist
+updatenightly: local/bin/pmbp.pl all-data
+	$(CURL) https://gist.githubusercontent.com/motemen/667573/raw/git-submodule-track | sh
+	$(GIT) add modules bin/modules t_deps/modules
+	perl local/bin/pmbp.pl --update
+	$(GIT) add config lib
 
-all:
+## ------ Setup ------
 
-## ------ Environment ------
-
-Makefile-setupenv: Makefile.setupenv
-	make --makefile Makefile.setupenv setupenv-update \
-	    SETUPENV_MIN_REVISION=20120930
-
-Makefile.setupenv:
-	wget -O $@ https://raw.github.com/wakaba/perl-setupenv/master/Makefile.setupenv
-
-pmb-update: pmbp-update
-pmb-install: pmbp-install
-local-perl: pmbp-install
-lperl: pmbp-install
-lprove: pmbp-install
-
-generatepm pmbp-update pmbp-install: %: Makefile-setupenv
-	make --makefile Makefile.setupenv $@
-
-pmbp-update: Makefile-setupenv git-submodules
-	make --makefile Makefile.setupenv $@
+deps: git-submodules pmbp-install
 
 git-submodules:
 	$(GIT) submodule update --init
 
-deps: git-submodules pmbp-install
-
-## ------ Tests ------
-
-test: test-deps test-data safetest
-
-test-data:
-	cd t/data && make all
-
-update-test-data:
-	cd t/data && make update
-
-safetest: test-deps safetest-main
-
-safetest-main:
-	$(PROVE) t/wanage/*.t t/warabe/*.t
-
-test-deps: deps
+local/bin/pmbp.pl:
+	mkdir -p local/bin
+	$(WGET) -O $@ https://raw.github.com/wakaba/perl-setupenv/master/bin/pmbp.pl
+pmbp-upgrade: local/bin/pmbp.pl
+	perl local/bin/pmbp.pl --update-pmbp-pl
+pmbp-update: git-submodules pmbp-upgrade
+	perl local/bin/pmbp.pl --update \
+	    --write-makefile-pl Makefile.PL
+pmbp-install: pmbp-upgrade
+	perl local/bin/pmbp.pl --install \
+            --create-perl-command-shortcut perl \
+            --create-perl-command-shortcut prove
 
 ## ------ Data ------
 
-dataautoupdate:
-	cd lib/Wanage/HTTP && $(MAKE) dataautoupdate
+all-data: lib/Wanage/HTTP/Info.pm
+clean-data:
+	rm -fr local/*.json
+
+lib/Wanage/HTTP/Info.pm: bin/mkinfo.pl local/http-methods.json \
+    local/http-status-codes.json
+	$(PERL) bin/mkinfo.pl > $@
+
+local/http-methods.json:
+	$(WGET) -O $@ https://raw.githubusercontent.com/manakai/data-web-defs/master/data/http-methods.json
+local/http-status-codes.json:
+	$(WGET) -O $@ https://raw.githubusercontent.com/manakai/data-web-defs/master/data/http-status-codes.json
+
+## ------ Tests ------
+
+PROVE = ./prove
+
+test: test-deps test-main
+
+test-deps: deps test-data
+
+test-data:
+	cd t/data && make all
+update-test-data:
+	cd t/data && make update
+
+test-main:
+	$(PROVE) t/wanage/*.t t/warabe/*.t
 
 ## License: Public Domain.
