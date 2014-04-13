@@ -660,7 +660,7 @@ XMLHttpRequest <http://xhr.spec.whatwg.org/>.
 RFC 3875 - The Common Gateway Interface (CGI) Version 1.1
 <http://tools.ietf.org/html/rfc3875>.
 
-SuikaWiki:CGI <http://suika.fam.cx/~wakaba/wiki/sw/n/CGI>.
+SuikaWiki:CGI <http://suika.suikawiki.org/~wakaba/wiki/sw/n/CGI>.
 
 PSGI specification <http://search.cpan.org/dist/PSGI/PSGI.pod>.
 
@@ -674,7 +674,7 @@ Wakaba <wakaba@suikawiki.org>.
 
 =head1 LICENSE
 
-Copyright 2012-2013 Wakaba <wakaba@suikawiki.org>.
+Copyright 2012-2014 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
