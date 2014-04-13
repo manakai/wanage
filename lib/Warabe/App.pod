@@ -225,12 +225,33 @@ set to C<text/plain; charset=utf-8>.
 Send an HTML document, encoded in UTF-8.  The C<Content-Type:> header
 is set to C<text/html; charset=utf-8>.
 
-=item $app->send_redirect ($url_as_string)
+=item $app->send_redirect ($url_as_string, %args)
 
 Send a redirect response.  The argument must be the URL to which the
 request is redirected.  It must be a character string.  The URL will
 be resolved with respect to the URL of the request (i.e. C<< $app->url
 >>).
+
+Following options are available:
+
+=over 4
+
+=item status => $code
+
+Specify the HTTP status code.  Default is C<302>.  It must be an HTTP
+status code for redirect response.
+
+=item reason_phrase => $string
+
+Specify the C<reason-phrase> in the C<Status-Line> of the HTTP
+response.  The value must be a short string of US-ASCII printable
+characters.  If this option is not specified, the default response
+phrase from HTTP specifications is used.
+
+Depending on the interface, C<Reason-Phrase> might be ignored.  CGI
+does support C<Reason-Phrase>, while PSGI does not.
+
+=back
 
 Examples:
 
@@ -508,11 +529,11 @@ L<Wanage::HTTP>.
 
 =head1 AUTHOR
 
-Wakaba <w@suika.fam.cx>.
+Wakaba <wakaba@suikawiki.org>.
 
 =head1 LICENSE
 
-Copyright 2012 Wakaba <wakaba@suikawiki.org>.
+Copyright 2012-2014 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

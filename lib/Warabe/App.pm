@@ -1,7 +1,7 @@
 package Warabe::App;
 use strict;
 use warnings;
-our $VERSION = '1.0';
+our $VERSION = '2.0';
 use Encode;
 use Wanage::URL qw(percent_decode_c);
 use Time::HiRes qw(gettimeofday tv_interval);
@@ -117,7 +117,7 @@ sub send_redirect ($$;%) {
       ->get_canon_url;
   $location_url = $self->redirect_url_filter ($location_url);
 
-  $http->set_status ($args{status} || 302);
+  $http->set_status ($args{status} || 302, $args{reason_phrase});
   $http->set_response_header (Location => $location_url->stringify);
   $http->set_response_header ('Content-Type' => 'text/html; charset=utf-8');
 
@@ -326,7 +326,7 @@ sub DESTROY {
 
 =head1 LICENSE
 
-Copyright 2012-2013 Wakaba <wakaba@suikawiki.org>.
+Copyright 2012-2014 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

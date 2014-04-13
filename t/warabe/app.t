@@ -292,6 +292,21 @@ Location: https://hogehoge.test:123/foo/hoge/fug&a
 <!DOCTYPE HTML><title>Moved</title><a href="https://hogehoge.test:123/foo/hoge/fug&amp;a">Moved</a>};
 } # _send_redirect_status
 
+sub _send_redirect_status_reason : Test(1) {
+  my $out = '';
+  my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+    HTTPS => 1,
+    REQUEST_URI => q<https://hogehoge.test:0123/foo/b%61r/baz?a=b&c=">,
+  }, undef, $out;
+  my $app = Warabe::App->new_from_http ($http);
+  $app->send_redirect (q<../hoge/fug&a>, status => 301, reason_phrase => 'Hoge fuga!');
+  eq_or_diff $out, q{Status: 301 Hoge fuga!
+Content-Type: text/html; charset=utf-8
+Location: https://hogehoge.test:123/foo/hoge/fug&a
+
+<!DOCTYPE HTML><title>Moved</title><a href="https://hogehoge.test:123/foo/hoge/fug&amp;a">Moved</a>};
+} # _send_redirect_status_reason
+
 sub _send_redirect_filtered : Test(1) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
