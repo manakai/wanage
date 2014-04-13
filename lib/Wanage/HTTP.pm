@@ -311,19 +311,21 @@ sub set_status ($$;$) {
 sub add_response_header ($$$) {
   croak "You can no longer set a header" if $_[0]->{response_headers_sent};
   my ($self, $name, $value) = @_;
+  carp "Field value is undef" unless defined $value;
   my $i_name = $name;
   $i_name =~ tr/A-Z/a-z/; ## ASCII case-insensitive.
   push @{$self->{response_headers}->{headers}->{$i_name} ||= []},
-      [$name => $value];
+      [$name => $value // ''];
 } # add_response_header
 
 sub set_response_header ($$$) {
   croak "You can no longer set a header" if $_[0]->{response_headers_sent};
   my ($self, $name, $value) = @_;
+  carp "Field value is undef" unless defined $value;
   my $i_name = $name;
   $i_name =~ tr/A-Z/a-z/; ## ASCII case-insensitive.
   $self->{response_headers}->{headers}->{$i_name}
-      = [[$name => $value]];
+      = [[$name => $value // '']];
 } # set_response_header
 
 sub response_mime_type ($) {
