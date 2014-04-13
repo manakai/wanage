@@ -1,7 +1,7 @@
 package Wanage::HTTP;
 use strict;
 use warnings;
-our $VERSION = '1.0';
+our $VERSION = '2.0';
 use Carp;
 use Encode;
 require utf8;
@@ -315,7 +315,7 @@ sub add_response_header ($$$) {
   my $i_name = $name;
   $i_name =~ tr/A-Z/a-z/; ## ASCII case-insensitive.
   push @{$self->{response_headers}->{headers}->{$i_name} ||= []},
-      [$name => $value // ''];
+      [$name => defined $value ? $value : ''];
 } # add_response_header
 
 sub set_response_header ($$$) {
@@ -325,7 +325,7 @@ sub set_response_header ($$$) {
   my $i_name = $name;
   $i_name =~ tr/A-Z/a-z/; ## ASCII case-insensitive.
   $self->{response_headers}->{headers}->{$i_name}
-      = [[$name => $value // '']];
+      = [[$name => defined $value ? $value : '']];
 } # set_response_header
 
 sub response_mime_type ($) {
@@ -404,7 +404,7 @@ sub set_response_last_modified {
            $time[2], $time[1], $time[0]);
 } # set_response_last_modified
 
-## See: <http://suika.fam.cx/~wakaba/wiki/sw/n/Content-Disposition%3A>.
+## See: <http://suika.suikawiki.org/~wakaba/wiki/sw/n/Content-Disposition%3A>.
 sub set_response_disposition {
   my ($self, %args) = @_;
   my $header = _ascii ($args{disposition} || 'attachment');
@@ -487,7 +487,7 @@ sub DESTROY {
 
 =head1 LICENSE
 
-Copyright 2012 Wakaba <w@suika.fam.cx>.
+Copyright 2012-2014 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
