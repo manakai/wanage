@@ -117,7 +117,7 @@ Test::NoWarnings~1.04
 DateTime::Locale~0.45
 Test::TCP~2.02
 AnyEvent::Util
-Digest::SHA~5.88
+Digest::SHA~5.89
 Crypt::SSLeay~0.64
 Time::Local~1.2300
 Getopt::Long~2.42
