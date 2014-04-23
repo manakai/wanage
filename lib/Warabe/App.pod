@@ -521,6 +521,20 @@ ASCII characters other than C<"> and C<\>.
 
 =back
 
+=item $app->requires_same_origin
+
+Check whether the C<Origin:> header value is same as the origin of the
+request URL or not.  If not (i.e. is different origin or has no
+C<Origin:> header), a C<400> response is thrown.
+
+=item $app->requires_same_origin_or_referer_origin
+
+Check whether the C<Origin:> header value or the origin of the
+C<Referer:> header value is same as the origin of the request URL or
+not.  If not (i.e. is different origin or has no C<Origin:> and
+C<Referer:> headers), a C<400> response is thrown.  If there are both
+header fields, only C<Origin:> header is taken into account.
+
 =back
 
 =head1 SEE ALSO

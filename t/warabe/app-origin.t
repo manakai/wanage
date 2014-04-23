@@ -11,6 +11,7 @@ use Warabe::App;
 
 for my $method (qw(
   requires_same_origin
+  requires_same_origin_or_referer_origin
 )) {
   test {
     my $c = shift;
@@ -192,6 +193,153 @@ Content-Type: text/plain; charset=us-ascii
 400 Bad origin};
     done $c;
   } n => 1, name => 'requires_same_origin_wrong_origins';
+} # $method
+
+for my $method (qw(requires_same_origin)) {
+  test {
+    my $c = shift;
+    my $out = '';
+    my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+      HTTP_REFERER => 'http://hoge.fuga:081/abc',
+      SERVER_NAME => 'hoge.fuga',
+      SERVER_PORT => 81,
+    }, undef, $out;
+    my $app = Warabe::App->new_from_http ($http);
+    $app->execute (sub {
+      $app->$method;
+      $app->send_plain_text ('ok');
+    });
+    is $out, q{Status: 400 Bad origin
+Content-Type: text/plain; charset=us-ascii
+
+400 Bad origin};
+    done $c;
+  } n => 1, name => [$method, 'same origin as referer'];
+
+  test {
+    my $c = shift;
+    my $out = '';
+    my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+      HTTP_REFERER => 'https://hoge.fuga/abc',
+      HTTPS => 'on',
+      SERVER_NAME => 'hoge.fuga',
+      SERVER_PORT => 443,
+    }, undef, $out;
+    my $app = Warabe::App->new_from_http ($http);
+    $app->execute (sub {
+      $app->$method;
+      $app->send_plain_text ('ok');
+    });
+    is $out, q{Status: 400 Bad origin
+Content-Type: text/plain; charset=us-ascii
+
+400 Bad origin};
+    done $c;
+  } n => 1, name => [$method, 'same origin as referer'];
+
+  test {
+    my $c = shift;
+    my $out = '';
+    my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+      SERVER_NAME => 'hoge.fuga',
+      SERVER_PORT => 80,
+      HTTP_REFERER => 'https://hoge.fuga',
+    }, undef, $out;
+    my $app = Warabe::App->new_from_http ($http);
+    $app->execute (sub {
+      $app->$method;
+      $app->send_plain_text ('ok');
+    });
+    is $out, q{Status: 400 Bad origin
+Content-Type: text/plain; charset=us-ascii
+
+400 Bad origin};
+    done $c;
+  } n => 1, name => [$method, 'not same origin as referer'];
+} # $method
+
+for my $method (qw(requires_same_origin_or_referer_origin)) {
+  test {
+    my $c = shift;
+    my $out = '';
+    my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+      HTTP_REFERER => 'http://hoge.fuga:081/abc',
+      SERVER_NAME => 'hoge.fuga',
+      SERVER_PORT => 81,
+    }, undef, $out;
+    my $app = Warabe::App->new_from_http ($http);
+    $app->execute (sub {
+      $app->$method;
+      $app->send_plain_text ('ok');
+    });
+    is $out, q{Status: 200 OK
+Content-Type: text/plain; charset=utf-8
+
+ok};
+    done $c;
+  } n => 1, name => [$method, 'same origin as referer'];
+
+  test {
+    my $c = shift;
+    my $out = '';
+    my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+      HTTP_REFERER => 'https://hoge.fuga/abc',
+      HTTPS => 'on',
+      SERVER_NAME => 'hoge.fuga',
+      SERVER_PORT => 443,
+    }, undef, $out;
+    my $app = Warabe::App->new_from_http ($http);
+    $app->execute (sub {
+      $app->$method;
+      $app->send_plain_text ('ok');
+    });
+    is $out, q{Status: 200 OK
+Content-Type: text/plain; charset=utf-8
+
+ok};
+    done $c;
+  } n => 1, name => [$method, 'same origin as referer'];
+
+  test {
+    my $c = shift;
+    my $out = '';
+    my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+      SERVER_NAME => 'hoge.fuga',
+      SERVER_PORT => 80,
+      HTTP_REFERER => 'https://hoge.fuga',
+    }, undef, $out;
+    my $app = Warabe::App->new_from_http ($http);
+    $app->execute (sub {
+      $app->$method;
+      $app->send_plain_text ('ok');
+    });
+    is $out, q{Status: 400 Bad origin
+Content-Type: text/plain; charset=us-ascii
+
+400 Bad origin};
+    done $c;
+  } n => 1, name => [$method, 'not same origin as referer'];
+
+  test {
+    my $c = shift;
+    my $out = '';
+    my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+      SERVER_NAME => 'hoge.fuga',
+      SERVER_PORT => 80,
+      HTTP_ORIGIN => 'http://hoge.fuga2',
+      HTTP_REFERER => 'http://hoge.fuga/abc',
+    }, undef, $out;
+    my $app = Warabe::App->new_from_http ($http);
+    $app->execute (sub {
+      $app->$method;
+      $app->send_plain_text ('ok');
+    });
+    is $out, q{Status: 400 Bad origin
+Content-Type: text/plain; charset=us-ascii
+
+400 Bad origin};
+    done $c;
+  } n => 1, name => [$method, 'not same origin but same origin as referer'];
 } # $method
 
 run_tests;
