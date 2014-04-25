@@ -14,8 +14,8 @@ List::Rubyish~0.03
 IO::Socket::Socks~0.63
 URI::Escape~3.31
 IO::Handle~1.28
-Package::Stash::XS~0.28
 LWP::MediaTypes~6.02
+Package::Stash::XS~0.28
 Test::Fatal~0.013
 Params::Util~1.07
 HTML::Entities~3.69
@@ -43,8 +43,8 @@ ExtUtils::Constant~0.23
 Net::Server~2.007
 Class::Accessor::Fast~0.34
 File::Listing~6.04
-Stream::Buffered~0.02
 List::Util~1.38
+Stream::Buffered~0.02
 Crypt::OpenSSL::Random~0.04
 Module::Implementation~0.07
 OAuth::Lite::AuthMethod
@@ -66,7 +66,7 @@ WWW::RobotRules~6.02
 Unicode::Stringprep~1.104
 IPC::Signal~1.00
 MRO::Compat~0.12
-IO::Socket::SSL~1.981
+IO::Socket::SSL~1.982
 Digest::SHA1~2.13
 Class::Load~0.21
 Apache::LogFormat::Compiler~0.30
@@ -118,7 +118,7 @@ DateTime::Locale~0.45
 Test::TCP~2.02
 AnyEvent::Util
 Digest::SHA~5.89
-Crypt::SSLeay~0.64
+Crypt::SSLeay~0.72
 Time::Local~1.2300
 Getopt::Long~2.42
 Test::Exception~0.32
