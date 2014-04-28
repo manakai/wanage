@@ -1,7 +1,7 @@
 Net::SSLeay~1.58
 Capture::Tiny~0.24
 Data::Dump~1.22
-CPAN::Meta~2.140640
+CPAN::Meta~2.141170
 Module::Build~0.4205
 HTTP::Daemon~6.01
 List::MoreUtils~0.33
@@ -26,8 +26,8 @@ Algorithm::Diff~1.1902
 Perl::OSType~1.007
 Path::Tiny~0.052
 Parse::CPAN::Meta~1.4414
-version~0.9908
 Package::Stash~0.36
+version~0.9908
 ExtUtils::InstallPaths~0.010
 Carp~1.3301
 Class::ErrorHandler~0.03
@@ -43,7 +43,6 @@ ExtUtils::Constant~0.23
 Net::Server~2.007
 Class::Accessor::Fast~0.34
 File::Listing~6.04
-List::Util~1.38
 Stream::Buffered~0.02
 Crypt::OpenSSL::Random~0.04
 Module::Implementation~0.07
@@ -64,6 +63,7 @@ AnyEvent::HTTP::Socks~0.04
 CPAN::Meta::Requirements~2.125
 WWW::RobotRules~6.02
 Unicode::Stringprep~1.104
+Scalar::Util~1.38
 IPC::Signal~1.00
 MRO::Compat~0.12
 IO::Socket::SSL~1.982
@@ -132,7 +132,7 @@ Class::Inspector~1.28
 IO::Compress::Bzip2~2.064
 LWP~6.06
 Test::Requires~0.07
-Module::Metadata~1.000019
+Module::Metadata~1.000020
 Scope::Guard~0.20
 File::Spec~3.40
 Encode::Locale~1.03
