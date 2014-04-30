@@ -5,7 +5,7 @@ CPAN::Meta~2.141170
 Module::Build~0.4205
 HTTP::Daemon~6.01
 List::MoreUtils~0.33
-ExtUtils::MakeMaker~6.96
+ExtUtils::MakeMaker~6.98
 Crypt::OpenSSL::RSA~0.28
 Data::OptList~0.109
 POSIX::strftime::Compiler~0.31
@@ -48,7 +48,7 @@ Crypt::OpenSSL::Random~0.04
 Module::Implementation~0.07
 OAuth::Lite::AuthMethod
 Test::SharedFork~0.24
-Try::Tiny~0.21
+Try::Tiny~0.22
 parent~0.228
 Term::ANSIColor~4.03
 Test::Class~0.41
@@ -78,7 +78,7 @@ Sub::Exporter~0.987
 JSON::XS~3.01
 HTTP::Status~6.03
 Starman~0.4009
-Encode~2.59
+Encode~2.60
 IO::HTML~1.00
 HTTP::Headers~6.05
 HTTP::Tiny~0.043
@@ -132,7 +132,7 @@ Class::Inspector~1.28
 IO::Compress::Bzip2~2.064
 LWP~6.06
 Test::Requires~0.07
-Module::Metadata~1.000020
+Module::Metadata~1.000022
 Scope::Guard~0.20
 File::Spec~3.40
 Encode::Locale~1.03
