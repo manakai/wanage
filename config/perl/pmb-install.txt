@@ -24,7 +24,7 @@ Sub::Uplevel~0.24
 Socket~2.013
 Algorithm::Diff~1.1902
 Perl::OSType~1.007
-Path::Tiny~0.052
+Path::Tiny~0.054
 Parse::CPAN::Meta~1.4414
 Package::Stash~0.36
 version~0.9908
@@ -34,7 +34,7 @@ Class::ErrorHandler~0.03
 Proc::Wait3~0.04
 Filesys::Notify::Simple~0.12
 LWP::UserAgent~6.06
-Params::Validate~1.08
+Params::Validate~1.09
 Sub::Install~0.927
 Devel::StackTrace::AsHTML~0.14
 Starlet~0.23
@@ -66,7 +66,7 @@ Unicode::Stringprep~1.104
 Scalar::Util~1.38
 IPC::Signal~1.00
 MRO::Compat~0.12
-IO::Socket::SSL~1.982
+IO::Socket::SSL~1.983
 Digest::SHA1~2.13
 Class::Load~0.21
 Apache::LogFormat::Compiler~0.30
@@ -87,7 +87,7 @@ Test::Deep~0.112
 Devel::StackTrace~1.31
 ExtUtils::ParseXS~3.24
 HTTP::Body~1.19
-Module::Build::Tiny~0.035
+Module::Build::Tiny~0.036
 Compress::Raw::Bzip2~2.064
 Test::Differences~0.61
 Path::Class~0.33
@@ -112,7 +112,7 @@ HTTP::Parser::XS~0.16
 Class::Singleton~1.4
 MIME::Base64~3.14
 HTML::Tagset~3.20
-DateTime~1.08
+DateTime~1.10
 Test::NoWarnings~1.04
 DateTime::Locale~0.45
 Test::TCP~2.02
