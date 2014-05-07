@@ -26,8 +26,8 @@ Algorithm::Diff~1.1902
 Perl::OSType~1.007
 Path::Tiny~0.054
 Parse::CPAN::Meta~1.4414
-Package::Stash~0.36
 version~0.9908
+Package::Stash~0.36
 ExtUtils::InstallPaths~0.010
 Carp~1.3301
 Class::ErrorHandler~0.03
@@ -84,7 +84,7 @@ HTTP::Headers~6.05
 HTTP::Tiny~0.043
 Data::MessagePack~0.48
 Test::Deep~0.112
-Devel::StackTrace~1.31
+Devel::StackTrace~1.32
 ExtUtils::ParseXS~3.24
 HTTP::Body~1.19
 Module::Build::Tiny~0.036
