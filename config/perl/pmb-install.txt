@@ -51,7 +51,7 @@ Test::SharedFork~0.24
 Try::Tiny~0.22
 parent~0.228
 Term::ANSIColor~4.03
-Test::Class~0.41
+Test::Class~0.42
 Exporter::Lite~0.04
 Data::Dumper~2.151
 Dist::CheckConflicts~0.11
@@ -117,7 +117,7 @@ Test::NoWarnings~1.04
 DateTime::Locale~0.45
 Test::TCP~2.02
 AnyEvent::Util
-Digest::SHA~5.89
+Digest::SHA~5.90
 Crypt::SSLeay~0.72
 Time::Local~1.2300
 Getopt::Long~2.42
