@@ -1,4 +1,4 @@
-Net::SSLeay~1.58
+Net::SSLeay~1.61
 Capture::Tiny~0.24
 Data::Dump~1.22
 CPAN::Meta~2.141170
@@ -34,13 +34,13 @@ Class::ErrorHandler~0.03
 Proc::Wait3~0.04
 Filesys::Notify::Simple~0.12
 LWP::UserAgent~6.06
-Params::Validate~1.09
+Params::Validate~1.10
 Sub::Install~0.927
 Devel::StackTrace::AsHTML~0.14
 Starlet~0.23
 File::ShareDir::Install~0.08
 ExtUtils::Constant~0.23
-Net::Server~2.007
+Net::Server~2.008
 Class::Accessor::Fast~0.34
 File::Listing~6.04
 Stream::Buffered~0.02
@@ -66,7 +66,7 @@ Unicode::Stringprep~1.104
 Scalar::Util~1.38
 IPC::Signal~1.00
 MRO::Compat~0.12
-IO::Socket::SSL~1.983
+IO::Socket::SSL~1.984
 Digest::SHA1~2.13
 Class::Load~0.21
 Apache::LogFormat::Compiler~0.30
@@ -137,13 +137,13 @@ Scope::Guard~0.20
 File::Spec~3.40
 Encode::Locale~1.03
 HTTP::Negotiate~6.01
-File::ShareDir~1.03
+File::ShareDir~1.102
 LWP::Protocol::https~6.04
 Class::Data::Inheritable~0.08
 Hash::MultiValue~0.15
 ExtUtils::Helpers~0.022
 Time::HiRes~1.9726
 HTTP::Date~6.02
-DateTime::TimeZone~1.65
+DateTime::TimeZone~1.69
 Mozilla::CA~20130114
 Class::Data::Accessor~0.04004
