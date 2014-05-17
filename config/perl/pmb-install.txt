@@ -66,7 +66,7 @@ Unicode::Stringprep~1.104
 Scalar::Util~1.38
 IPC::Signal~1.00
 MRO::Compat~0.12
-IO::Socket::SSL~1.985
+IO::Socket::SSL~1.986
 Digest::SHA1~2.13
 Class::Load~0.21
 Apache::LogFormat::Compiler~0.30
@@ -117,7 +117,7 @@ Test::NoWarnings~1.04
 DateTime::Locale~0.45
 Test::TCP~2.02
 AnyEvent::Util
-Digest::SHA~5.90
+Digest::SHA~5.91
 Crypt::SSLeay~0.72
 Time::Local~1.2300
 Getopt::Long~2.42
