@@ -52,7 +52,7 @@ Try::Tiny~0.22
 parent~0.228
 Term::ANSIColor~4.03
 Test::Class~0.42
-Exporter::Lite~0.04
+Exporter::Lite~0.05
 Data::Dumper~2.151
 Dist::CheckConflicts~0.11
 AnyEvent::HTTP~2.15
@@ -134,7 +134,7 @@ LWP~6.06
 Test::Requires~0.07
 Module::Metadata~1.000022
 Scope::Guard~0.20
-File::Spec~3.40
+File::Spec~3.47
 Encode::Locale~1.03
 HTTP::Negotiate~6.01
 File::ShareDir~1.102
