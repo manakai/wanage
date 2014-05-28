@@ -37,7 +37,7 @@ LWP::UserAgent~6.06
 Params::Validate~1.10
 Sub::Install~0.927
 Devel::StackTrace::AsHTML~0.14
-Starlet~0.23
+Starlet~0.24
 File::ShareDir::Install~0.08
 ExtUtils::Constant~0.23
 Net::Server~2.008
@@ -66,7 +66,7 @@ Unicode::Stringprep~1.104
 Scalar::Util~1.38
 IPC::Signal~1.00
 MRO::Compat~0.12
-IO::Socket::SSL~1.988
+IO::Socket::SSL~1.991
 Digest::SHA1~2.13
 Class::Load~0.21
 Apache::LogFormat::Compiler~0.30
@@ -95,7 +95,7 @@ common::sense~3.72
 Types::Serialiser~1.0
 TAP::Harness::Env~3.30
 Module::Runtime~0.014
-Unicode::Normalize~1.17
+Unicode::Normalize~1.18
 Filter::Util::Call~1.49
 Thread::SigMask~0.004
 Test::Output~1.03
