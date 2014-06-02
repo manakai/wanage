@@ -1,7 +1,7 @@
 Net::SSLeay~1.63
 Capture::Tiny~0.24
 Data::Dump~1.22
-CPAN::Meta~2.141170
+CPAN::Meta~2.141520
 Module::Build~0.4205
 HTTP::Daemon~6.01
 List::MoreUtils~0.33
@@ -21,7 +21,7 @@ Params::Util~1.07
 HTML::Entities~3.69
 Parallel::Prefork~0.15
 Sub::Uplevel~0.24
-Socket~2.013
+Socket~2.014
 Algorithm::Diff~1.1902
 Perl::OSType~1.007
 Path::Tiny~0.054
@@ -66,7 +66,7 @@ Unicode::Stringprep~1.104
 Scalar::Util~1.38
 IPC::Signal~1.00
 MRO::Compat~0.12
-IO::Socket::SSL~1.991
+IO::Socket::SSL~1.992
 Digest::SHA1~2.13
 Class::Load~0.21
 Apache::LogFormat::Compiler~0.30
@@ -78,7 +78,7 @@ Sub::Exporter~0.987
 JSON::XS~3.01
 HTTP::Status~6.03
 Starman~0.4009
-Encode~2.60
+Encode~2.62
 IO::HTML~1.00
 HTTP::Headers~6.05
 HTTP::Tiny~0.043
@@ -91,7 +91,7 @@ Module::Build::Tiny~0.036
 Compress::Raw::Bzip2~2.064
 Test::Differences~0.61
 Path::Class~0.33
-common::sense~3.72
+common::sense~3.73
 Types::Serialiser~1.0
 TAP::Harness::Env~3.30
 Module::Runtime~0.014
@@ -117,7 +117,7 @@ Test::NoWarnings~1.04
 DateTime::Locale~0.45
 Test::TCP~2.02
 AnyEvent::Util
-Digest::SHA~5.91
+Digest::SHA~5.92
 Crypt::SSLeay~0.72
 Time::Local~1.2300
 Getopt::Long~2.42
@@ -132,7 +132,7 @@ Class::Inspector~1.28
 IO::Compress::Bzip2~2.064
 LWP~6.06
 Test::Requires~0.07
-Module::Metadata~1.000022
+Module::Metadata~1.000023
 Scope::Guard~0.20
 File::Spec~3.47
 Encode::Locale~1.03
@@ -144,6 +144,6 @@ Hash::MultiValue~0.15
 ExtUtils::Helpers~0.022
 Time::HiRes~1.9726
 HTTP::Date~6.02
-DateTime::TimeZone~1.69
+DateTime::TimeZone~1.70
 Mozilla::CA~20130114
 Class::Data::Accessor~0.04004
