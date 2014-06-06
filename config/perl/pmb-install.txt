@@ -63,7 +63,7 @@ AnyEvent::HTTP::Socks~0.04
 CPAN::Meta::Requirements~2.125
 WWW::RobotRules~6.02
 Unicode::Stringprep~1.104
-Scalar::Util~1.38
+Scalar::Util~1.39
 IPC::Signal~1.00
 MRO::Compat~0.12
 IO::Socket::SSL~1.992
