@@ -43,7 +43,7 @@ ExtUtils::Constant~0.23
 Net::Server~2.008
 Class::Accessor::Fast~0.34
 File::Listing~6.04
-Stream::Buffered~0.02
+Stream::Buffered~0.03
 Crypt::OpenSSL::Random~0.04
 Module::Implementation~0.07
 OAuth::Lite::AuthMethod
