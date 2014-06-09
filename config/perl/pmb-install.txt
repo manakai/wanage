@@ -8,7 +8,7 @@ List::MoreUtils~0.33
 ExtUtils::MakeMaker~6.98
 Crypt::OpenSSL::RSA~0.28
 Data::OptList~0.109
-POSIX::strftime::Compiler~0.31
+POSIX::strftime::Compiler~0.32
 ExtUtils::Config~0.007
 List::Rubyish~0.03
 IO::Socket::Socks~0.63
@@ -55,7 +55,7 @@ Test::Class~0.42
 Exporter::Lite~0.05
 Data::Dumper~2.151
 Dist::CheckConflicts~0.11
-AnyEvent::HTTP~2.15
+AnyEvent::HTTP~2.21
 HTTP::Cookies~6.01
 Compress::Raw::Zlib~2.065
 Test::More~1.001003
@@ -69,7 +69,7 @@ MRO::Compat~0.12
 IO::Socket::SSL~1.992
 Digest::SHA1~2.13
 Class::Load~0.21
-Apache::LogFormat::Compiler~0.30
+Apache::LogFormat::Compiler~0.32
 JSON::PP~2.27203
 UNIVERSAL::require~0.17
 Pod::Usage~1.63
@@ -93,7 +93,7 @@ Test::Differences~0.61
 Path::Class~0.33
 common::sense~3.73
 Types::Serialiser~1.0
-TAP::Harness::Env~3.30
+TAP::Harness::Env~3.31
 Module::Runtime~0.014
 Unicode::Normalize~1.18
 Filter::Util::Call~1.49
