@@ -1,4 +1,4 @@
-Net::SSLeay~1.63
+Net::SSLeay~1.64
 Capture::Tiny~0.24
 Data::Dump~1.22
 CPAN::Meta~2.141520
