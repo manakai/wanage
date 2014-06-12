@@ -93,7 +93,7 @@ Test::Differences~0.61
 Path::Class~0.33
 common::sense~3.73
 Types::Serialiser~1.0
-TAP::Harness::Env~3.31
+TAP::Harness::Env~3.32
 Module::Runtime~0.014
 Unicode::Normalize~1.18
 Filter::Util::Call~1.49
