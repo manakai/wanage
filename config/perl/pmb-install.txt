@@ -30,7 +30,6 @@ URI::Escape~3.31
 IO::Handle~1.28
 LWP::MediaTypes~6.02
 Package::Stash::XS~0.28
->>>>>>> origin/master
 Test::Fatal~0.013
 Params::Util~1.07
 HTML::Entities~3.69
@@ -197,12 +196,9 @@ Test::NoWarnings~1.04
 DateTime::Locale~0.45
 Test::TCP~2.02
 AnyEvent::Util
-<<<<<<< HEAD
 Crypt::SSLeay~0.64
-=======
 Digest::SHA~5.92
 Crypt::SSLeay~0.72
->>>>>>> origin/master
 Time::Local~1.2300
 Getopt::Long~2.42
 Test::Exception~0.32
