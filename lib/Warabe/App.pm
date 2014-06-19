@@ -1,7 +1,7 @@
 package Warabe::App;
 use strict;
 use warnings;
-our $VERSION = '2.0';
+our $VERSION = '3.0';
 use Encode;
 use Wanage::URL qw(percent_decode_c);
 use Time::HiRes qw(gettimeofday tv_interval);
@@ -315,6 +315,34 @@ sub requires_same_origin ($) {
     $_[0]->throw_error (400, reason_phrase => 'Bad origin');
   }
 } # requires_same_origin
+
+sub requires_same_origin_or_referer_origin ($) {
+  my $url_origin = $_[0]->http->url->ascii_origin;
+  return $_[0]->throw_error (400, reason_phrase => 'Bad origin')
+      unless defined $url_origin;
+
+  my $origin = $_[0]->http->get_request_header ('Origin');
+  if (defined $origin) {
+    if ($origin =~ /,/ or $origin ne $url_origin) {
+      return $_[0]->throw_error (400, reason_phrase => 'Bad origin');
+    } else {
+      return;
+    }
+  }
+
+  my $referer = $_[0]->http->get_request_header ('Referer');
+  if (defined $referer) {
+    my $u = $_[0]->http->url->resolve_string ($referer)->get_canon_url;
+    my $o = $u->ascii_origin;
+    if (defined $o and $o eq $url_origin) {
+      return;
+    } else {
+      return $_[0]->throw_error (400, reason_phrase => 'Bad origin');
+    }
+  }
+
+  return $_[0]->throw_error (400, reason_phrase => 'Bad origin');
+} # requires_same_origin_or_referer_origin
 
 sub DESTROY {
   if ($Warabe::App::DetectLeak) {

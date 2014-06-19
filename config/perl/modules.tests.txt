@@ -1,4 +1,5 @@
 AnyEvent
+Path::Tiny
 Starlet
 Test::Class
 Twiggy
