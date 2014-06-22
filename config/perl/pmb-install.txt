@@ -14,8 +14,8 @@ List::Rubyish~0.03
 IO::Socket::Socks~0.63
 URI::Escape~3.31
 IO::Handle~1.28
-LWP::MediaTypes~6.02
 Package::Stash::XS~0.28
+LWP::MediaTypes~6.02
 Test::Fatal~0.013
 Params::Util~1.07
 HTML::Entities~3.69
@@ -26,8 +26,8 @@ Algorithm::Diff~1.1902
 Perl::OSType~1.007
 Path::Tiny~0.054
 Parse::CPAN::Meta~1.4414
-version~0.9908
 Package::Stash~0.36
+version~0.9908
 ExtUtils::InstallPaths~0.010
 Carp~1.3301
 Class::ErrorHandler~0.03
@@ -43,6 +43,7 @@ ExtUtils::Constant~0.23
 Net::Server~2.008
 Class::Accessor::Fast~0.34
 File::Listing~6.04
+List::Util~1.39
 Stream::Buffered~0.03
 Crypt::OpenSSL::Random~0.04
 Module::Implementation~0.07
@@ -63,7 +64,6 @@ AnyEvent::HTTP::Socks~0.04
 CPAN::Meta::Requirements~2.125
 WWW::RobotRules~6.02
 Unicode::Stringprep~1.104
-Scalar::Util~1.39
 IPC::Signal~1.00
 MRO::Compat~0.12
 IO::Socket::SSL~1.993
@@ -86,6 +86,7 @@ Data::MessagePack~0.48
 Test::Deep~0.112
 Devel::StackTrace~1.32
 ExtUtils::ParseXS~3.24
+List::AllUtils~0.08
 HTTP::Body~1.19
 Module::Build::Tiny~0.036
 Compress::Raw::Bzip2~2.064
@@ -128,8 +129,8 @@ Twiggy~0.1024
 Text::Diff~1.41
 File::Temp~0.2304
 Signal::Mask~0.007
-Class::Inspector~1.28
 IO::Compress::Bzip2~2.064
+Class::Inspector~1.28
 LWP~6.06
 Test::Requires~0.07
 Module::Metadata~1.000024
@@ -141,9 +142,10 @@ File::ShareDir~1.102
 LWP::Protocol::https~6.04
 Class::Data::Inheritable~0.08
 Hash::MultiValue~0.15
+Test::Warnings~0.016
 ExtUtils::Helpers~0.022
 Time::HiRes~1.9726
 HTTP::Date~6.02
-DateTime::TimeZone~1.70
+DateTime::TimeZone~1.71
 Mozilla::CA~20130114
 Class::Data::Accessor~0.04004
