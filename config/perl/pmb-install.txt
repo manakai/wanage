@@ -48,7 +48,7 @@ Stream::Buffered~0.03
 Crypt::OpenSSL::Random~0.04
 Module::Implementation~0.07
 OAuth::Lite::AuthMethod
-Test::SharedFork~0.24
+Test::SharedFork~0.25
 Try::Tiny~0.22
 parent~0.228
 Term::ANSIColor~4.03
@@ -116,7 +116,7 @@ HTML::Tagset~3.20
 DateTime~1.10
 Test::NoWarnings~1.04
 DateTime::Locale~0.45
-Test::TCP~2.02
+Test::TCP~2.05
 AnyEvent::Util
 Digest::SHA~5.92
 Crypt::SSLeay~0.72
