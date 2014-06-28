@@ -32,7 +32,7 @@ Carp~1.3301
 Class::ErrorHandler~0.03
 Proc::Wait3~0.04
 Filesys::Notify::Simple~0.12
-Params::Validate~1.11
+Params::Validate~1.13
 LWP::UserAgent~6.06
 Sub::Install~0.928
 Devel::StackTrace::AsHTML~0.14
@@ -47,7 +47,7 @@ Stream::Buffered~0.03
 Crypt::OpenSSL::Random~0.04
 Module::Implementation~0.07
 OAuth::Lite::AuthMethod
-Test::SharedFork~0.25
+Test::SharedFork~0.26
 Try::Tiny~0.22
 parent~0.228
 Term::ANSIColor~4.03
