@@ -174,7 +174,7 @@ sub _query_params_same : Test(2) {
 
 # ------ Request method ------
 
-sub _request_method : Test(81) {
+sub _request_method : Test(84) {
   for (
     [undef, undef, 0, 0],
     ['' => '', 0, 0],
