@@ -97,7 +97,9 @@ $IdempotentMethods = {
         };
 $SafeMethods = {
           'GET' => 1,
-          'HEAD' => 1
+          'HEAD' => 1,
+          'OPTIONS' => 1,
+          'TRACE' => 1
         };
 $CaseInsensitiveMethods = {
           'CONNECT' => 1,
