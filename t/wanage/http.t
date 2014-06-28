@@ -174,7 +174,7 @@ sub _query_params_same : Test(2) {
 
 # ------ Request method ------
 
-sub _request_method : Test(78) {
+sub _request_method : Test(81) {
   for (
     [undef, undef, 0, 0],
     ['' => '', 0, 0],
@@ -186,7 +186,8 @@ sub _request_method : Test(78) {
     ['HEAD' => 'HEAD', 1, 1],
     ['PUT' => 'PUT', 0, 1],
     ['DELETE' => 'DELETE', 0, 1],
-    ['OPTIONS' => 'OPTIONS', 0, 1],
+    ['OPTIONS' => 'OPTIONS', 1, 1],
+    ['TRACE' => 'TRACE', 1, 1],
     ['unknown method' => 'unknown method', 0, 0],
     ['Get123' => 'Get123', 0, 0],
   ) {
@@ -1226,7 +1227,7 @@ $Wanage::HTTP::DetectLeak = 1;
 
 =head1 LICENSE
 
-Copyright 2012 Wakaba <w@suika.fam.cx>.
+Copyright 2012-2014 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
