@@ -23,7 +23,7 @@ Parallel::Prefork~0.15
 Socket~2.014
 Algorithm::Diff~1.1902
 Perl::OSType~1.007
-Path::Tiny~0.054
+Path::Tiny~0.055
 Parse::CPAN::Meta~1.4414
 Package::Stash~0.36
 version~0.9908
@@ -71,7 +71,7 @@ Class::Load~0.21
 Apache::LogFormat::Compiler~0.32
 JSON::PP~2.27203
 UNIVERSAL::require~0.17
-Pod::Usage~1.63
+Pod::Usage~1.64
 Pod::Text~3.18
 Sub::Exporter~0.987
 JSON::XS~3.01
