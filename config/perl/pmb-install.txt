@@ -47,7 +47,7 @@ Stream::Buffered~0.03
 Crypt::OpenSSL::Random~0.04
 Module::Implementation~0.07
 OAuth::Lite::AuthMethod
-Test::SharedFork~0.26
+Test::SharedFork~0.27
 Try::Tiny~0.22
 parent~0.228
 Term::ANSIColor~4.03
@@ -129,7 +129,7 @@ File::Temp~0.2304
 Signal::Mask~0.007
 IO::Compress::Bzip2~2.064
 Class::Inspector~1.28
-LWP~6.06
+LWP~6.07
 Test::Requires~0.07
 Module::Metadata~1.000024
 Scope::Guard~0.20
