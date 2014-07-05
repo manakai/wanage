@@ -47,11 +47,11 @@ Stream::Buffered~0.03
 Crypt::OpenSSL::Random~0.04
 Module::Implementation~0.07
 OAuth::Lite::AuthMethod
-Test::SharedFork~0.27
+Test::SharedFork~0.28
 Try::Tiny~0.22
 parent~0.228
 Term::ANSIColor~4.03
-Test::Class~0.43
+Test::Class~0.44
 Exporter::Lite~0.05
 Data::Dumper~2.151
 Dist::CheckConflicts~0.11
@@ -101,7 +101,7 @@ Thread::SigMask~0.004
 Test::Output~1.03
 ExtUtils::CBuilder~0.280216
 Net::HTTP~6.06
-URI~1.60
+URI~1.61
 Plack~1.0030
 Test::Tester~0.109
 Class::Accessor~0.34
