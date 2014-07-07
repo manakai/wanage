@@ -51,7 +51,7 @@ Test::SharedFork~0.28
 Try::Tiny~0.22
 parent~0.228
 Term::ANSIColor~4.03
-Test::Class~0.45
+Test::Class~0.46
 Exporter::Lite~0.05
 Data::Dumper~2.151
 Dist::CheckConflicts~0.11
