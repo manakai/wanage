@@ -37,7 +37,7 @@ LWP::UserAgent~6.06
 Sub::Install~0.928
 Devel::StackTrace::AsHTML~0.14
 Starlet~0.24
-File::ShareDir::Install~0.08
+File::ShareDir::Install~0.09
 ExtUtils::Constant~0.23
 Net::Server~2.008
 Class::Accessor::Fast~0.34
