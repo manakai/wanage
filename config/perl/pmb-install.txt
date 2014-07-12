@@ -19,7 +19,7 @@ LWP::MediaTypes~6.02
 Test::Fatal~0.013
 Params::Util~1.07
 HTML::Entities~3.69
-Parallel::Prefork~0.15
+Parallel::Prefork~0.17
 Socket~2.014
 Algorithm::Diff~1.1902
 Perl::OSType~1.007
@@ -65,7 +65,7 @@ WWW::RobotRules~6.02
 Unicode::Stringprep~1.104
 IPC::Signal~1.00
 MRO::Compat~0.12
-IO::Socket::SSL~1.994
+IO::Socket::SSL~1.995
 Digest::SHA1~2.13
 Class::Load~0.21
 Apache::LogFormat::Compiler~0.32
@@ -101,7 +101,7 @@ Thread::SigMask~0.004
 Test::Output~1.03
 ExtUtils::CBuilder~0.280216
 Net::HTTP~6.06
-URI~1.61
+URI~1.62
 Plack~1.0030
 Test::Tester~0.109
 Class::Accessor~0.34
