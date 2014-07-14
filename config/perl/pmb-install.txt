@@ -2,7 +2,7 @@ Net::SSLeay~1.64
 Capture::Tiny~0.24
 Data::Dump~1.22
 CPAN::Meta~2.141520
-Module::Build~0.4205
+Module::Build~0.4206
 HTTP::Daemon~6.01
 List::MoreUtils~0.33
 ExtUtils::MakeMaker~6.98
@@ -65,7 +65,7 @@ WWW::RobotRules~6.02
 Unicode::Stringprep~1.104
 IPC::Signal~1.00
 MRO::Compat~0.12
-IO::Socket::SSL~1.995
+IO::Socket::SSL~1.997
 Digest::SHA1~2.13
 Class::Load~0.21
 Apache::LogFormat::Compiler~0.32
@@ -101,7 +101,7 @@ Thread::SigMask~0.004
 Test::Output~1.03
 ExtUtils::CBuilder~0.280216
 Net::HTTP~6.06
-URI~1.62
+URI~1.64
 Plack~1.0030
 Test::Tester~0.109
 Class::Accessor~0.34
