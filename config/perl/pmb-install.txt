@@ -100,7 +100,7 @@ Filter::Util::Call~1.49
 Thread::SigMask~0.004
 Test::Output~1.03
 ExtUtils::CBuilder~0.280216
-Net::HTTP~6.06
+Net::HTTP~6.07
 URI~1.64
 Plack~1.0030
 Test::Tester~0.109
