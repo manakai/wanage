@@ -129,7 +129,7 @@ File::Temp~0.2304
 Signal::Mask~0.007
 IO::Compress::Bzip2~2.064
 Class::Inspector~1.28
-LWP~6.07
+LWP~6.08
 Test::Requires~0.08
 Module::Metadata~1.000024
 Scope::Guard~0.20
