@@ -1,7 +1,7 @@
 Net::SSLeay~1.65
 Capture::Tiny~0.24
 Data::Dump~1.22
-CPAN::Meta~2.141520
+CPAN::Meta~2.142060
 Module::Build~0.4206
 HTTP::Daemon~6.01
 List::MoreUtils~0.33
