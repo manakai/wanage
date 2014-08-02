@@ -97,12 +97,11 @@ TAP::Harness::Env~3.32
 Module::Runtime~0.014
 Unicode::Normalize~1.18
 Filter::Util::Call~1.49
-Thread::SigMask~0.004
 Test::Output~1.03
 ExtUtils::CBuilder~0.280216
 Net::HTTP~6.07
 URI~1.64
-Plack~1.0030
+Plack~1.0031
 Test::Tester~0.109
 Class::Accessor~0.34
 CPAN::Meta::YAML~0.012
@@ -126,7 +125,7 @@ Server::Starter~0.17
 Twiggy~0.1024
 Text::Diff~1.41
 File::Temp~0.2304
-Signal::Mask~0.007
+Signal::Mask~0.008
 IO::Compress::Bzip2~2.064
 Class::Inspector~1.28
 LWP~6.08
