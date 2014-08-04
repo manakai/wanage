@@ -143,6 +143,6 @@ Hash::MultiValue~0.15
 ExtUtils::Helpers~0.022
 Time::HiRes~1.9726
 HTTP::Date~6.02
-DateTime::TimeZone~1.71
+DateTime::TimeZone~1.72
 Mozilla::CA~20130114
 Class::Data::Accessor~0.04004
