@@ -23,7 +23,7 @@ Parallel::Prefork~0.17
 Socket~2.014
 Algorithm::Diff~1.1902
 Perl::OSType~1.007
-Path::Tiny~0.055
+Path::Tiny~0.056
 Parse::CPAN::Meta~1.4414
 Package::Stash~0.36
 version~0.9908
