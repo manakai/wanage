@@ -136,7 +136,7 @@ File::Spec~3.47
 Encode::Locale~1.03
 HTTP::Negotiate~6.01
 File::ShareDir~1.102
-LWP::Protocol::https~6.04
+LWP::Protocol::https~6.06
 Class::Data::Inheritable~0.08
 Test::Warnings~0.016
 Hash::MultiValue~0.15
