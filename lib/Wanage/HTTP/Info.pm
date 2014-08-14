@@ -102,14 +102,11 @@ $SafeMethods = {
           'TRACE' => 1
         };
 $CaseInsensitiveMethods = {
-          'CONNECT' => 1,
           'DELETE' => 1,
           'GET' => 1,
           'HEAD' => 1,
           'OPTIONS' => 1,
           'POST' => 1,
-          'PUT' => 1,
-          'TRACE' => 1,
-          'TRACK' => 1
+          'PUT' => 1
         };
 1;
