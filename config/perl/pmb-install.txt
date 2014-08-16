@@ -20,7 +20,7 @@ Test::Fatal~0.013
 Params::Util~1.07
 HTML::Entities~3.69
 Parallel::Prefork~0.17
-Socket~2.014
+Socket~2.015
 Algorithm::Diff~1.1902
 Perl::OSType~1.007
 Path::Tiny~0.056
