@@ -1,4 +1,4 @@
-Net::SSLeay~1.65
+Net::SSLeay~1.66
 Capture::Tiny~0.25
 Data::Dump~1.22
 CPAN::Meta~2.142060
@@ -9,7 +9,7 @@ ExtUtils::MakeMaker~6.98
 Crypt::OpenSSL::RSA~0.28
 Sub::Identify~0.04
 Data::OptList~0.109
-POSIX::strftime::Compiler~0.32
+POSIX::strftime::Compiler~0.40
 ExtUtils::Config~0.008
 Variable::Magic~0.53
 List::Rubyish~0.03
