@@ -86,7 +86,7 @@ Starman~0.4009
 Encode~2.62
 IO::HTML~1.001
 HTTP::Headers~6.05
-HTTP::Tiny~0.047
+HTTP::Tiny~0.048
 Data::MessagePack~0.48
 Test::Deep~0.112
 Devel::StackTrace~1.34
