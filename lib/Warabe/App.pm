@@ -10,13 +10,13 @@ use Scalar::Util qw(weaken);
 ## ------ Constructor ------
 
 sub new_from_http ($$) {
-  my $self = bless {http => $_[1], start_time => [gettimeofday]}, $_[0];
-  weaken (my $app = $self);
-  $self->{http}->onclose (sub {
+  my $app = bless {http => $_[1], start_time => [gettimeofday]}, $_[0];
+  $app->{http}->onclose (sub {
     $app->{elapsed_time} = tv_interval $app->{start_time};
     $app->onclose->();
+    undef $app;
   });
-  return $self;
+  return $app;
 } # new_from_http
 
 ## ------ Underlying HTTP object ------
@@ -344,10 +344,11 @@ sub requires_same_origin_or_referer_origin ($) {
   return $_[0]->throw_error (400, reason_phrase => 'Bad origin');
 } # requires_same_origin_or_referer_origin
 
-sub DESTROY {
-  if ($Warabe::App::DetectLeak) {
-    warn "Possible memory leak";
-  }
+sub DESTROY ($) {
+  local $@;
+  eval { die };
+  warn "Possible memory leak detected (Warabe::App)\n"
+      if $@ =~ /during global destruction/;
 } # DESTROY
 
 1;

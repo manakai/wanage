@@ -477,11 +477,12 @@ sub onclose ($;$) {
   return shift->{interface}->onclose (@_);
 } # onclose
 
-sub DESTROY {
-  if ($Wanage::HTTP::DetectLeak) {
-    warn "Possible memory leak";
-  }
-}
+sub DESTROY ($) {
+  local $@;
+  eval { die };
+  warn "Possible memory leak detected (Wanage::HTTP)\n"
+      if $@ =~ /during global destruction/;
+} # DESTROY
 
 1;
 
