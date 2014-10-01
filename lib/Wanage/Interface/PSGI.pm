@@ -133,7 +133,6 @@ sub send_response ($;%) {
           $self->{psgi_writer_closed_cv}->send
               if $self->{psgi_writer_closed_cv};
           $code->() if $code;
-          $self->onclose->();
         } else {
           $code->() if $code;
         }

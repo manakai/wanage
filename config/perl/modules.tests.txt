@@ -1,4 +1,5 @@
 AnyEvent
+File::Temp
 Path::Tiny
 Starlet
 Test::Class
