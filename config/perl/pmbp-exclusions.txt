@@ -1,0 +1,10 @@
+- "../../modules/perl-web-url" tests
+- "../../modules/perl-web-encodings" tests
+- "../../modules/perl-ooutils" classdiamondgenerator classregistry objectcachesmethod operationresponse test tests
+- "../../modules/perl-json-functions-xs" tests
+- "../../modules/perl-charclass" tests build
+- "../../t_deps/modules/web-useragent-functions" anyeventsocket cli curl oauth tests testws wsse
+- "../../t_deps/modules/test-x1" tests
+- "../../t_deps/modules/test-moremore" tests
+- "../../t_deps/modules/test-anyevent-plackup" tests
+- "../../t_deps/modules/promise" tests
