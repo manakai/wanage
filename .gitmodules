@@ -34,3 +34,6 @@
 	path = t_deps/modules/web-useragent-functions
 	url = git://github.com/wakaba/perl-web-useragent-functions
 	track = master
+[submodule "t_deps/modules/promise"]
+	path = t_deps/modules/promise
+	url = git://github.com/wakaba/perl-promise
