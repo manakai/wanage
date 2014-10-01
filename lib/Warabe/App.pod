@@ -385,6 +385,8 @@ the handler cannot be used to change the response.  This handler is
 intended for the hook point for reporting the exception to the
 developer, not to the user.
 
+This method can also be used by the promise-based application model.
+
 =item CODE = $app->onclose
 
 =item $app->onclose (CODE)
@@ -392,6 +394,8 @@ developer, not to the user.
 Specifying a code reference as the C<onclose> handler, you can hook
 when the response has been sent to the server (for sending back to the
 client).  The code reference is not expected to throw any exception.
+
+This method can also be used by the promise-based application model.
 
 =item SECONDS = $app->elapsed_time
 
@@ -401,7 +405,66 @@ C<$app> object to the completion of the response, in seconds.
 The method returns C<undef> before the the C<onclose> handler is
 invoked as the value is by definition not available yet.
 
+This method can also be used by the promise-based application model.
+
 =back
+
+=head2 Promise-based application model
+
+The application object supports the promise-based application model,
+that is, the application may either immediately process the request
+synchronously, or return a promise object to defer the process to
+generate the response until some asynchronous processing has been
+done.
+
+Example:
+
+  $app->execute_by_promise (sub {
+    my $path = $app->path_segments;
+    if (@$path == 1 and $path->[0] eq 'data') {
+      return get_as_promise ('http://internal/data.json')->then (sub {
+        $app->send_json ($_[0]->response_text);
+      }, sub {
+        $app->send_error (502);
+      });
+    } else {
+      $app->send_error (404);
+    }
+  });
+
+In this example, the C<get_as_promise> function returns a promise
+object which is to be resolved after the specified URL is fetched.  As
+a promise is returned when the path is C</data>, handling of the
+request will not be completed until the promise has been resolved.
+
+For the purpose of this application model, promises are objects
+implementing API which has similar semantics to C<Promise> JavaScript
+objects.  An example of such promise class is the L<Promise> module
+available at <https://github.com/wakaba/perl-promise>.  By default,
+the C<execute_by_promise> method requires the L<Promise> module.  This
+can be altered by setting the C<$Warabe::App::PromiseClass> global
+variable.
+
+=over 4
+
+=item $app->execute_by_promise (CODE)
+
+Execute the specified code reference synchronously.  The code should
+construct the response synchronously or asynchronously.  If the
+process to construct the response has not been completed
+synchronously, it must return a promise, which is resolved upon the
+completion.
+
+The code should not throw any exception.  If it does, the exeception
+is reported to the C<onexecuteerror> handler.  Additionally, if the
+response headers are not sent yet, a C<500> Internal Server Error
+response is sent.  (If the response headers have already sent, it
+cannot be changed to an error response anymore.)
+
+=back
+
+Methods C<onexecuteerror>, C<onclose>, and C<elapsed_time> are also
+applicable to this application model.
 
 =head2 Validation methods
 

@@ -1,7 +1,7 @@
 package Warabe::App;
 use strict;
 use warnings;
-our $VERSION = '3.0';
+our $VERSION = '4.0';
 use Encode;
 use Wanage::URL qw(percent_decode_c);
 use Time::HiRes qw(gettimeofday tv_interval);
@@ -160,6 +160,31 @@ sub execute ($$;%) {
   };
 } # execute
 
+sub throw ($) {
+  die bless {}, 'Warabe::App::Done';
+} # throw
+
+## ------ Promise-based application model ------
+
+our $PromiseClass ||= 'Promise';
+
+sub execute_by_promise ($$) {
+  my ($app, $code) = @_;
+  my ($ok, $error);
+  eval qq{ require $PromiseClass } or die $@;
+  my $p = $PromiseClass->new (sub {
+    ($ok, $error) = @_;
+  })->then ($code)->catch (sub {
+    $app->onexecuteerror->($_[0]);
+    unless ($app->http->response_headers_sent) {
+      $app->send_error (500);
+    }
+  })->catch (sub {
+    warn $_[0];
+  });
+  return $app->http->send_response (onready => sub { $ok->() });
+} # execute_by_promise
+
 sub onclose ($;$) {
   if (@_ > 1) {
     $_[0]->{onclose} = $_[1];
@@ -179,10 +204,6 @@ sub onexecuteerror ($;$) {
 sub elapsed_time ($) {
   return $_[0]->{elapsed_time};
 } # elapsed_time
-
-sub throw ($) {
-  die bless {}, 'Warabe::App::Done';
-} # throw
 
 {
   package Warabe::App::Done;
