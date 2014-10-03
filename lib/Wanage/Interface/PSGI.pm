@@ -1,7 +1,7 @@
 package Wanage::Interface::PSGI;
 use strict;
 use warnings;
-our $VERSION = '1.0';
+our $VERSION = '2.0';
 use Wanage::Interface::Base;
 push our @ISA, qw(Wanage::Interface::Base);
 use Carp;

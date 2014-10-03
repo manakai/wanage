@@ -89,8 +89,8 @@ Return the L<Wanage::URL> object representing the canonicalized
 variant of the URL requested by the client.
 
 If the C<$Wanage::HTTP::UseXForwardedScheme> variable is set to true,
-the C<X-Forwarded-Scheme:> header, if any, is used to determine the
-scheme component of the URL.
+the C<X-Forwarded-Scheme:> or C<X-Forwarded-Proto:> header, if any, is
+used to determine the scheme component of the URL.
 
 If the C<$Wanage::HTTP::UseXForwardedHost> variable is set to true,
 the C<X-Forwarded-Host:> header, if any, is used to determine the
@@ -655,7 +655,7 @@ RFC 6266 - Use of the Content-Disposition Header Field in the
 Hypertext Transfer Protocol (HTTP)
 <http://tools.ietf.org/html/rfc6266>.
 
-XMLHttpRequest <http://xhr.spec.whatwg.org/>.
+XMLHttpRequest <https://xhr.spec.whatwg.org/>.
 
 RFC 3875 - The Common Gateway Interface (CGI) Version 1.1
 <http://tools.ietf.org/html/rfc3875>.
@@ -664,7 +664,7 @@ SuikaWiki:CGI <http://suika.suikawiki.org/~wakaba/wiki/sw/n/CGI>.
 
 PSGI specification <http://search.cpan.org/dist/PSGI/PSGI.pod>.
 
-MIME Sniffing <http://mimesniff.spec.whatwg.org/>.
+MIME Sniffing <https://mimesniff.spec.whatwg.org/>.
 
 BCP 47 - Language Tags <http://tools.ietf.org/html/bcp47>.
 

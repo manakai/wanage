@@ -52,6 +52,10 @@ C<modules/perl-web-url>; which depends on
 C<modules/perl-web-encodings> and C<modules/perl-charclass>
 submodules).
 
+It also requires a promise implementation (e.g. L<Promise> from
+<https://github.com/wakaba/perl-promise>) if you would like to use
+promise-related features.
+
 If you want to use optional modules (C<Warabe::App::Role::*>), more
 module might be necessary.  See relevant documentations and source
 codes of those modules.
