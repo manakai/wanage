@@ -50,9 +50,10 @@ sub new_https_for_interfaces (%) {
   my %args = @_;
   require Wanage::HTTP;
   my @result;
+  my $out = '';
   push @result, with_cgi_env {
     Wanage::HTTP->new_cgi;
-  } $args{env}, $args{request_body}, '';
+  } $args{env}, $args{request_body}, \$out;
   open $args{env}->{'psgi.input'}, '<', \($args{request_body})
       if defined $args{request_body};
   push @result, Wanage::HTTP->new_from_psgi_env (new_psgi_env $args{env});
