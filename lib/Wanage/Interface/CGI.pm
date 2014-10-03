@@ -1,7 +1,7 @@
 package Wanage::Interface::CGI;
 use strict;
 use warnings;
-our $VERSION = '1.0';
+our $VERSION = '2.0';
 require utf8;
 use Carp;
 use Encode;

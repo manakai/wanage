@@ -42,6 +42,11 @@ sub _url_scheme_by_proxy {
       $scheme =~ tr/A-Z/a-z/; ## ASCII case-insensitive.
       return $scheme;
     }
+    $scheme = $_[0]->get_request_header ('X-Forwarded-Proto');
+    if ($scheme and $scheme =~ /\A[0-9A-Za-z+_.-]+\z/) {
+      $scheme =~ tr/A-Z/a-z/; ## ASCII case-insensitive.
+      return $scheme;
+    }
   }
   return undef;
 } # _url_scheme_by_proxy

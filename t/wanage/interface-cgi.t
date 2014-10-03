@@ -71,6 +71,13 @@ sub _url_scheme_x_forwarded_scheme_ignored : Test(1) {
   is $cgi->url_scheme, 'https';
 } # _url_scheme_x_forwarded_scheme_ignored
 
+sub _url_scheme_x_forwarded_scheme_proto_ignored : Test(1) {
+  my $cgi = with_cgi_env {
+    Wanage::Interface::CGI->new_from_main;
+  } {HTTPS => '1', HTTP_X_FORWARDED_PROTo => 'hoge'};
+  is $cgi->url_scheme, 'https';
+} # _url_scheme_x_forwarded_scheme_proto_ignored
+
 sub _url_scheme_x_forwarded_scheme_used : Test(1) {
   local $Wanage::HTTP::UseXForwardedScheme = 1;
   my $cgi = with_cgi_env {
@@ -78,6 +85,31 @@ sub _url_scheme_x_forwarded_scheme_used : Test(1) {
   } {HTTPS => '1', HTTP_X_FORWARDED_SCHEME => 'hoge'};
   is $cgi->url_scheme, 'hoge';
 } # _url_scheme_x_forwarded_scheme_used
+
+sub _url_scheme_x_forwarded_scheme_proto_used : Test(1) {
+  local $Wanage::HTTP::UseXForwardedScheme = 1;
+  my $cgi = with_cgi_env {
+    Wanage::Interface::CGI->new_from_main;
+  } {HTTPS => '1', HTTP_X_FORWARDED_PROTO => 'hoge'};
+  is $cgi->url_scheme, 'hoge';
+} # _url_scheme_x_forwarded_scheme_proto_used
+
+sub _url_scheme_x_forwarded_scheme_proto_used_bad : Test(1) {
+  local $Wanage::HTTP::UseXForwardedScheme = 1;
+  my $cgi = with_cgi_env {
+    Wanage::Interface::CGI->new_from_main;
+  } {HTTPS => '1', HTTP_X_FORWARDED_PROTO => 'hoge@'};
+  is $cgi->url_scheme, 'https';
+} # _url_scheme_x_forwarded_scheme_proto_used_bad
+
+sub _url_scheme_x_forwarded_scheme_proto_used_both : Test(1) {
+  local $Wanage::HTTP::UseXForwardedScheme = 1;
+  my $cgi = with_cgi_env {
+    Wanage::Interface::CGI->new_from_main;
+  } {HTTPS => '1', HTTP_X_FORWARDED_PROTO => 'hoge',
+     HTTP_X_FORWARDED_SCHEME => 'hage'};
+  is $cgi->url_scheme, 'hage';
+} # _url_scheme_x_forwarded_scheme_proto_used_both
 
 sub _get_meta_variable : Test(2) {
   my $cgi = with_cgi_env {
