@@ -36,6 +36,7 @@ sub get_request_header ($$) {
 sub url_scheme { die "url_scheme not implemented" }
 
 sub _url_scheme_by_proxy {
+  ## Note that we don't have to support URL scheme |0|.
   if ($Wanage::HTTP::UseCFVisitor) {
     ## <https://support.cloudflare.com/hc/en-us/articles/200170536-How-do-I-redirect-HTTPS-traffic-with-Flexible-SSL-and-Apache->
     my $scheme = $_[0]->get_request_header ('CF-Visitor');
@@ -48,12 +49,14 @@ sub _url_scheme_by_proxy {
   }
   if ($Wanage::HTTP::UseXForwardedScheme) {
     my $scheme = $_[0]->get_request_header ('X-Forwarded-Scheme');
-    if ($scheme and $scheme =~ /\A[0-9A-Za-z+_.-]+\z/) {
+    if (defined $scheme and
+        ($scheme =~ /\A[0-9A-Za-z+_.-]+\z/)) {
       $scheme =~ tr/A-Z/a-z/; ## ASCII case-insensitive.
       return $scheme;
     }
     $scheme = $_[0]->get_request_header ('X-Forwarded-Proto');
-    if ($scheme and $scheme =~ /\A[0-9A-Za-z+_.-]+\z/) {
+    if (defined $scheme and
+        ($scheme =~ /\A[0-9A-Za-z+_.-]+\z/)) {
       $scheme =~ tr/A-Z/a-z/; ## ASCII case-insensitive.
       return $scheme;
     }
