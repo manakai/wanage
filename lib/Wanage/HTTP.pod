@@ -88,9 +88,13 @@ Following methods can be used to get the request URL.
 Return the L<Wanage::URL> object representing the canonicalized
 variant of the URL requested by the client.
 
-If the C<$Wanage::HTTP::UseXForwardedScheme> variable is set to true,
-the C<X-Forwarded-Scheme:> or C<X-Forwarded-Proto:> header, if any, is
-used to determine the scheme component of the URL.
+If the C<$Wanage::HTTP::UseCFVisitor> variable is set to true, the
+C<CF-Visitor:> header, if any, is used to determine the scheme
+component of the URL.
+
+Otherwise, if the C<$Wanage::HTTP::UseXForwardedScheme> variable is
+set to true, the C<X-Forwarded-Scheme:> or C<X-Forwarded-Proto:>
+header, if any, is used to determine the scheme component of the URL.
 
 If the C<$Wanage::HTTP::UseXForwardedHost> variable is set to true,
 the C<X-Forwarded-Host:> header, if any, is used to determine the
@@ -667,6 +671,9 @@ PSGI specification <http://search.cpan.org/dist/PSGI/PSGI.pod>.
 MIME Sniffing <https://mimesniff.spec.whatwg.org/>.
 
 BCP 47 - Language Tags <http://tools.ietf.org/html/bcp47>.
+
+How do I redirect HTTPS traffic with Flexible SSL and Apache?
+<https://support.cloudflare.com/hc/en-us/articles/200170536-How-do-I-redirect-HTTPS-traffic-with-Flexible-SSL-and-Apache->.
 
 =head1 AUTHOR
 
