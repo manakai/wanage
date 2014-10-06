@@ -26,7 +26,7 @@ sub _new_from_interface : Test(2) {
   }
 } # _new_from_interface
 
-sub _addrs : Test(31) {
+sub _addrs : Test(32) {
   local $Wanage::HTTP::UseXForwardedFor = 1;
   for my $test (
     {result => undef},
@@ -65,9 +65,12 @@ sub _addrs : Test(31) {
      result => '::31:abc'},
     {addr => '10.5.11.124', for => 'unknown', result => '10.5.11.124'},
     {addr => '10.5.11.124', for => '10.2.11.1,unknown', result => '10.2.11.1'},
+    {addr => '10.5.11.124', for => '1.2.3.4', cf => '4.5.6.7',
+     result => '1.2.3.4'},
   ) {
     my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
       REMOTE_ADDR => $test->{addr},
+      HTTP_CF_CONNECTING_IP => $test->{cf},
       HTTP_X_FORWARDED_FOR => $test->{for},
     };
     my $ip = Wanage::HTTP::ClientIPAddr->new_from_interface
@@ -75,6 +78,53 @@ sub _addrs : Test(31) {
     is $ip->as_text, $test->{result};
   }
 } # _addrs
+
+sub _addrs_cf : Test(5) {
+  local $Wanage::HTTP::UseCFConnectingIP = 1;
+  for my $test (
+    {addr => '10.5.11.124', cf => '4.5.6.7', result => '4.5.6.7'},
+    {addr => '10.5.11.124', for => '1.2.3.4', cf => '4.5.6.7',
+     result => '4.5.6.7'},
+    {addr => '10.5.11.124', for => '1.2.3.4', cf => '4.5.6.7,1.3.3.4',
+     result => '10.5.11.124'},
+    {addr => '10.5.11.124', for => '1.2.3.4', cf => '::31', result => '::31'},
+    {addr => '10.5.11.124', for => '1.2.3.4', cf => 'hoge',
+     result => '10.5.11.124'},
+  ) {
+    my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+      REMOTE_ADDR => $test->{addr},
+      HTTP_CF_CONNECTING_IP => $test->{cf},
+      HTTP_X_FORWARDED_FOR => $test->{for},
+    };
+    my $ip = Wanage::HTTP::ClientIPAddr->new_from_interface
+        ($http->{interface});
+    is $ip->as_text, $test->{result};
+  }
+} # _addrs_cf
+
+sub _addrs_cf_xff : Test(5) {
+  local $Wanage::HTTP::UseCFConnectingIP = 1;
+  local $Wanage::HTTP::UseXForwardedFor = 1;
+  for my $test (
+    {addr => '10.5.11.124', cf => '4.5.6.7', result => '4.5.6.7'},
+    {addr => '10.5.11.124', for => '1.2.3.4', cf => '4.5.6.7',
+     result => '4.5.6.7'},
+    {addr => '10.5.11.124', for => '1.2.3.4', cf => '4.5.6.7,1.3.3.4',
+     result => '1.2.3.4'},
+    {addr => '10.5.11.124', for => '1.2.3.4', cf => '::31', result => '::31'},
+    {addr => '10.5.11.124', for => '1.2.3.4', cf => 'hoge',
+     result => '1.2.3.4'},
+  ) {
+    my $http = with_cgi_env { Wanage::HTTP->new_cgi } {
+      REMOTE_ADDR => $test->{addr},
+      HTTP_CF_CONNECTING_IP => $test->{cf},
+      HTTP_X_FORWARDED_FOR => $test->{for},
+    };
+    my $ip = Wanage::HTTP::ClientIPAddr->new_from_interface
+        ($http->{interface});
+    is $ip->as_text, $test->{result};
+  }
+} # _addrs_cf_xff
 
 sub _select_addr_subclassed : Test(2) {
   local $Wanage::HTTP::UseXForwardedFor = 1;

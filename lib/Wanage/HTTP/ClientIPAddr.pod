@@ -55,10 +55,11 @@ The C<select_addr> method is invoked when it is necessary to determine
 the client IP address from the list of candidates.  The method can use
 the C<< $self->{addr} >> list (a L<List::Ish> object) as the list of
 candidate IP addresses in their canonical textual representations.
-The list contains any C<X-Forwarded-For:> addresses followed by the
-C<REMOTE_ADDR> address.  The list must not be modified by the method.
-The method is expected to return one of them, if there is an
-appropriate address, or return the C<undef> value.
+The list contains the C<CF-Connecting-IP:> address, if any, followed
+by any C<X-Forwarded-For:> addresses, followed by the C<REMOTE_ADDR>
+address.  The list must not be modified by the method.  The method is
+expected to return one of them, if there is an appropriate address, or
+return the C<undef> value.
 
 By default, the C<select_addr> method return the first address in the
 list.
@@ -73,6 +74,10 @@ The C<X-Forwarded-For:> headers are ignored unless the
 C<$Wanage::HTTP::UseXForwardedFor> variable is set to true.  This
 varibale is set to false by default.
 
+The C<CF-Connecting-IP:> headers are ignored unless the
+C<$Wanage::HTTP::UseCFConnectingIP> variable is set to true.  This
+varibale is set to false by default.
+
 =head1 SEE ALSO
 
 L<Wanage::HTTP>.
@@ -81,9 +86,12 @@ RFC 3875 - The Common Gateway Interface (CGI) Version 1.1
 <http://tools.ietf.org/html/rfc3875#section-4.1.8>.
 
 SuikaWiki:X-Forwarded-For:
-<http://suika.fam.cx/~wakaba/wiki/sw/n/X-Forwarded-For%3A>.
+<http://wiki.suikawiki.org/n/X-Forwarded-For:>.
 
 XFF <http://qiita.com/wakaba@github/items/cf8730ca3d75b28d844a>.
+
+How does CloudFlare handle HTTP Request headers?
+<https://support.cloudflare.com/hc/en-us/articles/200170986-How-does-CloudFlare-handle-HTTP-Request-headers->.
 
 L<Web::IPAddr::Canonicalize>.
 
