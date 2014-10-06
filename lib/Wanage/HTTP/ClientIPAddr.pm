@@ -1,7 +1,7 @@
 package Wanage::HTTP::ClientIPAddr;
 use strict;
 use warnings;
-our $VERSION = '3.0';
+our $VERSION = '4.0';
 use List::Ish;
 use Web::IPAddr::Canonicalize qw(
   canonicalize_ipv6_addr
@@ -16,14 +16,14 @@ sub new_from_interface ($$) {
   my ($class, $if) = @_;
   my @addr = (
     ## <https://support.cloudflare.com/hc/en-us/articles/200170986-How-does-CloudFlare-handle-HTTP-Request-headers->
-    ($Wanage::HTTP::UseCFConnectingIP ? (
-      $if->get_request_header ('CF-Connecting-IP') || '',
-    ) : ()),
     ($Wanage::HTTP::UseXForwardedFor ? (
       map { s/\A[\x09\x0A\x0D\x20]+//; s/[\x09\x0A\x0D\x20]+\z//; $_ }
       split /,/, $if->get_request_header ('X-Forwarded-For') || ''
     ) : ()),
-   $if->get_meta_variable ('REMOTE_ADDR'),
+    ($Wanage::HTTP::UseCFConnectingIP ? (
+      $if->get_request_header ('CF-Connecting-IP') || '',
+    ) : ()),
+    $if->get_meta_variable ('REMOTE_ADDR'),
   );
   my $addrs = List::Ish->new ([grep { $_ } map {
     if ($_ and /:/) {
@@ -37,7 +37,8 @@ sub new_from_interface ($$) {
 } # new_from_interface
 
 sub select_addr ($) {
-  return $_[0]->{selected_addr} ||= $_[0]->{addrs}->[0];
+  return $_[0]->{selected_addr}
+      ||= @{$_[0]->{addrs}} > 1 ? $_[0]->{addrs}->[-2] : $_[0]->{addrs}->[-1];
 } # select_addr
 
 sub as_text ($) {
