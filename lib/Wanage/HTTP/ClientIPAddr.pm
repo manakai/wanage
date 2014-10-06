@@ -1,19 +1,30 @@
 package Wanage::HTTP::ClientIPAddr;
 use strict;
 use warnings;
-our $VERSION = '2.0';
+our $VERSION = '3.0';
 use List::Ish;
 use Web::IPAddr::Canonicalize qw(
   canonicalize_ipv6_addr
   canonicalize_ipv4_addr
 );
 
-## See:
-## <http://suika.fam.cx/~wakaba/wiki/sw/n/REMOTE_ADDR>
-## <http://suika.fam.cx/~wakaba/wiki/sw/n/X-Forwarded-For>
+## See: <http://wiki.suikawiki.org/n/REMOTE_ADDR>,
+## <http://wiki.suikawiki.org/n/X-Forwarded-For:>,
+## <http://wiki.suikawiki.org/n/CF-Connecting-IP:>.
 
 sub new_from_interface ($$) {
   my ($class, $if) = @_;
+  my @addr = (
+    ## <https://support.cloudflare.com/hc/en-us/articles/200170986-How-does-CloudFlare-handle-HTTP-Request-headers->
+    ($Wanage::HTTP::UseCFConnectingIP ? (
+      $if->get_request_header ('CF-Connecting-IP') || '',
+    ) : ()),
+    ($Wanage::HTTP::UseXForwardedFor ? (
+      map { s/\A[\x09\x0A\x0D\x20]+//; s/[\x09\x0A\x0D\x20]+\z//; $_ }
+      split /,/, $if->get_request_header ('X-Forwarded-For') || ''
+    ) : ()),
+   $if->get_meta_variable ('REMOTE_ADDR'),
+  );
   my $addrs = List::Ish->new ([grep { $_ } map {
     if ($_ and /:/) {
       canonicalize_ipv6_addr $_;
@@ -21,13 +32,7 @@ sub new_from_interface ($$) {
       canonicalize_ipv4_addr $_;
     }
     ## "unknown" value is ignored.
-  } (
-     ($Wanage::HTTP::UseXForwardedFor ? (
-        map { s/\A[\x09\x0A\x0D\x20]+//; s/[\x09\x0A\x0D\x20]+\z//; $_ }
-        split /,/, $if->get_request_header ('X-Forwarded-For') || ''
-      ) : ()),
-     $if->get_meta_variable ('REMOTE_ADDR'),
-  )]);
+  } @addr]);
   return bless {addrs => $addrs}, $class;
 } # new_from_interface
 
