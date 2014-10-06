@@ -111,6 +111,31 @@ sub _url_scheme_x_forwarded_scheme_proto_used_both : Test(1) {
   is $cgi->url_scheme, 'hage';
 } # _url_scheme_x_forwarded_scheme_proto_used_both
 
+sub _url_scheme_cf_visitor : Test(1) {
+  local $Wanage::HTTP::UseCFVisitor = 1;
+  my $cgi = with_cgi_env {
+    Wanage::Interface::CGI->new_from_main;
+  } {HTTPS => '1', HTTP_CF_VISITOR => '{"scheme":"http"}'};
+  is $cgi->url_scheme, 'http';
+} # _url_scheme_cf_visitor
+
+sub _url_scheme_cf_visitor_and_xf : Test(1) {
+  local $Wanage::HTTP::UseCFVisitor = 1;
+  local $Wanage::HTTP::UseXForwardedScheme = 1;
+  my $cgi = with_cgi_env {
+    Wanage::Interface::CGI->new_from_main;
+  } {HTTP_CF_VISITOR => '{"scheme":"http"}',
+     HTTP_X_FORWARDED_PROTO => 'https'};
+  is $cgi->url_scheme, 'http';
+} # _url_scheme_cf_visitor_and_xf
+
+sub _url_scheme_cf_visitor_ignored : Test(1) {
+  my $cgi = with_cgi_env {
+    Wanage::Interface::CGI->new_from_main;
+  } {HTTPS => '1', HTTP_CF_VISITOR => '{"scheme":"http"}'};
+  is $cgi->url_scheme, 'https';
+} # _url_scheme_cf_visitor_ignored
+
 sub _get_meta_variable : Test(2) {
   my $cgi = with_cgi_env {
     Wanage::Interface::CGI->new_from_main;
