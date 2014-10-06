@@ -26,7 +26,7 @@ sub _new_from_interface : Test(2) {
   }
 } # _new_from_interface
 
-sub _addrs : Test(30) {
+sub _addrs : Test(31) {
   local $Wanage::HTTP::UseXForwardedFor = 1;
   for my $test (
     {result => undef},
@@ -56,10 +56,12 @@ sub _addrs : Test(30) {
     {addr => '10.5.11.124', for => ' 192.168.51.44 ',
      result => '192.168.51.44'},
     {addr => '10.5.11.124', for => '192.168.51.44,10.4.111.21',
-     result => '10.4.111.21'},
+     result => '192.168.51.44'},
     {addr => '10.5.11.124', for => '192.168.51.44,, 10.4.111.21',
-     result => '10.4.111.21'},
+     result => '192.168.51.44'},
     {addr => '10.5.11.124', for => '192.168.51.44,0::31:abc',
+     result => '192.168.51.44'},
+    {addr => '10.5.11.124', for => '0::31:abc,192.168.51.44,',
      result => '::31:abc'},
     {addr => '10.5.11.124', for => 'unknown', result => '10.5.11.124'},
     {addr => '10.5.11.124', for => '10.2.11.1,unknown', result => '10.2.11.1'},
@@ -80,7 +82,7 @@ sub _select_addr_subclassed : Test(2) {
     package test::my::ipaddr::select;
     push our @ISA, 'Wanage::HTTP::ClientIPAddr';
     sub select_addr {
-      return $_[0]->{addrs}->grep (sub { not /100/ })->[-1];
+      return $_[0]->{addrs}->grep (sub { not /100/ })->[0];
     }
   }
 

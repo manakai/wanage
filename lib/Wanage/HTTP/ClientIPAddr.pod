@@ -55,12 +55,12 @@ The C<select_addr> method is invoked when it is necessary to determine
 the client IP address from the list of candidates.  The method can use
 the C<< $self->{addr} >> list (a L<List::Ish> object) as the list of
 candidate IP addresses in their canonical textual representations.
-The list contains the C<REMOTE_ADDR> address followed by the
-C<X-Forwarded-For:> addresses.  The list must not be modified by the
-method.  The method is expected to return one of them, if there is an
+The list contains any C<X-Forwarded-For:> addresses followed by the
+C<REMOTE_ADDR> address.  The list must not be modified by the method.
+The method is expected to return one of them, if there is an
 appropriate address, or return the C<undef> value.
 
-By default, the C<select_addr> method return the last address in the
+By default, the C<select_addr> method return the first address in the
 list.
 
 The subclassing might be useful if you are using multiple reverse
@@ -83,11 +83,13 @@ RFC 3875 - The Common Gateway Interface (CGI) Version 1.1
 SuikaWiki:X-Forwarded-For:
 <http://suika.fam.cx/~wakaba/wiki/sw/n/X-Forwarded-For%3A>.
 
+XFF <http://qiita.com/wakaba@github/items/cf8730ca3d75b28d844a>.
+
 L<Web::IPAddr::Canonicalize>.
 
 =head1 LICENSE
 
-Copyright 2012 Wakaba <w@suika.fam.cx>.
+Copyright 2012-2014 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
