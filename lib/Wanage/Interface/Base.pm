@@ -39,11 +39,10 @@ sub _url_scheme_by_proxy {
   if ($Wanage::HTTP::UseCFVisitor) {
     ## <https://support.cloudflare.com/hc/en-us/articles/200170536-How-do-I-redirect-HTTPS-traffic-with-Flexible-SSL-and-Apache->
     my $scheme = $_[0]->get_request_header ('CF-Visitor');
-    if ($scheme and $scheme =~ /"scheme":"([0-9A-Za-z+_.-]+)"/) {
-      $scheme = $1;
-      $scheme =~ tr/A-Z/a-z/; ## ASCII case-insensitive.
-      return $scheme;
-    }
+    $scheme =~ /"scheme":"([0-9A-Za-z+_.-]+)"/;
+    $scheme = $1;
+    $scheme =~ tr/A-Z/a-z/; ## ASCII case-insensitive.
+    return $scheme;
   }
   if ($Wanage::HTTP::UseXForwardedScheme) {
     my $scheme = $_[0]->get_request_header ('X-Forwarded-Scheme');
