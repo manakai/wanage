@@ -62,7 +62,7 @@ Unicode::Stringprep~1.105
 IPC::Signal~1.00
 Test::Simple~1.001006
 MRO::Compat~0.12
-IO::Socket::SSL~1.998
+IO::Socket::SSL~1.999
 Class::Load~0.22
 Apache::LogFormat::Compiler~0.32
 namespace::clean~0.25
