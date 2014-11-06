@@ -36,7 +36,7 @@ Path::Tiny~0.060
 ExtUtils::CBuilder~0.280220
 Net::HTTP~6.07
 Parse::CPAN::Meta~1.4414
-URI~1.64
+URI~1.65
 Plack~1.0033
 version~0.9909
 Test::Tester~0.109
@@ -107,6 +107,6 @@ IO::Socket::SSL~2.002
 Apache::LogFormat::Compiler~0.32
 Time::HiRes~1.9726
 HTTP::Date~6.02
-DateTime::TimeZone~1.77
+DateTime::TimeZone~1.78
 JSON::PP~2.27300
 Mozilla::CA~20130114
