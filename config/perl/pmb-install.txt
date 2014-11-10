@@ -23,8 +23,8 @@ common::sense~3.73
 IO::Socket::Socks~0.65
 URI::Escape~3.31
 IO::Handle~1.28
-LWP::MediaTypes~6.02
 Types::Serialiser~1.0
+LWP::MediaTypes~6.02
 Module::Runtime~0.014
 Unicode::Normalize~1.18
 HTML::Entities~3.69
@@ -84,6 +84,7 @@ Compress::Raw::Zlib~2.066
 Text::Diff~1.41
 Test::More~1.001009
 AnyEvent::HTTP::Socks~0.04
+CPAN::Meta::Requirements~2.128
 File::Temp~0.2304
 Signal::Mask~0.008
 Class::Inspector~1.28
@@ -107,6 +108,6 @@ IO::Socket::SSL~2.002
 Apache::LogFormat::Compiler~0.32
 Time::HiRes~1.9726
 HTTP::Date~6.02
-DateTime::TimeZone~1.78
 JSON::PP~2.27300
+DateTime::TimeZone~1.78
 Mozilla::CA~20130114
