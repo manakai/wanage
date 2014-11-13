@@ -109,5 +109,5 @@ Apache::LogFormat::Compiler~0.32
 Time::HiRes~1.9726
 HTTP::Date~6.02
 JSON::PP~2.27300
-DateTime::TimeZone~1.78
+DateTime::TimeZone~1.79
 Mozilla::CA~20130114
