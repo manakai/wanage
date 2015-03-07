@@ -32,7 +32,7 @@ Parallel::Prefork~0.17
 Perl::OSType~1.008
 Algorithm::Diff~1.1903
 Socket~2.018
-Path::Tiny~0.061
+Path::Tiny~0.065
 ExtUtils::CBuilder~0.280220
 Parse::CPAN::Meta~1.4414
 Net::HTTP~6.07
