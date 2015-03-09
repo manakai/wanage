@@ -71,7 +71,7 @@ Module::Implementation~0.09
 Time::Local~1.2300
 Test::SharedFork~0.29
 Try::Tiny~0.22
-parent~0.228
+parent~0.229
 AnyEvent~7.08
 Term::ANSIColor~4.03
 Server::Starter~0.19
