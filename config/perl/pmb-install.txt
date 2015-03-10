@@ -6,7 +6,7 @@ IO::HTML~1.001
 Encode~2.70
 HTTP::Headers~6.05
 HTTP::Tiny~0.054
-CPAN::Meta~2.143240
+CPAN::Meta~2.150001
 HTTP::Daemon~6.01
 Module::Build~0.4211
 Data::MessagePack~0.48
@@ -71,7 +71,7 @@ Module::Implementation~0.09
 Time::Local~1.2300
 Test::SharedFork~0.29
 Try::Tiny~0.22
-parent~0.229
+parent~0.231
 AnyEvent~7.08
 Term::ANSIColor~4.03
 Server::Starter~0.19
