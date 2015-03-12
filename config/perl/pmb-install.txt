@@ -3,7 +3,7 @@ Capture::Tiny~0.28
 JSON::XS~3.01
 HTTP::Status~6.03
 IO::HTML~1.001
-Encode~2.70
+Encode~2.71
 HTTP::Headers~6.05
 HTTP::Tiny~0.054
 CPAN::Meta~2.150001
