@@ -1,7 +1,7 @@
 package Wanage::HTTP;
 use strict;
 use warnings;
-our $VERSION = '2.0';
+our $VERSION = '3.0';
 use Carp;
 use Encode;
 require utf8;
@@ -184,6 +184,10 @@ sub request_auth ($) {
     my ($userid, $password) = split /:/, $decoded, 2;
     return {auth_scheme => 'basic', userid => $userid, password => $password}
         if defined $password;
+  } elsif ($auth =~ s/^[\x09\x0A\x0D\x20]*[Bb][Ee][Aa][Rr][Ee][Rr][\x09\x0A\x0D\x20]+//) {
+    $auth =~ s/[\x09\x0A\x0D\x20]+\z//;
+    return {auth_scheme => 'bearer', token => $auth}
+        if length $auth and not $auth =~ /[\x09\x0A\x0D\x20]/;
   }
   return {};
 } # request_auth
@@ -488,7 +492,7 @@ sub DESTROY ($) {
 
 =head1 LICENSE
 
-Copyright 2012-2014 Wakaba <wakaba@suikawiki.org>.
+Copyright 2012-2015 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
