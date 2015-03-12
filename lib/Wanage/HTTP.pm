@@ -394,7 +394,7 @@ sub set_response_auth {
         ('WWW-Authenticate' => 'Basic realm="' . (_u8 $args{realm}) . '"');
   } elsif ($auth_scheme eq 'bearer') {
     $args{realm} =~ tr/"\\/__/;
-    $args{error} //= 'invalid_token';
+    $args{error} = 'invalid_token' unless defined $args{error};
     $args{error} =~ tr/"\\/__/;
     $self->add_response_header
         ('WWW-Authenticate' => 'Bearer realm="' . (_u8 $args{realm}) . '", error="' . (_u8 $args{error}) . '"');
