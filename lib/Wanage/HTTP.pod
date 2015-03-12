@@ -197,7 +197,7 @@ address of the client.
 
 You can use a subclass of L<Wanage::HTTP::ClientIPAddr> for the client
 IP address object by setting the C<$Wanage::HTTP::ClientIPAddrClass>
-variable.  See L<Wanagr::HTTP::ClientIPAddr> for more information.
+variable.  See L<Wanage::HTTP::ClientIPAddr> for more information.
 
 If the C<$Wanagr::HTTP::UseXForwardedFor> variable is set to true, the
 C<X-Forwarded-For:> headers, if any, is taken into account.
@@ -262,12 +262,17 @@ key, whose value is set to the lowercase-normalized form of the
 C<auth-scheme>.
 
 If the C<auth_scheme> value is C<basic>, the C<Authorization:> header
-contains C<basic-credentials>.  In this case the array reference
+contains a C<basic-credentials>.  In this case the hash reference also
 contains keys C<userid> and C<password>.  If the credentials contains
 no password (which violates the HTTP spec), the C<password> key is set
 to the C<undef> value.  Otherwise, these keys contain values of
 C<userid> and C<password>, respectively, in the C<basic-credentials>.
 They are byte strings.
+
+If the C<auth_scheme> value is C<bearer>, the C<Authorization:> header
+contains a Bearer token.  In this case the hash reference also
+contains the key C<token>, whose value is the Bearer token specified
+in the header.  It is a byte string.
 
 At the time of writing, no other C<auth-scheme> is supported.
 
@@ -659,6 +664,9 @@ RFC 6266 - Use of the Content-Disposition Header Field in the
 Hypertext Transfer Protocol (HTTP)
 <http://tools.ietf.org/html/rfc6266>.
 
+RFC 6750 - The OAuth 2.0 Authorization Framework: Bearer Token Usage
+<http://tools.ietf.org/html/rfc6750>.
+
 XMLHttpRequest <https://xhr.spec.whatwg.org/>.
 
 RFC 3875 - The Common Gateway Interface (CGI) Version 1.1
@@ -681,7 +689,7 @@ Wakaba <wakaba@suikawiki.org>.
 
 =head1 LICENSE
 
-Copyright 2012-2014 Wakaba <wakaba@suikawiki.org>.
+Copyright 2012-2015 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

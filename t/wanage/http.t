@@ -390,7 +390,7 @@ sub _request_cookies : Test(72) {
   }
 } # _request_cookies
 
-sub _request_auth : Test(36) {
+sub _request_auth : Test(54) {
   for my $test (
     [undef, {}],
     ['' => {}],
@@ -418,6 +418,15 @@ sub _request_auth : Test(36) {
     ['Basic aG9nZQ==' => {}],
     ['Hoge fuga="" abc', {}],
     ['notbasic QWxhZGRpbjpvcGVuIHNlc2FtZQ', {}],
+    ['bearer' => {}],
+    ['BEARER ' => {}],
+    ['Bearer hoge' => {auth_scheme => 'bearer', token => 'hoge'}],
+    ['Bearer hoge=' => {auth_scheme => 'bearer', token => 'hoge='}],
+    ['BearER foo   ' => {auth_scheme => 'bearer', token => 'foo'}],
+    ['Bearer ho ge' => {}],
+    ['Bearer   !?()' => {auth_scheme => 'bearer', token => '!?()'}],
+    ["Bearer hogea\xFE\x90" => {auth_scheme => 'bearer', token => "hogea\xFE\x90"}],
+    ['notBearer hoge' => {}],
   ) {
     my $https = new_https_for_interfaces
         env => {HTTP_AUTHORIZATION => $test->[0]};
@@ -1227,7 +1236,7 @@ $Wanage::HTTP::DetectLeak = 1;
 
 =head1 LICENSE
 
-Copyright 2012-2014 Wakaba <wakaba@suikawiki.org>.
+Copyright 2012-2015 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
