@@ -392,6 +392,12 @@ sub set_response_auth {
     $args{realm} =~ tr/"\\/__/;
     $self->add_response_header
         ('WWW-Authenticate' => 'Basic realm="' . (_u8 $args{realm}) . '"');
+  } elsif ($auth_scheme eq 'bearer') {
+    $args{realm} =~ tr/"\\/__/;
+    $args{error} = 'invalid_token' unless defined $args{error};
+    $args{error} =~ tr/"\\/__/;
+    $self->add_response_header
+        ('WWW-Authenticate' => 'Bearer realm="' . (_u8 $args{realm}) . '", error="' . (_u8 $args{error}) . '"');
   } else {
     croak "Auth-scheme |$auth_scheme| is not supported";
   }

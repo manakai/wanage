@@ -1044,7 +1044,7 @@ sub _set_response_cookie_after_sent : Test(4) {
   }
 } # _set_response_cookie_after_sent
 
-sub _set_response_auth : Test(30) {
+sub _set_response_auth : Test(36) {
   for my $test (
     [[], undef],
     [['Basic'], 'Basic realm=""'],
@@ -1061,6 +1061,12 @@ sub _set_response_auth : Test(30) {
     [['basic', realm => "\x90\xFE"], qq{Basic realm="\xc2\x90\xc3\xbe"}],
     [['basic', realm => "\x{5000}\x{3121}"],
      qq{Basic realm="\xe5\x80\x80\xe3\x84\xa1"}],
+    [['bearer', realm => 'hoge'],
+     q{Bearer realm="hoge", error="invalid_token"}],
+    [['bearer', realm => 'hoge', error => 'invalid_client'],
+     q{Bearer realm="hoge", error="invalid_client"}],
+    [['bearer', realm => 'ho \\"ge', error => 'invalid_\\"client '],
+     q{Bearer realm="ho __ge", error="invalid___client "}],
   ) {
     my $https = new_https_for_interfaces;
     for my $http (@$https) {
