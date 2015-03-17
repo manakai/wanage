@@ -40,7 +40,7 @@ URI~1.67
 Plack~1.0034
 version~0.9912
 Test::Tester~0.114
-CPAN::Meta::YAML~0.012
+CPAN::Meta::YAML~0.014
 Class::Accessor::Lite~0.06
 Exporter~5.70
 Carp~1.35
