@@ -10,7 +10,7 @@ CPAN::Meta~2.150001
 HTTP::Daemon~6.01
 Module::Build~0.4211
 Data::MessagePack~0.48
-List::MoreUtils~0.406
+List::MoreUtils~0.407
 Devel::StackTrace~2.00
 ExtUtils::ParseXS~3.24
 HTTP::Body~1.22
