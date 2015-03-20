@@ -43,7 +43,7 @@ Test::Tester~0.114
 CPAN::Meta::YAML~0.014
 Class::Accessor::Lite~0.06
 Exporter~5.70
-Carp~1.35
+Carp~1.36
 Proc::Wait3~0.04
 Class::Singleton~1.5
 Filesys::Notify::Simple~0.12
@@ -71,7 +71,7 @@ Module::Implementation~0.09
 Time::Local~1.2300
 Test::SharedFork~0.29
 Try::Tiny~0.22
-parent~0.231
+parent~0.232
 AnyEvent~7.08
 Term::ANSIColor~4.03
 Server::Starter~0.19
