@@ -109,6 +109,6 @@ IO::Socket::SSL~2.012
 Apache::LogFormat::Compiler~0.32
 Time::HiRes~1.9726
 HTTP::Date~6.02
-DateTime::TimeZone~1.85
+DateTime::TimeZone~1.86
 JSON::PP~2.27300
 Mozilla::CA~20141217
