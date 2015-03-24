@@ -32,7 +32,7 @@ Parallel::Prefork~0.17
 Perl::OSType~1.008
 Algorithm::Diff~1.1903
 Socket~2.018
-Path::Tiny~0.065
+Path::Tiny~0.068
 ExtUtils::CBuilder~0.280220
 Parse::CPAN::Meta~1.4414
 Net::HTTP~6.07
@@ -74,7 +74,7 @@ Try::Tiny~0.22
 parent~0.232
 AnyEvent~7.08
 Term::ANSIColor~4.03
-Server::Starter~0.19
+Server::Starter~0.21
 Test::Class~0.48
 Exporter::Lite~0.06
 Data::Dumper~2.154
