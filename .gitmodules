@@ -1,22 +1,22 @@
 [submodule "modules/perl-charclass"]
 	path = modules/perl-charclass
-	url = git://github.com/wakaba/perl-charclass.git
+	url = git://github.com/wakaba/perl-charclass
 	track = master
 [submodule "modules/perl-ooutils"]
 	path = modules/perl-ooutils
-	url = git://github.com/wakaba/perl-ooutils.git
+	url = git://github.com/wakaba/perl-ooutils
 	track = master
 [submodule "modules/perl-json-functions-xs"]
 	path = modules/perl-json-functions-xs
-	url = git://github.com/wakaba/perl-json-functions-xs.git
+	url = git://github.com/wakaba/perl-json-functions-xs
 	track = master
 [submodule "modules/perl-web-encodings"]
 	path = modules/perl-web-encodings
-	url = git://github.com/manakai/perl-web-encodings.git
+	url = git://github.com/manakai/perl-web-encodings
 	track = master
 [submodule "modules/perl-web-url"]
 	path = modules/perl-web-url
-	url = git://github.com/manakai/perl-web-url.git
+	url = git://github.com/manakai/perl-web-url
 	track = master
 [submodule "t_deps/modules/test-moremore"]
 	path = t_deps/modules/test-moremore
