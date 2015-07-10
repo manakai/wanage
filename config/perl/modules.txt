@@ -6,4 +6,5 @@ IO::Handle
 MIME::Base64
 Path::Class
 Scalar::Util
+Time::HiRes
 Time::Local
