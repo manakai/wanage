@@ -1,8 +1,7 @@
 package Wanage::HTTP::ClientIPAddr;
 use strict;
 use warnings;
-our $VERSION = '4.0';
-use List::Ish;
+our $VERSION = '5.0';
 use Web::IPAddr::Canonicalize qw(
   canonicalize_ipv6_addr
   canonicalize_ipv4_addr
@@ -25,14 +24,18 @@ sub new_from_interface ($$) {
     ) : ()),
     $if->get_meta_variable ('REMOTE_ADDR'),
   );
-  my $addrs = List::Ish->new ([grep { $_ } map {
+  my $addrs = [grep { $_ } map {
     if ($_ and /:/) {
       canonicalize_ipv6_addr $_;
     } else {
       canonicalize_ipv4_addr $_;
     }
     ## "unknown" value is ignored.
-  } @addr]);
+  } @addr];
+  unless ($class eq __PACKAGE__) {
+    require List::Ish;
+    bless $addrs, 'List::Ish';
+  }
   return bless {addrs => $addrs}, $class;
 } # new_from_interface
 
@@ -49,7 +52,7 @@ sub as_text ($) {
 
 =head1 LICENSE
 
-Copyright 2012-2014 Wakaba <wakaba@suikawiki.org>.
+Copyright 2012-2015 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
