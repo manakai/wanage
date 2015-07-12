@@ -15,7 +15,7 @@ the HTTP client for a request.
 The IP address is the value of the C<REMOTE_ADDR> CGI meta-variable in
 the simplest case.  However, when there are one or more intermediate
 proxies, the situation is much more difficult.  This module extracts
-client IP address from HTTP C<X-Forwarded-For> header, if available.
+client IP address from HTTP C<X-Forwarded-For:> header, if available.
 
 =head1 METHODS
 
@@ -80,6 +80,11 @@ The C<CF-Connecting-IP:> headers are ignored unless the
 C<$Wanage::HTTP::UseCFConnectingIP> variable is set to true.  This
 varibale is set to false by default.
 
+=head1 DEPENDENCY
+
+The module requires Perl 5.8 or later.  If the subclassing feature is
+used, it also requires the L<List::Ish> module.
+
 =head1 SEE ALSO
 
 L<Wanage::HTTP>.
@@ -99,7 +104,7 @@ L<Web::IPAddr::Canonicalize>.
 
 =head1 LICENSE
 
-Copyright 2012-2014 Wakaba <wakaba@suikawiki.org>.
+Copyright 2012-2015 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
