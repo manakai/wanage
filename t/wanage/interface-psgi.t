@@ -282,6 +282,19 @@ sub _original_url_from_http_host_request_uri : Test(4) {
   is $psgi->canon_url->stringify, 'http://fuga/hoge%3Cscript%3E/fuga';
 } # _original_url_from_http_host_request_uri
 
+sub _original_url_from_http_request_uri_pseudo_authority : Test(4) {
+  my $env = new_psgi_env {SERVER_NAME => 'hoge.Fuga', SERVER_PORT => 190,
+                          SCRIPT_NAME => '', PATH_INFO => '/',
+                          HTTP_HOST => 'fuga:80',
+                          REQUEST_URI => '//hoge<script>/fuga',
+                          'psgi.url_scheme' => 'http'};
+  my $psgi = Wanage::Interface::PSGI->new_from_psgi_env ($env);
+  isa_ok $psgi->original_url, 'Wanage::URL';
+  isa_ok $psgi->canon_url, 'Wanage::URL';
+  is $psgi->original_url->stringify, 'http://fuga:80//hoge<script>/fuga';
+  is $psgi->canon_url->stringify, 'http://fuga//hoge%3Cscript%3E/fuga';
+} # _original_url_from_http_request_uri_pseudo_authority
+
 sub _original_url_from_http_host_request_uri_x_forwarded : Test(4) {
   my $env = new_psgi_env {SERVER_NAME => 'hoge.Fuga', SERVER_PORT => 190,
                           SCRIPT_NAME => '', PATH_INFO => '/',
@@ -1014,7 +1027,7 @@ __PACKAGE__->runtests;
 
 =head1 LICENSE
 
-Copyright 2012 Wakaba <wakaba@suikawiki.org>.
+Copyright 2012-2015 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

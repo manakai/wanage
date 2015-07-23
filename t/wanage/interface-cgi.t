@@ -317,6 +317,32 @@ sub _original_url_from_http_host_request_uri : Test(4) {
   is $cgi->canon_url->stringify, 'http://fuga/hoge%3Cscript%3E/fuga';
 } # _original_url_from_http_host_request_uri
 
+sub _original_url_from_request_uri_pseudo_authority : Test(4) {
+  my $cgi = with_cgi_env {
+    Wanage::Interface::CGI->new_from_main;
+  } {SERVER_NAME => 'hoge.Fuga', SERVER_PORT => 190,
+     SCRIPT_NAME => '', PATH_INFO => '/',
+     HTTP_HOST => 'fuga:80',
+     REQUEST_URI => '//hoge<script>/fuga'};
+  isa_ok $cgi->original_url, 'Wanage::URL';
+  isa_ok $cgi->canon_url, 'Wanage::URL';
+  is $cgi->original_url->stringify, 'http://fuga:80//hoge<script>/fuga';
+  is $cgi->canon_url->stringify, 'http://fuga//hoge%3Cscript%3E/fuga';
+} # _original_url_from_request_uri_pseudo_authority
+
+sub _original_url_from_request_uri_pseudo_authority2 : Test(4) {
+  my $cgi = with_cgi_env {
+    Wanage::Interface::CGI->new_from_main;
+  } {SERVER_NAME => 'hoge.Fuga', SERVER_PORT => 190,
+     SCRIPT_NAME => '', PATH_INFO => '/',
+     HTTP_HOST => 'fuga:80',
+     REQUEST_URI => '///hoge<script>/fuga'};
+  isa_ok $cgi->original_url, 'Wanage::URL';
+  isa_ok $cgi->canon_url, 'Wanage::URL';
+  is $cgi->original_url->stringify, 'http://fuga:80///hoge<script>/fuga';
+  is $cgi->canon_url->stringify, 'http://fuga///hoge%3Cscript%3E/fuga';
+} # _original_url_from_request_uri_pseudo_authority2
+
 sub _original_url_from_http_host_request_uri_x_forwarded_host : Test(4) {
   my $cgi = with_cgi_env {
     Wanage::Interface::CGI->new_from_main;
@@ -661,7 +687,7 @@ __PACKAGE__->runtests;
 
 =head1 LICENSE
 
-Copyright 2012 Wakaba <w@suika.fam.cx>.
+Copyright 2012-2015 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

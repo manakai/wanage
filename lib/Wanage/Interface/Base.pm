@@ -1,7 +1,7 @@
 package Wanage::Interface::Base;
 use strict;
 use warnings;
-our $VERSION = '1.0';
+our $VERSION = '2.0';
 use Encode;
 use Wanage::URL;
 
@@ -71,6 +71,9 @@ sub original_url ($) {
     my $url = $handler->get_meta_variable ('REQUEST_URI');
     $url = '' unless defined $url;
     $url = decode 'utf-8', $url;
+    if ($url =~ m{^//}) {
+      $url = '//INVALID' . $url;
+    }
     
     my $parsed_url = Wanage::URL->new_from_string ($url);
     if (defined $parsed_url->{scheme}) {
@@ -115,7 +118,7 @@ sub onclose ($;$) {
 
 =head1 LICENSE
 
-Copyright 2012 Wakaba <wakaba@suikawiki.org>.
+Copyright 2012-2015 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
