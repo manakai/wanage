@@ -47,10 +47,10 @@ your Git repository, if your application is using Git.
 
 These modules require Perl 5.8 or later.  In addition, a few non-core
 modules are required: L<Exporter::Lite>; L<Path::Class>; L<List::Ish>
-(in C<modules/perl-ooutils> submodule); L<Web::URL> (in
-C<modules/perl-web-url>; which depends on
-C<modules/perl-web-encodings> and C<modules/perl-charclass>
-submodules).
+(in C<modules/perl-ooutils> submodule); L<Web::Encoding> and other
+modules from <https://github.com/manakai/perl-web-url> submodule);
+L<Web::URL> and other modules from
+<https://github.com/manakai/perl-web-encodings> submodule).
 
 It also requires a promise implementation (e.g. L<Promise> from
 <https://github.com/wakaba/perl-promise>) if you would like to use
@@ -66,7 +66,7 @@ Wakaba <wakaba@suikawiki.org>.
 
 =head1 LICENSE
 
-Copyright 2012-2014 Wakaba <wakaba@suikawiki.org>.
+Copyright 2012-2018 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

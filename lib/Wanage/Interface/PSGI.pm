@@ -1,11 +1,11 @@
 package Wanage::Interface::PSGI;
 use strict;
 use warnings;
-our $VERSION = '2.0';
+our $VERSION = '3.0';
 use Wanage::Interface::Base;
 push our @ISA, qw(Wanage::Interface::Base);
 use Carp;
-use Encode;
+use Web::Encoding;
 
 # ------ Constructor ------
 
@@ -61,7 +61,7 @@ sub send_response_headers ($;%) {
   $self->{response} ||= [200, []];
   $self->{response}->[0] = $args{status} if defined $args{status};
   $self->{response}->[1] = [map { 
-    my $s = utf8::is_utf8 ($_) ? encode 'utf-8', $_ : $_;
+    my $s = utf8::is_utf8 ($_) ? encode_web_utf8 $_ : $_;
     $s =~ s/[\x0D\x0A]+[\x09\x20]*/ /g;
     $s;
   } map { ($_->[0] => $_->[1]) } @{$args{headers}}]
@@ -180,7 +180,7 @@ sub DESTROY {
 
 =head1 LICENSE
 
-Copyright 2012 Wakaba <wakaba@suikawiki.org>.
+Copyright 2012-2018 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

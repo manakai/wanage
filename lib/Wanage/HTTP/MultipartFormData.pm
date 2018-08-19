@@ -220,15 +220,15 @@ sub as_uploads_hashref ($) {
 } # as_uploads_hashref
 
 package Wanage::HTTP::MultipartFormData::Upload;
-our $VERSION = '1.0';
-use Encode;
+our $VERSION = '2.0';
+use Web::Encoding;
 
 sub name ($) {
   return $_[0]->{name};
 } # name
 
 sub filename ($) {
-  return $_[0]->{decoded_filename} ||= decode 'utf-8', $_[0]->{filename};
+  return $_[0]->{decoded_filename} ||= decode_web_utf8 $_[0]->{filename};
 } # filename
 
 sub size ($) {
@@ -250,7 +250,7 @@ sub as_f ($) {
 
 =head1 LICENSE
 
-Copyright 2012 Wakaba <w@suika.fam.cx>.
+Copyright 2012-2018 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

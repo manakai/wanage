@@ -12,7 +12,7 @@ use base qw(Test::Class);
 use Warabe::App;
 use Wanage::HTTP;
 use Test::MoreMore;
-use Encode;
+use Web::Encoding;
 
 sub _version : Test(1) {
   ok $Warabe::App::VERSION;
@@ -44,9 +44,8 @@ sub _path_segments : Test(60) {
     ['/foo/bar' => ['foo', 'bar']],
     ['/foo%2Fbar' => ['foo/bar']],
     ['/hoge.abc' => ['hoge.abc']],
-    [(encode 'utf8', "/foo%25ab%9Eab\x{4e00}")
-     => ["foo%ab\x{FFFD}ab\x{4E00}"]],
-    [(encode 'utf8', "/\x{FFFF}") => ["\x{FFFD}"]],
+    ["/foo%25ab%9Eab\xE4\xB8\x80" => ["foo%ab\x{FFFD}ab\x{4E00}"]],
+    ["/\xEF\xBF\xBF" => ["\x{FFFD}"]],
     ['/%EF%AC%AX' => ["\x{FFFD}%AX"]],
     ['/%EF%AC%AD' => ["\x{FB2D}"]],
     ['/foo/../bar/%2E' => ["bar", '']],
@@ -371,7 +370,7 @@ sub _send_error_with_code_and_reason_utf8 : Test(1) {
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
   my $app = Warabe::App->new_from_http ($http);
   $app->send_error (410, reason_phrase => "\x{5000}\x{5100}\x00");
-  eq_or_diff $out, encode 'utf-8', qq{Status: 410 \x{5000}\x{5100}\x00
+  eq_or_diff $out, encode_web_utf8 qq{Status: 410 \x{5000}\x{5100}\x00
 Content-Type: text/plain; charset=us-ascii
 
 410 \x{5000}\x{5100}\x00};
@@ -1300,7 +1299,7 @@ sub _requires_basic_auth_utf8_bytes : Test(1) {
   }, undef, $out;
   my $app = Warabe::App->new_from_http ($http);
   $app->execute (sub {
-    $app->requires_basic_auth ({hoge => encode 'utf-8', "\x{4E00}"});
+    $app->requires_basic_auth ({hoge => encode_web_utf8 "\x{4E00}"});
     $app->send_plain_text ('ok');
   });
   is $out, q{Status: 200 OK
@@ -1370,7 +1369,7 @@ sub _requires_basic_auth_realm_utf8 : Test(1) {
     $app->requires_basic_auth ({foo => 123}, realm => "\x{4e00}");
     $app->send_plain_text ('ok');
   });
-  is $out, encode 'utf-8', qq{Status: 401 Unauthorized
+  is $out, encode_web_utf8 qq{Status: 401 Unauthorized
 Content-Type: text/plain; charset=us-ascii
 WWW-Authenticate: Basic realm="\x{4E00}"
 
@@ -1387,7 +1386,7 @@ sub _requires_basic_auth_realm_bytes : Test(1) {
     $app->requires_basic_auth ({foo => 123}, realm => "\x9F\xC1\xFF");
     $app->send_plain_text ('ok');
   });
-  is $out, encode 'utf-8', qq{Status: 401 Unauthorized
+  is $out, encode_web_utf8 qq{Status: 401 Unauthorized
 Content-Type: text/plain; charset=us-ascii
 WWW-Authenticate: Basic realm="\x9F\xC1\xFF"
 

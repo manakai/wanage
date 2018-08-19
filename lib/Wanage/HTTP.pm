@@ -1,12 +1,12 @@
 package Wanage::HTTP;
 use strict;
 use warnings;
-our $VERSION = '3.0';
+our $VERSION = '4.0';
 use Carp;
-use Encode;
-require utf8;
+use Web::Encoding;
+use Web::URL::Encoding qw(percent_encode_c);
 use Scalar::Util qw(weaken);
-use Wanage::URL qw(percent_encode_c parse_form_urlencoded_b);
+use Wanage::URL qw(parse_form_urlencoded_b);
 
 our @CARP_NOT = qw(
   Wanage::Interface::CGI Wanage::Interface::PSGI
@@ -296,14 +296,14 @@ sub request_uploads ($) {
 
 sub _ascii ($) {
   if (utf8::is_utf8 ($_[0])) {
-    return encode 'utf8', $_[0];
+    return encode_web_utf8 $_[0];
   } else {
     return $_[0];
   }
 } # _ascii
 
 sub _u8 ($) {
-  return encode 'utf-8', $_[0];
+  return encode_web_utf8 $_[0];
 } # _u8
 
 sub set_status ($$;$) {
@@ -474,7 +474,7 @@ sub response_headers_sent ($) {
 
 sub send_response_body_as_text ($) {
   $_[0]->send_response_headers unless $_[0]->{response_headers_sent};
-  $_[0]->{interface}->send_response_body (encode 'utf-8', $_[1]);
+  $_[0]->{interface}->send_response_body (encode_web_utf8 $_[1]);
 } # send_response_body_as_text
 
 sub send_response_body_as_ref ($) {

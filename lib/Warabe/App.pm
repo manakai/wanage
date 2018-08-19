@@ -1,9 +1,9 @@
 package Warabe::App;
 use strict;
 use warnings;
-our $VERSION = '4.0';
-use Encode;
-use Wanage::URL qw(percent_decode_c);
+our $VERSION = '5.0';
+use Web::Encoding;
+use Web::URL::Encoding qw(percent_decode_c);
 use Time::HiRes qw(gettimeofday tv_interval);
 use Scalar::Util qw(weaken);
 
@@ -40,11 +40,11 @@ sub path_segments ($) {
 sub text_param ($$) {
   return $_[0]->{text_param}->{$_[1]} if exists $_[0]->{text_param}->{$_[1]};
   my $proto = $_[0]->{http};
-  my $key = encode 'utf-8', $_[1];
+  my $key = encode_web_utf8 $_[1];
   my $v = $proto->query_params->{$key}
       || $proto->request_body_params->{$key}
       || [];
-  return $_[0]->{text_param}->{$_[1]} = decode 'utf-8', $v->[0] 
+  return $_[0]->{text_param}->{$_[1]} = decode_web_utf8 $v->[0]
       if defined $v->[0];
   return $_[0]->{text_param}->{$_[1]} = undef;
 } # text_param
@@ -52,10 +52,10 @@ sub text_param ($$) {
 sub text_param_list ($$) {
   return $_[0]->{text_param_list}->{$_[1]} ||= do {
     my $proto = $_[0]->{http};
-    my $key = encode 'utf-8', $_[1];
+    my $key = encode_web_utf8 $_[1];
     require List::Ish;
     List::Ish->new ([
-      map { decode 'utf-8', $_ }
+      map { decode_web_utf8 $_ }
       @{$proto->query_params->{$key} or []},
       @{$proto->request_body_params->{$key} or []},
     ]);
@@ -376,7 +376,7 @@ sub DESTROY ($) {
 
 =head1 LICENSE
 
-Copyright 2012-2014 Wakaba <wakaba@suikawiki.org>.
+Copyright 2012-2018 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

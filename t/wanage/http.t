@@ -9,9 +9,9 @@ use lib file (__FILE__)->dir->parent->parent->subdir ('t_deps', 'lib')->stringif
 use lib glob file (__FILE__)->dir->parent->parent->subdir ('t_deps', 'modules', '*', 'lib')->stringify;
 use Wanage::HTTP;
 use base qw(Test::Class);
-use Encode;
 use Test::MoreMore;
 use Test::Wanage::Envs;
+use Web::Encoding;
 
 $Wanage::HTTP::Sortkeys = 1;
 
@@ -414,7 +414,7 @@ sub _request_auth : Test(54) {
      {auth_scheme => 'basic', userid => "ageawgawgaef agewgeafewagagfew",
       password => 'gaeageJWwgewgagGwgagaea aefageeeeeeee agewgewagawgaeewa'}],
     ['Basic aG9nZTrkuIA=' => {auth_scheme => 'basic', userid => 'hoge',
-                              password => encode 'utf-8', "\x{4E00}"}],
+                              password => encode_web_utf8 "\x{4E00}"}],
     ['Basic aG9nZQ==' => {}],
     ['Hoge fuga="" abc', {}],
     ['notbasic QWxhZGRpbjpvcGVuIHNlc2FtZQ', {}],
@@ -769,7 +769,7 @@ sub _set_response_header_cgi_utf8_name_2 : Test(3) {
   my $out = '';
   my $http = with_cgi_env { Wanage::HTTP->new_cgi } {}, undef, $out;
   ng $http->send_response;
-  $http->set_response_header ((decode 'utf-8', "X-Hoge") => "ab cd\xFE");
+  $http->set_response_header ((decode_web_utf8 "X-Hoge") => "ab cd\xFE");
   $http->send_response_body_as_ref (\"");
   eq_or_diff $out, "Status: 200 OK\nX-Hoge: ab cd\xFE\n\n";
   ng utf8::is_utf8 $out;
@@ -781,7 +781,7 @@ sub _set_response_header_cgi_utf8_value : Test(3) {
   ng $http->send_response;
   $http->set_response_header ("X-Hoge" => "ab\x{4E00}");
   $http->send_response_body_as_ref (\"");
-  eq_or_diff $out, encode 'utf-8', "Status: 200 OK\nX-Hoge: ab\x{4e00}\n\n";
+  eq_or_diff $out, encode_web_utf8 "Status: 200 OK\nX-Hoge: ab\x{4e00}\n\n";
   ng utf8::is_utf8 $out;
 } # _set_response_header_cgi_utf8_value
 
@@ -812,7 +812,7 @@ sub _send_response_body_as_text : Test(1) {
   $http->send_response_body_as_text ("\x{4340}abc");
   $http->send_response_body_as_text ("\xAc\xFE\x45\x00ab");
   is $out, "Status: 200 OK\n\n" .
-      encode 'utf-8', "\x{4340}abc\xAc\xFE\x45\x00ab";
+      encode_web_utf8 "\x{4340}abc\xAc\xFE\x45\x00ab";
 } # _send_response_body_as_text
 
 sub _send_response_body_as_ref : Test(2) {
@@ -853,7 +853,7 @@ sub _send_response_psgi_streamable_multiple : Test(3) {
     $http->close_response_body;
   })->(sub { $res = shift; return $writer });
   eq_or_diff $res, [501, ['Content-Type' => 'text/plain; charset=utf-8']];
-  eq_or_diff $writer->data, [(encode 'utf-8', "\x{1055}"), "0"];
+  eq_or_diff $writer->data, [(encode_web_utf8 "\x{1055}"), "0"];
   ok $writer->closed;
 } # _send_response_empty_psgi_streamable
 

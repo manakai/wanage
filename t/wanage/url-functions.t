@@ -9,10 +9,10 @@ use lib glob file (__FILE__)->dir->parent->parent->subdir ('t_deps', 'modules', 
 use base qw(Test::Class);
 use Wanage::URL;
 use Test::MoreMore;
-use Encode;
 
 sub _flagged ($) {
-  return decode 'utf8', $_[0];
+  my $v = "\x{4e00}" . $_[0];
+  return substr $v, 1;
 } # _flagged
 
 sub _pe : Test(32) {
@@ -102,7 +102,7 @@ __PACKAGE__->runtests;
 
 =head1 LICENSE
 
-Copyright 2010-2012 Wakaba <w@suika.fam.cx>
+Copyright 2010-2018 Wakaba <wakaba@suikawiki.org>.
 
 This program is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

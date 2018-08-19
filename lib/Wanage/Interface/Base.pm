@@ -1,8 +1,8 @@
 package Wanage::Interface::Base;
 use strict;
 use warnings;
-our $VERSION = '2.0';
-use Encode;
+our $VERSION = '3.0';
+use Web::Encoding;
 use Wanage::URL;
 
 # ------ Request message ------
@@ -70,7 +70,7 @@ sub original_url ($) {
     
     my $url = $handler->get_meta_variable ('REQUEST_URI');
     $url = '' unless defined $url;
-    $url = decode 'utf-8', $url;
+    $url = decode_web_utf8 $url;
     if ($url =~ m{^//}) {
       $url = '//INVALID' . $url;
     }

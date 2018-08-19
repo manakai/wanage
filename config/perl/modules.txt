@@ -1,5 +1,4 @@
 Carp
-Encode
 Exporter::Lite
 File::Temp
 IO::Handle

@@ -9,8 +9,7 @@ use lib glob file (__FILE__)->dir->parent->parent->subdir ('t_deps', 'modules', 
 use base qw(Test::Class);
 use Test::MoreMore;
 use Wanage::HTTP::MIMEType;
-use Encode;
-require utf8;
+use Web::Encoding;
 
 sub _version : Test(1) {
   ok $Wanage::HTTP::MIMEType::VERSION;
@@ -103,11 +102,11 @@ sub _as_bytes : Test(7) {
 sub _as_bytes_flagged : Test(2) {
   local $Wanage::HTTP::MIMEType::Sortkeys = 1;
   my $mime = Wanage::HTTP::MIMEType->new_from_content_type;
-  $mime->{value} = decode 'utf-8', 'text/plain';
+  $mime->{value} = substr "\x{5001}text/plain", 1;
   $mime->params->{"\x{5000}"} = "hoge";
   $mime->params->{"abc"} = "\x{F0}";
   $mime->params->{hoge} = 'xyz';
-  $mime->params->{hoge2} = decode 'utf-8', 'xyz';
+  $mime->params->{hoge2} = substr "\x{5353}xyz", 1;
   is $mime->as_bytes, 'text/plain; hoge=xyz; hoge2=xyz';
   ng utf8::is_utf8 ($mime->as_bytes);
 } # _as_bytes_flagged
@@ -118,7 +117,7 @@ __PACKAGE__->runtests;
 
 =head1 LICENSE
 
-Copyright 2012 Wakaba <w@suika.fam.cx>.
+Copyright 2012-2018 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

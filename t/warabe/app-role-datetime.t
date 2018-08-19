@@ -9,7 +9,6 @@ use lib glob file (__FILE__)->dir->parent->parent->subdir ('t_deps', 'modules', 
 use base qw(Test::Class);
 use Test::MoreMore;
 use Test::Wanage::Envs;
-use Encode;
 use Wanage::HTTP;
 
 {

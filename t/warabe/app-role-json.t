@@ -9,7 +9,7 @@ use lib glob file (__FILE__)->dir->parent->parent->subdir ('t_deps', 'modules', 
 use base qw(Test::Class);
 use Test::MoreMore;
 use Test::Wanage::Envs;
-use Encode;
+use Web::Encoding;
 use Wanage::HTTP;
 
 {
@@ -32,7 +32,7 @@ sub _request_json : Test(16) {
     ['"acd \uAA0a"' => "acd \x{AA0A}"],
     ['{"abc":"\uFEAA"}' => {abc => "\x{FEAA}"}],
     ['abc "aaaa"' => undef],
-    [(encode 'utf-8', qq<{"abc\x{AA91}" : ["\x{99}\x{8111}"]}>)
+    [(encode_web_utf8 qq<{"abc\x{AA91}" : ["\x{99}\x{8111}"]}>)
      => {"abc\x{AA91}" => ["\x99\x{8111}"]}],
   ) {
     my $in = $_->[0];

@@ -1,8 +1,8 @@
 package Wanage::HTTP::MIMEType;
 use strict;
 use warnings;
-our $VERSION = '1.0';
-use Encode;
+our $VERSION = '2.0';
+use Web::Encoding;
 
 sub new_from_content_type ($$) {
   my ($class, $ct) = @_;
@@ -127,14 +127,14 @@ sub as_bytes ($) {
     }
   }
 
-  return encode 'utf-8', $type; ## Drop utf8 flag, if any
+  return encode_web_utf8 $type; ## Drop utf8 flag, if any
 } # as_bytes
 
 1;
 
 =head1 LICENSE
 
-Copyright 2012 Wakaba <w@suika.fam.cx>.
+Copyright 2012-2018 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

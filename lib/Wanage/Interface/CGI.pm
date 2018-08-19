@@ -1,10 +1,9 @@
 package Wanage::Interface::CGI;
 use strict;
 use warnings;
-our $VERSION = '2.0';
-require utf8;
+our $VERSION = '3.0';
 use Carp;
-use Encode;
+use Web::Encoding;
 use IO::Handle;
 use Wanage::Interface::Base;
 push our @ISA, qw(Wanage::Interface::Base);
@@ -84,7 +83,7 @@ sub send_response_headers ($;%) {
     $Wanage::HTTP::Info::ReasonPhrases->{$status} || '';
   } unless defined $status_text;
   $status_text =~ s/\s+/ /g;
-  $status_text = encode 'utf-8', $status_text if utf8::is_utf8 ($status_text);
+  $status_text = encode_web_utf8 $status_text if utf8::is_utf8 ($status_text);
 
   print $handle "Status: $status $status_text\n";
   for (@{$args{headers} or []}) {
@@ -92,8 +91,8 @@ sub send_response_headers ($;%) {
     my $value = $_->[1];
     $name =~ s/[^0-9A-Za-z_-]/_/g; ## Far more restrictive than RFC 3875
     $value =~ s/[\x0D\x0A]+[\x09\x20]*/ /g;
-    $name = encode 'utf-8', $name if utf8::is_utf8 ($name);
-    $value = encode 'utf-8', $value if utf8::is_utf8 ($value);
+    $name = encode_web_utf8 $name if utf8::is_utf8 ($name);
+    $value = encode_web_utf8 $value if utf8::is_utf8 ($value);
     print $handle "$name: $value\n";
   }
   print $handle "\n";
@@ -143,7 +142,7 @@ sub DESTROY {
 
 =head1 LICENSE
 
-Copyright 2012 Wakaba <wakaba@suikawiki.org>.
+Copyright 2012-2018 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
