@@ -47,7 +47,7 @@ sub _path_segments : Test(60) {
     [(encode 'utf8', "/foo%25ab%9Eab\x{4e00}")
      => ["foo%ab\x{FFFD}ab\x{4E00}"]],
     [(encode 'utf8', "/\x{FFFF}") => ["\x{FFFD}"]],
-    ['/%EF%AC%AX' => ["\x{FFFD}\x{FFFD}%AX"]],
+    ['/%EF%AC%AX' => ["\x{FFFD}%AX"]],
     ['/%EF%AC%AD' => ["\x{FB2D}"]],
     ['/foo/../bar/%2E' => ["bar", '']],
     ['///\a' => ['', '', '', 'a']],
@@ -1435,7 +1435,7 @@ $Warabe::App::DetectLeak = 1;
 
 =head1 LICENSE
 
-Copyright 2012-2013 Wakaba <wakaba@suikawiki.org>.
+Copyright 2012-2018 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
