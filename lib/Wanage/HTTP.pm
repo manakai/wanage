@@ -381,6 +381,14 @@ sub set_response_cookie {
     push @attr, $_ if $args{$_};
   }
 
+  if (defined $args{samesite}) {
+    if ($args{samesite} =~ /\A[Ss][Tt][Rr][Ii][Cc][Tt]\z/) {
+      push @attr, 'samesite=strict';
+    } elsif ($args{samesite}) {
+      push @attr, 'samesite=lax';
+    }
+  }
+
   $self->add_response_header ('Set-Cookie' => join '; ', @attr);
 } # set_response_cookie
 
@@ -490,15 +498,16 @@ sub onclose ($;$) {
 sub DESTROY ($) {
   local $@;
   eval { die };
-  warn "Possible memory leak detected (Wanage::HTTP)\n"
-      if $@ =~ /during global destruction/;
+  if ($@ =~ /during global destruction/) {
+    warn "$$: Reference to " . $_[0] . " is not discarded before global destruction\n";
+  }
 } # DESTROY
 
 1;
 
 =head1 LICENSE
 
-Copyright 2012-2015 Wakaba <wakaba@suikawiki.org>.
+Copyright 2012-2018 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

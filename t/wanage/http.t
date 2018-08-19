@@ -948,7 +948,7 @@ sub _response_mime_type_set_value_after_sent : Test(6) {
   }
 } # _response_mime_type_set_value_after_sent
 
-sub _set_response_cookie : Test(98) {
+sub _set_response_cookie : Test(126) {
   for my $test (
     [[], '=; expires=Thu, 01-Jan-1970 00:00:00 GMT'],
     [['hoge' => ''], 'hoge='],
@@ -1005,7 +1005,22 @@ sub _set_response_cookie : Test(98) {
     [['hoge' => 'fuga', Secure => 1], 'hoge=fuga'],
     [['hoge' => 'fuga', secure => 1, httponly => 1],
      'hoge=fuga; secure; httponly'],
+    [['hoge' => 'fuga', secure => 0], 'hoge=fuga'],
+    [['hoge' => 'fuga', secure => ''], 'hoge=fuga'],
+    [['hoge' => 'fuga', secure => undef], 'hoge=fuga'],
     [["ho\x0Dge" => "fu\x0Aga"], "ho\x0Dge=fu\x0Aga"],
+    [["hoge" => "fuga", samesite => 1], "hoge=fuga; samesite=lax"],
+    [["hoge" => "fuga", samesite => ''], "hoge=fuga"],
+    [["hoge" => "fuga", samesite => 0], "hoge=fuga"],
+    [["hoge" => "fuga", samesite => undef], "hoge=fuga"],
+    [["hoge" => "fuga", samesite => "Strict"], "hoge=fuga; samesite=strict"],
+    [["hoge" => "fuga", samesite => "strict"], "hoge=fuga; samesite=strict"],
+    [["hoge" => "fuga", samesite => "STRICT"], "hoge=fuga; samesite=strict"],
+    [["hoge" => "fuga", samesite => "lax"], "hoge=fuga; samesite=lax"],
+    [["hoge" => "fuga", samesite => "Lax"], "hoge=fuga; samesite=lax"],
+    [["hoge" => "fuga", samesite => "LAX"], "hoge=fuga; samesite=lax"],
+    [["hoge" => "fuga", samesite => 1, secure => 1, httponly => 1],
+     "hoge=fuga; secure; httponly; samesite=lax"],
   ) {
     my $https = new_https_for_interfaces;
     for my $http (@$https) {

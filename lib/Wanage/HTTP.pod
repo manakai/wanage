@@ -511,6 +511,12 @@ If true, set the "secure" flag by cookie's C<Secure> attribute.
 
 If true, set the "httponly" flag by cookie's C<HttpOnly> attribute.
 
+=item samesite => boolean | "lax" | "strict"
+
+If C<strict> (ASCII case-insensitive), cookie's C<SameSite=Strict>
+attribute is set.  Otherwise, if true, cookie's C<SameSite=Lax>
+attribute is set.
+
 =back
 
 =item $http->set_response_auth ($auth_scheme, %args)
@@ -660,34 +666,40 @@ compatibility.
 
 L<Warabe::App>.
 
+=head1 SPECIFICATIONS
+
 RFC 2616 - Hypertext Transfer Protocol -- HTTP/1.1
-<http://tools.ietf.org/html/rfc2616>.
+<https://tools.ietf.org/html/rfc2616>.
 
 RFC 2617 - HTTP Authentication: Basic and Digest Access Authentication
-<http://tools.ietf.org/html/rfc2617>.
+<https://tools.ietf.org/html/rfc2617>.
 
 RFC 6266 - Use of the Content-Disposition Header Field in the
 Hypertext Transfer Protocol (HTTP)
-<http://tools.ietf.org/html/rfc6266>.
+<https://tools.ietf.org/html/rfc6266>.
 
 RFC 6750 - The OAuth 2.0 Authorization Framework: Bearer Token Usage
-<http://tools.ietf.org/html/rfc6750>.
+<https://tools.ietf.org/html/rfc6750>.
 
 XMLHttpRequest <https://xhr.spec.whatwg.org/>.
 
 RFC 3875 - The Common Gateway Interface (CGI) Version 1.1
-<http://tools.ietf.org/html/rfc3875>.
+<https://tools.ietf.org/html/rfc3875>.
 
-SuikaWiki:CGI <http://suika.suikawiki.org/~wakaba/wiki/sw/n/CGI>.
+SuikaWiki:CGI <https://suika.suikawiki.org/~wakaba/wiki/sw/n/CGI>.
 
 PSGI specification <http://search.cpan.org/dist/PSGI/PSGI.pod>.
 
 MIME Sniffing <https://mimesniff.spec.whatwg.org/>.
 
-BCP 47 - Language Tags <http://tools.ietf.org/html/bcp47>.
+BCP 47 - Language Tags <https://tools.ietf.org/html/bcp47>.
 
 How do I redirect HTTPS traffic with Flexible SSL and Apache?
 <https://support.cloudflare.com/hc/en-us/articles/200170536-How-do-I-redirect-HTTPS-traffic-with-Flexible-SSL-and-Apache->.
+
+draft-ietf-httpbis-rfc6265bis-02 - Cookies: HTTP State Management
+Mechanism
+<https://tools.ietf.org/html/draft-ietf-httpbis-rfc6265bis-02>.
 
 =head1 AUTHOR
 
@@ -695,7 +707,7 @@ Wakaba <wakaba@suikawiki.org>.
 
 =head1 LICENSE
 
-Copyright 2012-2015 Wakaba <wakaba@suikawiki.org>.
+Copyright 2012-2018 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
