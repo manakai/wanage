@@ -1,13 +1,13 @@
 package Wanage::URL;
 use strict;
 use warnings;
-our $VERSION = '1.0';
+our $VERSION = '2.0';
 require utf8;
 use Exporter::Lite;
-use Encode;
 use Web::URL::Canonicalize qw(
   parse_url resolve_url canonicalize_parsed_url serialize_parsed_url
 );
+require Web::URL::Encoding;
 
 ## ------ URL object ------
 
@@ -57,8 +57,6 @@ sub stringify ($) {
 
 ## ------ Percent encode functions ------
 
-## Original: <https://github.com/wakaba/perl-web-utils/blob/master/lib/URL/PercentEncode.pm>.
-
 our @EXPORT = qw(
   percent_encode_b
   percent_encode_c
@@ -67,6 +65,7 @@ our @EXPORT = qw(
   parse_form_urlencoded_b
 );
 
+## Original: <https://github.com/wakaba/perl-web-utils/blob/master/lib/URL/PercentEncode.pm>.
 sub percent_encode_b ($) {
   my $s = ''.$_[0];
   $s =~ s/([^0-9A-Za-z._~-])/sprintf '%%%02X', ord $1/ge;
@@ -74,25 +73,9 @@ sub percent_encode_b ($) {
   return $s;
 } # percent_encode_b
 
-sub percent_encode_c ($) {
-  my $s = Encode::encode ('utf-8', ''.$_[0]);
-  $s =~ s/([^0-9A-Za-z._~-])/sprintf '%%%02X', ord $1/ge;
-  return $s;
-} # percent_encode_c
-
-sub percent_decode_b ($) {
-  my $s = ''.$_[0];
-  utf8::encode ($s) if utf8::is_utf8 ($s);
-  $s =~ s/%([0-9A-Fa-f]{2})/pack 'C', hex $1/ge;
-  return $s;
-} # percent_decode_b
-
-sub percent_decode_c ($) {
-  my $s = ''.$_[0];
-  utf8::encode ($s) if utf8::is_utf8 ($s);
-  $s =~ s/%([0-9A-Fa-f]{2})/pack 'C', hex $1/ge;
-  return Encode::decode ('utf-8', $s);
-} # percent_decode_c
+*percent_encode_c = \&Web::URL::Encoding::percent_encode_c;
+*percent_decode_b = \&Web::URL::Encoding::percent_decode_b;
+*percent_decode_c = \&Web::URL::Encoding::percent_decode_c;
 
 sub parse_form_urlencoded_b ($) {
   if (not defined $_[0]) {
@@ -101,7 +84,7 @@ sub parse_form_urlencoded_b ($) {
     my $params = {};
     for (split /[&;]/, $_[0], -1) {
       my ($n, $v) = map { defined $_ ? do {
-        my $v = $_; $v =~ tr/+/ /; percent_decode_b $v;
+        my $v = $_; $v =~ tr/+/ /; percent_decode_b ($v);
       } : '' } split /[=]/, $_, 2;
       push @{$params->{defined $n ? $n : ''} ||= []}, defined $v ? $v : '';
     }
@@ -113,7 +96,7 @@ sub parse_form_urlencoded_b ($) {
 
 =head1 LICENSE
 
-Copyright 2010-2013 Wakaba <wakaba@suikawiki.org>.
+Copyright 2010-2018 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

@@ -22,7 +22,7 @@ sub _pe : Test(32) {
       ['abc' => 'abc', 'abc'],
       [_flagged 'abc' => 'abc', 'abc'],
       ["\xA1\xC8\x4E\x4B\x21\x0D" => '%A1%C8NK%21%0D', '%C2%A1%C3%88NK%21%0D'],
-      ["http://abc/a+b?x(y)z~[*]" => 'http%3A%2F%2Fabc%2Fa%2Bb%3Fx%28y%29z~%5B%2A%5D', 'http%3A%2F%2Fabc%2Fa%2Bb%3Fx%28y%29z~%5B%2A%5D'],
+      ["http://abc/a+b?x(y)z~[*]" => 'http%3A%2F%2Fabc%2Fa%2Bb%3Fx%28y%29z~%5B%2A%5D', 'http%3A%2F%2Fabc%2Fa%2Bb%3Fx%28y%29z%7E%5B%2A%5D'],
       ["\x{4e00}\xC1" => '%4E00%C1', '%E4%B8%80%C3%81'],
       ["ab+cd" => 'ab%2Bcd', 'ab%2Bcd'],
   ) {
