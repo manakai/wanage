@@ -253,10 +253,10 @@ sub _original_url_no_data : Test(4) {
   my $cgi = with_cgi_env {
     Wanage::Interface::CGI->new_from_main;
   } {};
-    isa_ok $cgi->original_url, 'Wanage::URL';
+  isa_ok $cgi->original_url, 'Wanage::URL';
   isa_ok $cgi->canon_url, 'Wanage::URL';
-  is $cgi->original_url->stringify, 'http://:';
-  is $cgi->canon_url->stringify, 'http:///';
+  is $cgi->original_url->stringify, "http://:";
+  is $cgi->canon_url->stringify, undef;
 } # _original_url_no_data
 
 sub _original_url_from_server : Test(4) {
@@ -687,7 +687,7 @@ __PACKAGE__->runtests;
 
 =head1 LICENSE
 
-Copyright 2012-2015 Wakaba <wakaba@suikawiki.org>.
+Copyright 2012-2018 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
