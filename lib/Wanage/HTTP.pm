@@ -156,6 +156,53 @@ sub accept_langs ($) {
           ->uniq_by_key (sub { $_ });
 } # accept_langs
 
+sub accept_encodings ($) {
+  return $_[0]->{accept_encodings} if $_[0]->{accept_encodings};
+
+  ## This parsing is not strict per the spec definition, but does work
+  ## enough for real-world HTTP messages, and in fact the spec does
+  ## not define error handling at all.
+
+  my $langs = $_[0]->{interface}->get_request_header ('Accept-Encoding');
+  $langs = '' unless defined $langs;
+  my @map;
+  $langs =~ s{(\$\$[0-9]+\$\$|\"[^\"]*\"?)}{
+    push @map, $1;
+    '$$' . $#map . '$$';
+  }ge;
+
+  my @lang;
+  for my $lang (split /,/, $langs) {
+    my $q = 1;
+    if ($lang =~ s/;[\x09\x0A\x0D\x20]*[Qq][\x09\x0A\x0D\x20]*=([^;]*)//) {
+      $q = $1;
+      $q =~ s/\A[\x09\x0A\x0D\x20]+//;
+      $q =~ s/[\x09\x0A\x0D\x20]+\z//;
+      $q =~ s{\$\$([0-9]+)\$\$}{$map[$1]}ge;
+      $q =~ s{\x22([^\x22]*)\x22}{$1}g;
+      if ($q =~ /^([0-9](?:\.[0-9]{1,3})?)/) {
+        $q = 0 + $1;
+        $q = 1 if $q > 1;
+      } else {
+        $q = 1;
+      }
+    } else {
+      $q = 1;
+    }
+    next unless $q;
+    if ($lang =~ /^[\x09\x0A\x0D\x20]*([0-9A-Za-z*-]+)/) {
+      my $v = $1;
+      $v =~ tr/A-Z/a-z/; ## ASCII case-insensitive.
+      push @lang, [$v, $q];
+    }
+  }
+  require List::Ish;
+  return $_[0]->{accept_encodings}
+      = List::Ish->new ([sort { $b->[1] <=> $a->[1] } @lang])
+          ->map (sub { $_->[0] })
+          ->uniq_by_key (sub { $_ });
+} # accept_encodings
+
 sub request_cookies {
   return $_[0]->{cookies} ||= do {
     my $cookie = $_[0]->get_request_header ('Cookie') || '';
@@ -507,7 +554,7 @@ sub DESTROY ($) {
 
 =head1 LICENSE
 
-Copyright 2012-2018 Wakaba <wakaba@suikawiki.org>.
+Copyright 2012-2019 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

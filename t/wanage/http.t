@@ -359,6 +359,53 @@ sub _accept_langs_twice : Test(2) {
   }
 } # _accept_langs_twice
 
+sub _accept_encodings : Test(100) {
+  for my $test (
+    [undef, []],
+    ['' => []],
+    ['*' => ['*']],
+    ['ja,*' => [qw/ja */]],
+    ['ja' => [qw/ja/]],
+    ['ja,en' => [qw/ja en/]],
+    ['ja , en-gb' => [qw/ja en-gb/]],
+    ['ja;q=0,en' => [qw/en/]],
+    ['ja;q=0.3,en;q=0.9' => [qw/en ja/]],
+    ['ja;q=0.0001,en;q=0.0014' => [qw/en/]],
+    ['ja;q=3,en;q=5' => [qw/ja en/]],
+    ['ja;q="0.004",en;q="0.005"' => [qw/en ja/]],
+    ['ja;q="0.004"an,en;q="0.005"' => [qw/en ja/]],
+    ['ja;q="0.00\\4",en;q="0.00\\5"' => []],
+    ['ja;qa=0.44,en;qb=0.66' => [qw/ja en/]],
+    ['ja;qa=0.44;q=0.9,en;qb=0.66;q=0.99' => [qw/en ja/]],
+    ['ja;qa=0.44;q=0.9;a=1,en;qb=0.66;q=0.99' => [qw/en ja/]],
+    ['ja;qa=0.44;Q=0.9,en;qb=0.66;Q=0.99' => [qw/en ja/]],
+    ['ja ; ; q  = 0.9  ,  en ; q  =  0.99 ;' => [qw/en ja/]],
+    ['  ja  ;q,en  ;q=0.9' => [qw/ja en/]],
+    ['ja;q="0.9,en=0.8",fr' => [qw/fr ja/]],
+    ['ja;q=0.9,en;q=0.8,JA;q=0.6' => [qw/ja en/]],
+    ['ja;q=0.9,en;q=0.8,JA;q=0.0' => [qw/ja en/]],
+    ['ja;q=0.9,en;notq=0.3' => [qw/en ja/]],
+    ['ja;q=0.9,,en;q=0.01,' => [qw/ja en/]],
+  ) {
+    my $https = new_https_for_interfaces
+        env => {HTTP_ACCEPT_ENCODING => $test->[0]};
+    for my $http (@$https) {
+      my $list = $http->accept_encodings;
+      isa_list_ok $list;
+      eq_or_diff $list->to_a, $test->[1];
+    }
+  }
+} # _accept_encodings
+
+sub _accept_encodings_twice : Test(2) {
+  my $https = new_https_for_interfaces
+      env => {HTTP_ACCEPT_ENCODING => 'ja'};
+  for my $http (@$https) {
+    my $list = $http->accept_encodings;
+    is $http->accept_encodings, $list;
+  }
+} # _accept_encodings_twice
+
 sub _request_cookies : Test(72) {
   for my $test (
     [undef, {}],
@@ -1257,7 +1304,7 @@ $Wanage::HTTP::DetectLeak = 1;
 
 =head1 LICENSE
 
-Copyright 2012-2015 Wakaba <wakaba@suikawiki.org>.
+Copyright 2012-2019 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

@@ -218,19 +218,37 @@ C<Content-Type:> header of the request message.
 
 =item $list = $http->accept_langs
 
-Return the list of language tags accepted by the client through the
-HTTP C<Accept-Language:> header.
+Return the list of language tags accepted by the client, indicated
+using the HTTP C<Accept-Language:> header.
 
 The list is a L<List::Ish> object where items are language tags or the
 C<*> value.  Items are ordered by their qvalues (i.e. C<q> parameter
 values), if any.  Items whose qvalues are zero, as well as
 duplications, syntactically illegal language tags, are excluded from
-the list.  If no acceptable language is requested by the client, the
+the list.  If no acceptable language is indicated by the client, the
 list is empty.
 
 Language tags are normalized in their lowercase forms.  This is a
 willful violation to the spirit of IETF Language Tag specification
 (BCP 47) which defines more complex recommendations on case-folding.
+
+Applications should not modify the list itself.
+
+=item $list = $http->accept_encodings
+
+Return the list of content-codings accepted by the client as the
+response's C<Content-Encoding>, indicated using the HTTP
+C<Accept-Language:> header.
+
+The list is a L<List::Ish> object where items are content-codings,
+C<identity>, or the C<*> value.  Items are ordered by their qvalues
+(i.e. C<q> parameter values), if any.  Items whose qvalues are zero,
+as well as duplications, syntactically illegal content-codings, are
+excluded from the list.  If no accepted content-coding is indicated by
+the client, the list is empty.
+
+Content-codings and C<identity> are normalized in their lowercase
+forms.
 
 Applications should not modify the list itself.
 
@@ -707,7 +725,7 @@ Wakaba <wakaba@suikawiki.org>.
 
 =head1 LICENSE
 
-Copyright 2012-2018 Wakaba <wakaba@suikawiki.org>.
+Copyright 2012-2019 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
