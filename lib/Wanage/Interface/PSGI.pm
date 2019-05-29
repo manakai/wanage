@@ -14,6 +14,10 @@ sub new_from_psgi_env ($$) {
   return bless {env => $_[1]}, $_[0];
 } # new_from_psgi_env
 
+sub server_state ($) {
+  return $_[0]->{env}->{'manakai.server.state'}; # or undef
+} # server_state
+
 # ------ Request data ------
 
 sub url_scheme ($) {
@@ -180,7 +184,7 @@ sub DESTROY {
 
 =head1 LICENSE
 
-Copyright 2012-2018 Wakaba <wakaba@suikawiki.org>.
+Copyright 2012-2019 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

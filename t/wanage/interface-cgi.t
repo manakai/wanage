@@ -15,6 +15,11 @@ sub _version : Test(1) {
   ok $Wanage::Interface::CGI::VERSION;
 } # _version
 
+sub _server_state : Test(1) {
+  my $cgi = with_cgi_env { Wanage::Interface::CGI->new_from_main };
+  is $cgi->server_state, undef;
+} # _server_state
+
 # ------ Request data ------
 
 sub _url_scheme_no_env : Test(1) {
@@ -687,7 +692,7 @@ __PACKAGE__->runtests;
 
 =head1 LICENSE
 
-Copyright 2012-2018 Wakaba <wakaba@suikawiki.org>.
+Copyright 2012-2019 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

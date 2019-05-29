@@ -38,6 +38,26 @@ sub _new_from_psgi_env : Test(3) {
   is $http->get_request_header ('Hoge'), '123';
 } # _new_from_psgi_env
 
+sub _server_state_cgi : Test(1) {
+  my $http = with_cgi_env {
+    Wanage::HTTP->new_cgi;
+  } {HTTP_HOGE => 123};
+  is $http->server_state, undef;
+} # _server_state_cgi
+
+sub _server_state_psgi : Test(1) {
+  my $env = new_psgi_env {HTTP_HOGE => 123};
+  my $http = Wanage::HTTP->new_from_psgi_env ($env);
+  is $http->server_state, undef;
+} # _server_state_psgi
+
+sub _server_state_psgi_obj : Test(1) {
+  my $obj = {};
+  my $env = new_psgi_env {HTTP_HOGE => 123, 'manakai.server.state' => $obj};
+  my $http = Wanage::HTTP->new_from_psgi_env ($env);
+  is $http->server_state, $obj;
+} # _server_state_psgi_obj
+
 # ------ Request URL ------
 
 sub _url : Test(14) {

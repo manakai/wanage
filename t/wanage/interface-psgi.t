@@ -16,6 +16,20 @@ sub _version : Test(1) {
   ok $Wanage::Interface::PSGI::VERSION;
 } # _version
 
+sub _server_state_empty : Test(1) {
+  my $env = new_psgi_env {};
+  my $psgi = Wanage::Interface::PSGI->new_from_psgi_env ($env);
+  is $psgi->server_state, undef;
+} # _server_state_empty
+
+sub _server_state_obj : Test(2) {
+  my $obj = {};
+  my $env = new_psgi_env {'manakai.server.state' => $obj};
+  my $psgi = Wanage::Interface::PSGI->new_from_psgi_env ($env);
+  is $psgi->server_state, $obj;
+  is ref $psgi->server_state, ref $obj;
+} # _server_state_obj
+
 # ------ Request data ------
 
 sub _url_scheme_no_env : Test(1) {
@@ -1027,7 +1041,7 @@ __PACKAGE__->runtests;
 
 =head1 LICENSE
 
-Copyright 2012-2018 Wakaba <wakaba@suikawiki.org>.
+Copyright 2012-2019 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

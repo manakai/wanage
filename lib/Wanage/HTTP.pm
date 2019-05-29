@@ -29,6 +29,10 @@ sub new_from_psgi_env ($$) {
   }, $_[0];
 } # new_from_psgi_env
 
+sub server_state ($) {
+  return $_[0]->{interface}->server_state; # or undef
+} # server_state
+
 # ------ Request data ------
 
 # ---- Request URL ----

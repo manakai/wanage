@@ -77,6 +77,15 @@ typical PSGI application implemented using Wanage would look like:
 
 =back
 
+=item $value = $http->server_state
+
+Returns an HTTP server dependent value that represents the state of
+the HTTP server, if any, or C<undef>.
+
+This method returns the C<manakai.server.state> PSGI environment
+value, if supported by the HTTP server.  See, e.g., L<Sarze> module's
+documentation.
+
 =head2 Request URL
 
 Following methods can be used to get the request URL.
@@ -718,6 +727,9 @@ How do I redirect HTTPS traffic with Flexible SSL and Apache?
 draft-ietf-httpbis-rfc6265bis-02 - Cookies: HTTP State Management
 Mechanism
 <https://tools.ietf.org/html/draft-ietf-httpbis-rfc6265bis-02>.
+
+manakai PSGI extensions
+<https://wiki.suikawiki.org/n/manakai%20PSGI%20extensions>.
 
 =head1 AUTHOR
 

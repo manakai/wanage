@@ -5,6 +5,8 @@ our $VERSION = '3.0';
 use Web::Encoding;
 use Wanage::URL;
 
+sub server_state ($) { return undef }
+
 # ------ Request message ------
 
 sub get_meta_variable { die "meta_variable not implemented" }
@@ -118,7 +120,7 @@ sub onclose ($;$) {
 
 =head1 LICENSE
 
-Copyright 2012-2018 Wakaba <wakaba@suikawiki.org>.
+Copyright 2012-2019 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
