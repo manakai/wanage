@@ -51,12 +51,12 @@ sub _url_scheme_x_forwarded_scheme_ignored : Test(1) {
   is $psgi->url_scheme, 'https';
 } # _url_scheme_x_forwarded_scheme_ignored
 
-sub _url_scheme_x_forwarded_scheme_ignored : Test(1) {
+sub _url_scheme_x_forwarded_scheme_ignored2 : Test(1) {
   my $env = new_psgi_env {'psgi.url_scheme' => 'https',
                           HTTP_X_FORWARDED_SCHEME => 'hoge'};
   my $psgi = Wanage::Interface::PSGI->new_from_psgi_env ($env);
   is $psgi->url_scheme, 'https';
-} # _url_scheme_x_forwarded_scheme_ignored
+} # _url_scheme_x_forwarded_scheme_ignored2
 
 sub _url_scheme_x_forwarded_scheme_proto_used : Test(1) {
   local $Wanage::HTTP::UseXForwardedScheme = 1;
