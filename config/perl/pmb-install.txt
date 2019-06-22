@@ -15,8 +15,8 @@ Class::Accessor::Lite~0.08
 Class::Data::Inheritable~0.08
 Class::Inspector~1.34
 Class::Singleton~1.5
-Cookie::Baker~0.10
-Cpanel::JSON::XS~4.11
+Cookie::Baker~0.11
+Cpanel::JSON::XS~4.12
 Crypt::SSLeay~0.72
 Data::Dumper~2.173
 Data::MessagePack~1.00
@@ -51,7 +51,7 @@ HTTP::Message~6.18
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
 HTTP::Request~6.18
-HTTP::Response~6.18
+HTTP::Status~6.18
 HTTP::Tiny~0.076
 Hash::MultiValue~0.16
 IO::HTML~1.001
@@ -61,7 +61,7 @@ IO::Socket::SSL~2.066
 IO::Socket::Socks~0.74
 IPC::Signal~1.00
 JSON::MaybeXS~1.004000
-JSON::PP~4.02
+JSON::PP~4.03
 JSON::XS~4.02
 LWP::MediaTypes~6.04
 LWP::Protocol::https~6.07
@@ -88,13 +88,13 @@ Path::Class~0.37
 Path::Tiny~0.108
 Plack~1.0047
 Proc::Wait3~0.05
-Role::Tiny~2.000006
+Role::Tiny::With~2.000006
 Scalar::Util~1.50
 Scope::Guard~0.21
 Server::Starter~0.34
 Signal::Mask~0.008
 Socket~2.029
-Specio::Exporter~0.43
+Specio::Library::String~0.43
 Starlet~0.31
 Stream::Buffered~0.03
 Sub::Exporter::Progressive~0.001013
@@ -118,8 +118,9 @@ Try::Tiny~0.30
 Twiggy~0.1025
 Types::Serialiser~1.0
 URI~1.76
+URI::Escape~3.31
 Variable::Magic~0.62
-WWW::Form::UrlEncoded~0.25
+WWW::Form::UrlEncoded~0.26
 WWW::RobotRules~6.02
 XSLoader~0.24
 common::sense~3.74
