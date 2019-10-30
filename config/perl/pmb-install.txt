@@ -49,7 +49,7 @@ HTTP::Headers::Fast~0.22
 HTTP::Message~6.18
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
-HTTP::Request::Common~6.18
+HTTP::Response~6.18
 HTTP::Status~6.18
 HTTP::Tiny~0.076
 Hash::MultiValue~0.16
@@ -87,12 +87,13 @@ Path::Class~0.37
 Path::Tiny~0.108
 Plack~1.0047
 Proc::Wait3~0.05
-Role::Tiny~2.001004
+Role::Tiny::With~2.001004
+Scalar::Util~1.53
 Scope::Guard~0.21
 Server::Starter~0.35
 Signal::Mask~0.008
 Socket~2.029
-Specio::Library::Builtins~0.44
+Specio::Library::String~0.44
 Starlet~0.31
 Stream::Buffered~0.03
 Sub::Exporter::Progressive~0.001013
@@ -116,6 +117,7 @@ Try::Tiny~0.30
 Twiggy~0.1025
 Types::Serialiser~1.0
 URI~1.76
+URI::Escape~3.31
 Variable::Magic~0.62
 WWW::Form::UrlEncoded~0.26
 WWW::RobotRules~6.02
