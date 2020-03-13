@@ -76,6 +76,7 @@ Module::Implementation~0.09
 Module::Runtime~0.016
 Mozilla::CA~20180117
 Net::HTTP~6.19
+Net::HTTPS~6.19
 Net::SSLeay~1.88
 POSIX::strftime::Compiler~0.42
 Package::Stash~0.38
@@ -86,13 +87,12 @@ Path::Class~0.37
 Path::Tiny~0.112
 Plack~1.0047
 Proc::Wait3~0.05
-Role::Tiny~2.001004
-Scalar::Util~1.54
+Role::Tiny::With~2.001004
 Scope::Guard~0.21
 Server::Starter~0.35
 Signal::Mask~0.008
 Socket~2.029
-Specio::Library::Builtins~0.45
+Specio::Library::String~0.45
 Starlet~0.31
 Stream::Buffered~0.03
 Sub::Exporter::Progressive~0.001013
@@ -100,12 +100,11 @@ Sub::Identify~0.14
 Sub::Quote~2.006006
 TAP::Harness::Env~3.42
 Term::ANSIColor~5.01
-Test::Builder~1.302172
 Test::Class~0.50
 Test::Deep~1.130
 Test::Differences~0.67
 Test::Fatal~0.014
-Test::Needs~0.002006
+Test::More~1.302172
 Test::Requires~0.10
 Test::SharedFork~0.35
 Test::TCP~2.22
