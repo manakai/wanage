@@ -117,13 +117,26 @@ sub send_redirect ($$;%) {
       ->get_canon_url;
   $location_url = $self->redirect_url_filter ($location_url);
 
-  $http->set_status ($args{status} || 302, $args{reason_phrase});
-  $http->set_response_header (Location => $location_url->stringify);
+  my $use_refresh = $args{refresh};
+  my $status = $args{status};
+  if (not defined $status) {
+    $status = $use_refresh ? 200 : 302;
+  }
+  
+  $http->set_status ($status, $args{reason_phrase});
   $http->set_response_header ('Content-Type' => 'text/html; charset=utf-8');
 
+  my $hurl = htescape $location_url->stringify;
+  my $refresh = '';
+  if ($use_refresh) {
+    $refresh = sprintf '<meta http-equiv=Refresh content="0;url=%s">', $hurl;
+  } else {
+    $http->set_response_header (Location => $location_url->stringify);
+  }
+
   $http->send_response_body_as_text
-      (sprintf '<!DOCTYPE HTML><title>Moved</title><a href="%s">Moved</a>',
-           htescape $location_url->stringify);
+      (sprintf '<!DOCTYPE HTML><meta name=robots content="NOINDEX,NOARCHIVE"><meta name=referrer content=origin-when-cross-origin>%s<title>Moved</title><a href="%s">Next</a>', $refresh, $hurl);
+  
   $http->close_response_body;
 } # send_redirect
 

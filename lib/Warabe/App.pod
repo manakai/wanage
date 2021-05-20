@@ -238,8 +238,12 @@ Following options are available:
 
 =item status => $code
 
-Specify the HTTP status code.  Default is C<302>.  It must be an HTTP
-status code for redirect response.
+Specify the HTTP status code.
+
+Unless C<refresh> is true, it's default is C<302> and, if specified,
+it must be one of HTTP redirect status codes.
+
+If C<refresh> is true, it's default is C<200>.
 
 =item reason_phrase => $string
 
@@ -250,6 +254,11 @@ phrase from HTTP specifications is used.
 
 Depending on the interface, C<Reason-Phrase> might be ignored.  CGI
 does support C<Reason-Phrase>, while PSGI does not.
+
+=item refresh => BOOLEAN
+
+If true, instead of HTTP redirect, a short HTML document with C<<
+<meta http-equiv=Refresh> >> directive is used.
 
 =back
 
@@ -610,7 +619,7 @@ Wakaba <wakaba@suikawiki.org>.
 
 =head1 LICENSE
 
-Copyright 2012-2014 Wakaba <wakaba@suikawiki.org>.
+Copyright 2012-2021 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
