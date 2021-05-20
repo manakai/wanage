@@ -135,7 +135,7 @@ sub send_redirect ($$;%) {
   }
 
   $http->send_response_body_as_text
-      (sprintf '<!DOCTYPE HTML><meta name=robots content="NOINDEX,NOARCHIVE"><meta name=referrer content=origin-when-cross-origin>%s<title>Moved</title><a href="%s">Next</a>', $refresh, $hurl);
+      (sprintf '<!DOCTYPE HTML><html lang=en><meta name=robots content="NOINDEX,NOARCHIVE"><meta name=referrer content=origin-when-cross-origin>%s<title>Moved</title><a href="%s">Next</a></html>', $refresh, $hurl);
   
   $http->close_response_body;
 } # send_redirect

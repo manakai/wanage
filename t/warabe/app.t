@@ -228,7 +228,7 @@ sub _send_redirect_no_args : Test(1) {
 Content-Type: text/html; charset=utf-8
 Location: https://hogehoge.test:123/foo/bar/baz?a=b&c=%22
 
-<!DOCTYPE HTML><meta name=robots content="NOINDEX,NOARCHIVE"><meta name=referrer content=origin-when-cross-origin><title>Moved</title><a href="https://hogehoge.test:123/foo/bar/baz?a=b&amp;c=%22">Next</a>};
+<!DOCTYPE HTML><html lang=en><meta name=robots content="NOINDEX,NOARCHIVE"><meta name=referrer content=origin-when-cross-origin><title>Moved</title><a href="https://hogehoge.test:123/foo/bar/baz?a=b&amp;c=%22">Next</a></html>};
 } # _send_redirect_no_args
 
 sub _send_redirect_relative : Test(1) {
@@ -243,7 +243,7 @@ sub _send_redirect_relative : Test(1) {
 Content-Type: text/html; charset=utf-8
 Location: https://hogehoge.test:123/foo/hoge/fug&a
 
-<!DOCTYPE HTML><meta name=robots content="NOINDEX,NOARCHIVE"><meta name=referrer content=origin-when-cross-origin><title>Moved</title><a href="https://hogehoge.test:123/foo/hoge/fug&amp;a">Next</a>};
+<!DOCTYPE HTML><html lang=en><meta name=robots content="NOINDEX,NOARCHIVE"><meta name=referrer content=origin-when-cross-origin><title>Moved</title><a href="https://hogehoge.test:123/foo/hoge/fug&amp;a">Next</a></html>};
 } # _send_redirect_relative
 
 sub _send_redirect_abspath : Test(1) {
@@ -258,7 +258,7 @@ sub _send_redirect_abspath : Test(1) {
 Content-Type: text/html; charset=utf-8
 Location: https://hogehoge.test:123/hoge/fuga#abc
 
-<!DOCTYPE HTML><meta name=robots content="NOINDEX,NOARCHIVE"><meta name=referrer content=origin-when-cross-origin><title>Moved</title><a href="https://hogehoge.test:123/hoge/fuga#abc">Next</a>};
+<!DOCTYPE HTML><html lang=en><meta name=robots content="NOINDEX,NOARCHIVE"><meta name=referrer content=origin-when-cross-origin><title>Moved</title><a href="https://hogehoge.test:123/hoge/fuga#abc">Next</a></html>};
 } # _send_redirect_abspath
 
 sub _send_redirect_absurl : Test(1) {
@@ -273,7 +273,7 @@ sub _send_redirect_absurl : Test(1) {
 Content-Type: text/html; charset=utf-8
 Location: http://abc.test/hoge/fuga#abc
 
-<!DOCTYPE HTML><meta name=robots content="NOINDEX,NOARCHIVE"><meta name=referrer content=origin-when-cross-origin><title>Moved</title><a href="http://abc.test/hoge/fuga#abc">Next</a>};
+<!DOCTYPE HTML><html lang=en><meta name=robots content="NOINDEX,NOARCHIVE"><meta name=referrer content=origin-when-cross-origin><title>Moved</title><a href="http://abc.test/hoge/fuga#abc">Next</a></html>};
 } # _send_redirect_absurl
 
 sub _send_redirect_status : Test(1) {
@@ -288,7 +288,7 @@ sub _send_redirect_status : Test(1) {
 Content-Type: text/html; charset=utf-8
 Location: https://hogehoge.test:123/foo/hoge/fug&a
 
-<!DOCTYPE HTML><meta name=robots content="NOINDEX,NOARCHIVE"><meta name=referrer content=origin-when-cross-origin><title>Moved</title><a href="https://hogehoge.test:123/foo/hoge/fug&amp;a">Next</a>};
+<!DOCTYPE HTML><html lang=en><meta name=robots content="NOINDEX,NOARCHIVE"><meta name=referrer content=origin-when-cross-origin><title>Moved</title><a href="https://hogehoge.test:123/foo/hoge/fug&amp;a">Next</a></html>};
 } # _send_redirect_status
 
 sub _send_redirect_status_reason : Test(1) {
@@ -303,7 +303,7 @@ sub _send_redirect_status_reason : Test(1) {
 Content-Type: text/html; charset=utf-8
 Location: https://hogehoge.test:123/foo/hoge/fug&a
 
-<!DOCTYPE HTML><meta name=robots content="NOINDEX,NOARCHIVE"><meta name=referrer content=origin-when-cross-origin><title>Moved</title><a href="https://hogehoge.test:123/foo/hoge/fug&amp;a">Next</a>};
+<!DOCTYPE HTML><html lang=en><meta name=robots content="NOINDEX,NOARCHIVE"><meta name=referrer content=origin-when-cross-origin><title>Moved</title><a href="https://hogehoge.test:123/foo/hoge/fug&amp;a">Next</a></html>};
 } # _send_redirect_status_reason
 
 sub _send_redirect_filtered : Test(1) {
@@ -328,7 +328,7 @@ sub _send_redirect_filtered : Test(1) {
 Content-Type: text/html; charset=utf-8
 Location: ftp://abc.test/hoge/fuga/HOGE#abc
 
-<!DOCTYPE HTML><meta name=robots content="NOINDEX,NOARCHIVE"><meta name=referrer content=origin-when-cross-origin><title>Moved</title><a href="ftp://abc.test/hoge/fuga/HOGE#abc">Next</a>};
+<!DOCTYPE HTML><html lang=en><meta name=robots content="NOINDEX,NOARCHIVE"><meta name=referrer content=origin-when-cross-origin><title>Moved</title><a href="ftp://abc.test/hoge/fuga/HOGE#abc">Next</a></html>};
 } # _send_redirect_filtered
 
 sub _send_error_no_args : Test(1) {
@@ -504,7 +504,7 @@ Content-Type: text/html; charset=utf-8
 Location: http://abc/hoge/fuga
 X-Hoge: Fuga
 
-<!DOCTYPE HTML><meta name=robots content="NOINDEX,NOARCHIVE"><meta name=referrer content=origin-when-cross-origin><title>Moved</title><a href="http://abc/hoge/fuga">Next</a>};
+<!DOCTYPE HTML><html lang=en><meta name=robots content="NOINDEX,NOARCHIVE"><meta name=referrer content=origin-when-cross-origin><title>Moved</title><a href="http://abc/hoge/fuga">Next</a></html>};
 } # _throw_redirect
 
 sub _throw_error : Test(1) {
@@ -619,7 +619,7 @@ sub _requires_https_http_get : Test(1) {
 Content-Type: text/html; charset=utf-8
 Location: https://foo/bar
 
-<!DOCTYPE HTML><meta name=robots content="NOINDEX,NOARCHIVE"><meta name=referrer content=origin-when-cross-origin><title>Moved</title><a href="https://foo/bar">Next</a>};
+<!DOCTYPE HTML><html lang=en><meta name=robots content="NOINDEX,NOARCHIVE"><meta name=referrer content=origin-when-cross-origin><title>Moved</title><a href="https://foo/bar">Next</a></html>};
 } # _requires_https_http_get
 
 sub _requires_https_ftp_get : Test(1) {
@@ -638,7 +638,7 @@ sub _requires_https_ftp_get : Test(1) {
 Content-Type: text/html; charset=utf-8
 Location: https://foo/bar
 
-<!DOCTYPE HTML><meta name=robots content="NOINDEX,NOARCHIVE"><meta name=referrer content=origin-when-cross-origin><title>Moved</title><a href="https://foo/bar">Next</a>};
+<!DOCTYPE HTML><html lang=en><meta name=robots content="NOINDEX,NOARCHIVE"><meta name=referrer content=origin-when-cross-origin><title>Moved</title><a href="https://foo/bar">Next</a></html>};
 } # _requires_https_ftp_get
 
 sub _requires_https_about_get : Test(1) {
@@ -656,7 +656,7 @@ sub _requires_https_about_get : Test(1) {
 Content-Type: text/html; charset=utf-8
 Location: https:blank
 
-<!DOCTYPE HTML><meta name=robots content="NOINDEX,NOARCHIVE"><meta name=referrer content=origin-when-cross-origin><title>Moved</title><a href="https:blank">Next</a>};
+<!DOCTYPE HTML><html lang=en><meta name=robots content="NOINDEX,NOARCHIVE"><meta name=referrer content=origin-when-cross-origin><title>Moved</title><a href="https:blank">Next</a></html>};
 } # _requires_https_about_get
 
 sub _requires_https_http_post : Test(1) {
@@ -1434,7 +1434,7 @@ $Warabe::App::DetectLeak = 1;
 
 =head1 LICENSE
 
-Copyright 2012-2018 Wakaba <wakaba@suikawiki.org>.
+Copyright 2012-2021 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

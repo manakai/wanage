@@ -24,7 +24,7 @@ test {
 Content-Type: text/html; charset=utf-8
 Location: https://foo.bar/test%201
 
-<!DOCTYPE HTML><meta name=robots content="NOINDEX,NOARCHIVE"><meta name=referrer content=origin-when-cross-origin><title>Moved</title><a href="https://foo.bar/test%201">Next</a>};
+<!DOCTYPE HTML><html lang=en><meta name=robots content="NOINDEX,NOARCHIVE"><meta name=referrer content=origin-when-cross-origin><title>Moved</title><a href="https://foo.bar/test%201">Next</a></html>};
   done $c;
 } n => 1, name => '302';
 
@@ -42,7 +42,7 @@ test {
   is $out, q{Status: 200 OK
 Content-Type: text/html; charset=utf-8
 
-<!DOCTYPE HTML><meta name=robots content="NOINDEX,NOARCHIVE"><meta name=referrer content=origin-when-cross-origin><meta http-equiv=Refresh content="0;url=https://foo.bar/test%201"><title>Moved</title><a href="https://foo.bar/test%201">Next</a>};
+<!DOCTYPE HTML><html lang=en><meta name=robots content="NOINDEX,NOARCHIVE"><meta name=referrer content=origin-when-cross-origin><meta http-equiv=Refresh content="0;url=https://foo.bar/test%201"><title>Moved</title><a href="https://foo.bar/test%201">Next</a></html>};
   done $c;
 } n => 1, name => 'refresh';
 
@@ -60,7 +60,7 @@ test {
   is $out, q{Status: 201 Created
 Content-Type: text/html; charset=utf-8
 
-<!DOCTYPE HTML><meta name=robots content="NOINDEX,NOARCHIVE"><meta name=referrer content=origin-when-cross-origin><meta http-equiv=Refresh content="0;url=https://foo.bar/test%201"><title>Moved</title><a href="https://foo.bar/test%201">Next</a>};
+<!DOCTYPE HTML><html lang=en><meta name=robots content="NOINDEX,NOARCHIVE"><meta name=referrer content=origin-when-cross-origin><meta http-equiv=Refresh content="0;url=https://foo.bar/test%201"><title>Moved</title><a href="https://foo.bar/test%201">Next</a></html>};
   done $c;
 } n => 1, name => 'refresh with status';
 
