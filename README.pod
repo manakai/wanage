@@ -46,7 +46,7 @@ Git repository, if your application is using Git.
 
 =head1 DEPENDENCIES
 
-These modules require Perl 5.8 or later.  In addition, a few non-core
+These modules require Perl 5.10 or later.  In addition, a few non-core
 modules are required: L<Exporter::Lite>; L<Path::Class>; L<List::Ish>
 (in the C<modules/perl-ooutils> submodule); L<Web::Encoding> and other
 modules from the <https://github.com/manakai/perl-web-url>
