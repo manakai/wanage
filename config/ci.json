@@ -1,7 +1,7 @@
 {
-  "travisci": {
+  "github": {
     "pmbp": "5.8+",
     "merger": true,
-    "notifications": "suika"
+    "gaa": true
   }
 }
