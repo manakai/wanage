@@ -46,20 +46,22 @@ Git repository, if your application is using Git.
 
 =head1 DEPENDENCIES
 
-These modules require Perl 5.10 or later.  In addition, a few non-core
-modules are required: L<Exporter::Lite>; L<Path::Class>; L<List::Ish>
-(in the C<modules/perl-ooutils> submodule); L<Web::Encoding> and other
-modules from the <https://github.com/manakai/perl-web-url>
-repository); L<Web::URL> and other modules from the
+These modules require Perl 5.14.2 or later.
+
+In addition, they require a few non-core Perl modules:
+L<Exporter::Lite>; L<Path::Class>; L<List::Ish> (in the
+C<modules/perl-ooutils> submodule); L<Web::Encoding> and other modules
+from the <https://github.com/manakai/perl-web-url> repository);
+L<Web::URL> and other modules from the
 <https://github.com/manakai/perl-web-encodings> repository).
 
-It also requires a promise implementation (e.g. L<Promise> from the
-<https://github.com/manakai/perl-promise> repository) if you would
+They also require a Perl promise implementation (e.g. L<Promise> from
+the <https://github.com/manakai/perl-promise> repository) if you would
 like to use promise-related features.
 
 Optional modules such as C<Warabe::App::Role::*> might require
-additional modules; see relevant documentations and source codes of
-those modules.
+additional Perl modules; see relevant documentations and source codes
+of those modules.
 
 =head1 AUTHOR
 
