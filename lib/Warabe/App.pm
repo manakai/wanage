@@ -188,7 +188,7 @@ sub execute_by_promise ($$) {
   my $p = $PromiseClass->new (sub {
     ($ok, $error) = @_;
   })->then ($code)->catch (sub {
-    $app->onexecuteerror->($_[0]);
+    $app->onexecuteerror->($_[0]) unless UNIVERSAL::isa ($_[0], 'Warabe::App::Done');
     unless ($app->http->response_headers_sent) {
       $app->send_error (500);
     }
