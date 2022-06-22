@@ -22,11 +22,12 @@ of Wanage.
 
 They are I<not> Web application frameworks (WAFs).  They only provide
 abstraction for interpretation of HTTP requests and construction of
-HTTP response in the level enough to create Web applications easily by
-just understanding how HTTP works.  They does not define how you
-organize your Web application.  They can be used in conjection with a
-random Perl WAF, as long as it does not prevent you from accessing raw
-HTTP request and/or response, if desired.
+HTTP responses in the level enough to create Web applications by just
+understanding how HTTP works, without learning bulk of WAF-specific
+APIs.  They does not define how you organize your Web application.
+They can be used in conjection with a random Perl WAF, as long as it
+does not prevent you from accessing raw HTTP requests and/or
+responses, if desired.
 
 =head1 SEE ALSO
 
@@ -37,32 +38,40 @@ L<Warabe::App>.
 =head1 DISTRIBUTION
 
 Latest version of these modules are available in the Git repository:
-<https://github.com/wakaba/wanage>.
+<https://github.com/manakai/wanage>.
 
 There are no longer snapshot release version tarballs for Wanage and
-Warabe.  You can just simply add the repository as a Git submodule of
-your Git repository, if your application is using Git.
+Warabe.  You can just add the repository as a Git submodule of your
+Git repository, if your application is using Git.
 
 =head1 DEPENDENCIES
 
-These modules require Perl 5.8 or later.  In addition, a few non-core
-modules are required: L<Exporter::Lite>; L<Path::Class>; L<List::Ish>
-(in C<modules/perl-ooutils> submodule); L<Web::Encoding> and other
-modules from <https://github.com/manakai/perl-web-url> submodule);
-L<Web::URL> and other modules from
-<https://github.com/manakai/perl-web-encodings> submodule).
+These modules require Perl 5.14.2 or later.
 
-It also requires a promise implementation (e.g. L<Promise> from
-<https://github.com/wakaba/perl-promise>) if you would like to use
-promise-related features.
+In addition, they require a few non-core Perl modules:
+L<Exporter::Lite>; L<Path::Class>; L<List::Ish> (in the
+C<modules/perl-ooutils> submodule); L<Web::Encoding> and other modules
+from the <https://github.com/manakai/perl-web-url> repository);
+L<Web::URL> and other modules from the
+<https://github.com/manakai/perl-web-encodings> repository).
 
-If you want to use optional modules (C<Warabe::App::Role::*>), more
-module might be necessary.  See relevant documentations and source
-codes of those modules.
+They also require a Perl promise implementation (e.g. L<Promise> from
+the <https://github.com/manakai/perl-promise> repository) if you would
+like to use promise-related features.
+
+Optional modules such as C<Warabe::App::Role::*> might require
+additional Perl modules; see relevant documentations and source codes
+of those modules.
 
 =head1 AUTHOR
 
 Wakaba <wakaba@suikawiki.org>.
+
+=head1 HISTORY
+
+This repository was originally located at
+<https://github.com/wakaba/wanage>, which has been transferred to the
+manaki project on November 16, 2021.
 
 =head1 LICENSE
 
