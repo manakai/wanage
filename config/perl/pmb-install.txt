@@ -22,7 +22,7 @@ DateTime::Locale~1.35
 DateTime::TimeZone~2.52
 Devel::StackTrace~2.04
 Devel::StackTrace::AsHTML~0.15
-Encode~3.17
+Encode~3.18
 Encode::Locale~1.05
 Eval::Closure~0.14
 Exception::Class~1.45
@@ -47,8 +47,6 @@ HTTP::Headers::Fast~0.22
 HTTP::Message~6.37
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
-HTTP::Request::Common~6.37
-HTTP::Response~6.37
 HTTP::Status~6.37
 Hash::MultiValue~0.16
 IO::HTML~1.004
@@ -88,18 +86,18 @@ Scope::Guard~0.21
 Server::Starter~0.35
 Signal::Mask~0.008
 Socket~2.033
-Specio::Declare~0.48
+Specio::Library::Numeric~0.48
 Starlet~0.31
 Stream::Buffered~0.03
 Sub::Exporter::Progressive~0.001013
 Sub::Identify~0.14
 Sub::Quote~2.006006
 Term::ANSIColor~5.01
+Test::Builder~1.302190
 Test::Class~0.52
 Test::Deep~1.130
 Test::Differences~0.69
 Test::Fatal~0.016
-Test::More~1.302190
 Test::Requires~0.11
 Test::SharedFork~0.35
 Test::TCP~2.22
@@ -111,7 +109,6 @@ Try::Tiny~0.31
 Twiggy~0.1026
 Types::Serialiser~1.01
 URI~5.10
-URI::URL~5.10
 Variable::Magic~0.62
 WWW::Form::UrlEncoded~0.26
 WWW::RobotRules~6.02
