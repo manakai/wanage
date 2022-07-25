@@ -659,6 +659,45 @@ server implementation.  THIS BEHAVIOR MIGHT BE CHANGED IN LATER
 REVISION OF THE WANAGE MODULE to improve portability and debuggability
 of the application.
 
+=item $http->response_timing_enabled ($boolean)
+
+=item $boolean = $http->response_timing_enabled
+
+Whether the response's server timing output is enabled or not.
+
+=item $timing = $http->response_timing ($name, desc => $text)
+
+Start a response timing mesuring.  This can be used to generate a
+C<Server-Timing> HTTP header.
+
+The first argument must be a metric name, which is an HTTP token.
+Non-ASCII characters are not allowed.
+
+Optionally, there may be a named parameter C<desc>, whose value is a
+description text.  Non-ASCII characters are not allowed.  No
+description text by default.
+
+=item $timing->add
+
+Add a C<Server-Timing> HTTP header to the response.  Its C<dur> value
+is the duration between the invocation of the C<response_timing>
+method and the C<add> method.
+
+If C<response_timing_enabled> is not set to a true value, no header is
+added.
+
+=item $timing->send_html
+
+Send an HTML comment that contains a C<Server-Timing> HTTP header as
+part of the response body.  Its C<dur> value is the duration between
+the invocation of the C<response_timing> method and the C<add> method.
+
+Note that the comment syntax is not part of the HTTP Server Timing and
+is not recognized by Web browsers.
+
+If C<response_timing_enabled> is not set to a true value, nothing is
+sent.
+
 =item $code = $http->onclose
 
 =item $http->onclose ($code)
@@ -708,6 +747,8 @@ Hypertext Transfer Protocol (HTTP)
 RFC 6750 - The OAuth 2.0 Authorization Framework: Bearer Token Usage
 <https://tools.ietf.org/html/rfc6750>.
 
+Server Timing <https://w3c.github.io/server-timing/>.
+
 XMLHttpRequest <https://xhr.spec.whatwg.org/>.
 
 RFC 3875 - The Common Gateway Interface (CGI) Version 1.1
@@ -737,7 +778,7 @@ Wakaba <wakaba@suikawiki.org>.
 
 =head1 LICENSE
 
-Copyright 2012-2019 Wakaba <wakaba@suikawiki.org>.
+Copyright 2012-2022 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
