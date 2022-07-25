@@ -1,8 +1,9 @@
 package Wanage::HTTP;
 use strict;
 use warnings;
-our $VERSION = '4.0';
+our $VERSION = '5.0';
 use Carp;
+use Time::HiRes qw(time);
 use Web::Encoding;
 use Web::URL::Encoding qw(percent_encode_c);
 use Scalar::Util qw(weaken);
@@ -493,6 +494,28 @@ sub set_response_disposition {
   $self->set_response_header ('Content-Disposition' => $header);
 } # set_response_disposition
 
+sub response_timing_enabled ($;$) {
+  if (@_ > 1) {
+    $_[0]->{response_timing_enabled} = $_[1];
+  }
+  return $_[0]->{response_timing_enabled};
+} # response_timing_enabled
+
+sub response_timing ($$;%) {
+  my ($self, $name, %args) = @_;
+  if ($self->{response_timing_enabled}) {
+    my $rt = bless {
+      name => $name,
+      desc => $args{desc},
+      http => $self,
+      start_time => time,
+    }, 'Wanage::HTTP::ServerTiming';
+    return $rt;
+  } else {
+    return bless {}, 'Wanage::HTTP::ServerTiming::Null';
+  }
+} # response_timing
+
 our $Sortkeys;
 
 sub send_response_headers ($) {
@@ -554,11 +577,71 @@ sub DESTROY ($) {
   }
 } # DESTROY
 
+package Wanage::HTTP::ServerTiming;
+use Time::HiRes qw(time);
+use Web::Encoding;
+use Web::URL::Encoding;
+
+sub _to_http_header ($) {
+  my $self = $_[0];
+
+  my $dur = time - $self->{start_time};
+  my $name = percent_encode_c $self->{name};
+  my $desc = encode_web_utf8 ($self->{desc} // '');
+
+  my $value = sprintf '%s;dur=%f',
+      $name, 1000*$dur;
+  if (length $desc) {
+    $desc =~ s/(["\\])/\\$1/g;
+    $desc =~ s/([\x00-\x1F\x7F])/percent_encode_c $1/ge;
+    $value .= ';desc="' . $desc . '"';
+  }
+
+  return $value;
+} # _to_http_header
+
+sub add ($) {
+  my $self = $_[0];
+
+  my $value = $self->_to_http_header;
+  eval {
+    $self->{http}->add_response_header ('server-timing', $value);
+    1;
+  } or warn $@;
+
+  $self->{added} = 1;
+} # add
+
+sub send_html ($) {
+  my $self = $_[0];
+  
+  my $value = $self->_to_http_header;
+  $value =~ s/--/-%2D/g;
+  eval {
+    $self->{http}->send_response_body_as_ref (\"\x0A<!--\x0Aserver-timing: $value\x0A-->");
+    1;
+  } or warn $@;
+
+  $self->{added} = 1;
+} # send_html
+
+#sub DESTROY ($) {
+#  my $self = $_[0];
+#  unless ($self->{added}) {
+#    warn "$$: $_[0]: Discarded without added to the response\n";
+#  }
+#} # DESTROY
+
+package Wanage::HTTP::ServerTiming::Null;
+
+sub add ($) { }
+sub send_html ($) { }
+
 1;
 
 =head1 LICENSE
 
-Copyright 2012-2019 Wakaba <wakaba@suikawiki.org>.
+Copyright 2012-2022 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
