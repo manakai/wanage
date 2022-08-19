@@ -2,6 +2,7 @@ Algorithm::Diff~1.201
 AnyEvent~7.17
 AnyEvent::HTTP~2.25
 AnyEvent::HTTP::Socks~0.05
+AnyEvent::Util
 Apache::LogFormat::Compiler~0.36
 B::Hooks::EndOfScope~0.26
 Canary::Stability~2013
@@ -47,7 +48,8 @@ HTTP::Headers::Fast~0.22
 HTTP::Message~6.37
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
-HTTP::Request~6.37
+HTTP::Request::Common~6.37
+HTTP::Response~6.37
 Hash::MultiValue~0.16
 IO::HTML~1.004
 IO::Handle~1.48
@@ -70,7 +72,6 @@ Module::Implementation~0.09
 Module::Runtime~0.016
 Mozilla::CA~20211001
 Net::HTTP~6.22
-Net::HTTPS~6.22
 Net::SSLeay~1.92
 POSIX::strftime::Compiler~0.44
 Package::Stash~0.40
@@ -87,7 +88,7 @@ Scope::Guard~0.21
 Server::Starter~0.35
 Signal::Mask~0.008
 Socket~2.035
-Specio::Exporter~0.48
+Specio::Library::Numeric~0.48
 Starlet~0.31
 Stream::Buffered~0.03
 Sub::Exporter::Progressive~0.001013
