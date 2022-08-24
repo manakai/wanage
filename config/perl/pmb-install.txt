@@ -19,7 +19,7 @@ Crypt::SSLeay~0.72
 Data::Dumper~2.183
 Data::MessagePack~1.02
 DateTime~1.58
-DateTime::Locale~1.35
+DateTime::Locale~1.36
 DateTime::TimeZone~2.53
 Devel::StackTrace~2.04
 Devel::StackTrace::AsHTML~0.15
@@ -48,8 +48,7 @@ HTTP::Headers::Fast~0.22
 HTTP::Message~6.37
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
-HTTP::Request::Common~6.37
-HTTP::Response~6.37
+HTTP::Request~6.37
 Hash::MultiValue~0.16
 IO::HTML~1.004
 IO::Handle~1.48
@@ -72,6 +71,7 @@ Module::Implementation~0.09
 Module::Runtime~0.016
 Mozilla::CA~20211001
 Net::HTTP~6.22
+Net::HTTPS~6.22
 Net::SSLeay~1.92
 POSIX::strftime::Compiler~0.44
 Package::Stash~0.40
@@ -87,8 +87,8 @@ Scalar::Util~1.63
 Scope::Guard~0.21
 Server::Starter~0.35
 Signal::Mask~0.008
-Socket~2.035
-Specio::Library::Numeric~0.48
+Socket~2.036
+Specio::Library::String~0.48
 Starlet~0.31
 Stream::Buffered~0.03
 Sub::Exporter::Progressive~0.001013
