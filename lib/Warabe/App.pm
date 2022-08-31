@@ -148,7 +148,8 @@ sub send_error ($$;%) {
       ('Content-Type' => 'text/plain; charset=us-ascii');
   $proto->send_response_body_as_text
       (defined $args{reason_phrase}
-           ? $code . ' ' . $args{reason_phrase} : $code);
+           ? $code . ' ' . $args{reason_phrase} : $code)
+      unless $code == 204 or $code == 304 or $self->http->request_method eq 'HEAD';
   $proto->close_response_body;
 } # send_error
 
@@ -389,7 +390,7 @@ sub DESTROY ($) {
 
 =head1 LICENSE
 
-Copyright 2012-2018 Wakaba <wakaba@suikawiki.org>.
+Copyright 2012-2022 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
