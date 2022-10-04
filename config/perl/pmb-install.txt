@@ -2,6 +2,7 @@ Algorithm::Diff~1.201
 AnyEvent~7.17
 AnyEvent::HTTP~2.25
 AnyEvent::HTTP::Socks~0.05
+AnyEvent::Util
 Apache::LogFormat::Compiler~0.36
 B::Hooks::EndOfScope~0.26
 Canary::Stability~2013
@@ -42,12 +43,12 @@ HTML::Tagset~3.20
 HTTP::Cookies~6.10
 HTTP::Date~6.05
 HTTP::Entity::Parser~0.25
-HTTP::Headers~6.37
 HTTP::Headers::Fast~0.22
+HTTP::Message~6.37
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
+HTTP::Request~6.37
 HTTP::Request::Common~6.37
-HTTP::Status~6.37
 Hash::MultiValue~0.16
 IO::HTML~1.004
 IO::Handle~1.48
@@ -57,7 +58,6 @@ IPC::Signal~1.00
 JSON::MaybeXS~1.004004
 JSON::XS~4.03
 LWP::MediaTypes~6.04
-LWP::Protocol::http~6.67
 LWP::Protocol::https~6.10
 LWP::UserAgent~6.67
 List::MoreUtils~0.430
@@ -79,14 +79,15 @@ Params::ValidationCompiler~0.30
 Path::Class~0.37
 Path::Tiny~0.124
 Plack~1.0050
+Plack::Loader
 Proc::Wait3~0.05
-Role::Tiny::With~2.002004
+Role::Tiny~2.002004
 Scalar::Util~1.63
 Scope::Guard~0.21
 Server::Starter~0.35
 Signal::Mask~0.008
 Socket~2.036
-Specio::Exporter~0.48
+Specio~0.48
 Starlet~0.31
 Stream::Buffered~0.03
 Sub::Exporter::Progressive~0.001013
@@ -109,6 +110,7 @@ Try::Tiny~0.31
 Twiggy~0.1026
 Types::Serialiser~1.01
 URI~5.12
+URI::Escape~5.12
 Variable::Magic~0.63
 WWW::Form::UrlEncoded~0.26
 WWW::RobotRules~6.02
