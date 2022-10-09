@@ -42,7 +42,6 @@ HTML::Tagset~3.20
 HTTP::Cookies~6.10
 HTTP::Date~6.05
 HTTP::Entity::Parser~0.25
-HTTP::Headers~6.39
 HTTP::Headers::Fast~0.22
 HTTP::Headers::Util~6.39
 HTTP::Message~6.39
@@ -78,7 +77,6 @@ Params::ValidationCompiler~0.30
 Path::Class~0.37
 Path::Tiny~0.124
 Plack~1.0050
-Plack::Loader
 Proc::Wait3~0.05
 Role::Tiny~2.002004
 Scalar::Util~1.63
