@@ -47,7 +47,7 @@ HTTP::Headers~6.44
 HTTP::Headers::Fast~0.22
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
-HTTP::Response~6.44
+HTTP::Request~6.44
 HTTP::Status~6.44
 Hash::MultiValue~0.16
 IO::HTML~1.004
@@ -71,7 +71,6 @@ Module::Implementation~0.09
 Module::Runtime~0.016
 Mozilla::CA~20221114
 Net::HTTP~6.22
-Net::HTTPS~6.22
 Net::SSLeay~1.92
 POSIX::strftime::Compiler~0.44
 Package::Stash~0.40
@@ -82,13 +81,13 @@ Path::Class~0.37
 Path::Tiny~0.144
 Plack~1.0050
 Proc::Wait3~0.05
-Role::Tiny~2.002004
+Role::Tiny::With~2.002004
 Scalar::Util~1.63
 Scope::Guard~0.21
 Server::Starter~0.35
 Signal::Mask~0.008
 Socket~2.036
-Specio::Library::String~0.48
+Specio::Exporter~0.48
 Starlet~0.31
 Stream::Buffered~0.03
 Sub::Exporter::Progressive~0.001013
