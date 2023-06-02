@@ -49,7 +49,6 @@ HTTP::Message~6.44
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
 HTTP::Request~6.44
-HTTP::Status~6.44
 Hash::MultiValue~0.16
 IO::HTML~1.004
 IO::Handle~1.51
@@ -66,12 +65,11 @@ List::MoreUtils::XS~0.430
 MIME::Base64~3.16
 MRO::Compat~0.15
 Module::Build~0.4234
-Module::Build::Tiny~0.045
+Module::Build::Tiny~0.046
 Module::Implementation~0.09
 Module::Runtime~0.016
 Mozilla::CA~20221114
 Net::HTTP~6.22
-Net::HTTPS~6.22
 Net::SSLeay~1.92
 POSIX::strftime::Compiler~0.44
 Package::Stash~0.40
@@ -81,8 +79,9 @@ Params::ValidationCompiler~0.31
 Path::Class~0.37
 Path::Tiny~0.144
 Plack~1.0050
+Plack::Loader
 Proc::Wait3~0.05
-Role::Tiny::With~2.002004
+Role::Tiny~2.002004
 Scalar::Util~1.63
 Scope::Guard~0.21
 Server::Starter~0.35
