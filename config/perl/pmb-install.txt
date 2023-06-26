@@ -46,11 +46,10 @@ HTTP::Date~6.05
 HTTP::Entity::Parser~0.25
 HTTP::Headers~6.44
 HTTP::Headers::Fast~0.22
-HTTP::Headers::Util~6.44
+HTTP::Message~6.44
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
-HTTP::Request~6.44
-HTTP::Status~6.44
+HTTP::Response~6.44
 Hash::MultiValue~0.16
 IO::HTML~1.004
 IO::Handle~1.51
@@ -73,7 +72,6 @@ Module::Implementation~0.09
 Module::Runtime~0.016
 Mozilla::CA~20221114
 Net::HTTP~6.23
-Net::HTTPS~6.23
 Net::SSLeay~1.92
 POSIX::strftime::Compiler~0.44
 Package::Stash~0.40
@@ -84,13 +82,13 @@ Path::Class~0.37
 Path::Tiny~0.144
 Plack~1.0050
 Proc::Wait3~0.05
-Role::Tiny::With~2.002004
+Role::Tiny~2.002004
 Scalar::Util~1.63
 Scope::Guard~0.21
 Server::Starter~0.35
 Signal::Mask~0.008
 Socket~2.037
-Specio::Library::Builtins~0.48
+Specio::Exporter~0.48
 Starlet~0.31
 Stream::Buffered~0.03
 Sub::Exporter::Progressive~0.001013
@@ -113,6 +111,8 @@ Try::Tiny~0.31
 Twiggy~0.1026
 Types::Serialiser~1.01
 URI~5.19
+URI::Escape~5.19
+URI::URL~5.19
 Variable::Magic~0.63
 WWW::Form::UrlEncoded~0.26
 WWW::RobotRules~6.02
