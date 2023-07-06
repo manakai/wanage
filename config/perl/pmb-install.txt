@@ -49,6 +49,8 @@ HTTP::Headers::Fast~0.22
 HTTP::Message~6.44
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
+HTTP::Request~6.44
+HTTP::Status~6.44
 Hash::MultiValue~0.16
 IO::HTML~1.004
 IO::Handle~1.51
@@ -71,7 +73,6 @@ Module::Implementation~0.09
 Module::Runtime~0.016
 Mozilla::CA~20221114
 Net::HTTP~6.23
-Net::HTTPS~6.23
 Net::SSLeay~1.92
 POSIX::strftime::Compiler~0.44
 Package::Stash~0.40
@@ -81,8 +82,9 @@ Params::ValidationCompiler~0.31
 Path::Class~0.37
 Path::Tiny~0.144
 Plack~1.0050
+Plack::Loader
 Proc::Wait3~0.05
-Role::Tiny~2.002004
+Role::Tiny::With~2.002004
 Scalar::Util~1.63
 Scope::Guard~0.21
 Server::Starter~0.35
@@ -95,11 +97,11 @@ Sub::Exporter::Progressive~0.001013
 Sub::Identify~0.14
 Sub::Quote~2.006008
 Term::ANSIColor~5.01
-Test::Builder~1.302195
 Test::Class~0.52
 Test::Deep~1.204
 Test::Differences~0.69
 Test::Fatal~0.017
+Test::More~1.302195
 Test::Requires~0.11
 Test::SharedFork~0.35
 Test::TCP~2.22
@@ -112,6 +114,7 @@ Twiggy~0.1026
 Types::Serialiser~1.01
 URI~5.19
 URI::Escape~5.19
+URI::URL~5.19
 Variable::Magic~0.63
 WWW::Form::UrlEncoded~0.26
 WWW::RobotRules~6.02
