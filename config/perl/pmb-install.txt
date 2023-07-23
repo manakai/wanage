@@ -37,6 +37,7 @@ File::ShareDir~1.118
 File::ShareDir::Install~0.14
 File::Temp~0.2311
 Filesys::Notify::Simple~0.14
+HTML::Entities~3.81
 HTML::HeadParser~3.81
 HTML::Tagset~3.20
 HTTP::CookieJar::LWP~0.014
@@ -81,15 +82,14 @@ Params::ValidationCompiler~0.31
 Path::Class~0.37
 Path::Tiny~0.144
 Plack~1.0050
-Plack::Loader
 Proc::Wait3~0.05
-Role::Tiny::With~2.002004
+Role::Tiny~2.002004
 Scalar::Util~1.63
 Scope::Guard~0.21
 Server::Starter~0.35
 Signal::Mask~0.008
 Socket~2.037
-Specio::Library::String~0.48
+Specio~0.48
 Starlet~0.31
 Stream::Buffered~0.03
 Sub::Exporter::Progressive~0.001013
