@@ -44,10 +44,11 @@ HTTP::Cookies~6.10
 HTTP::Date~6.06
 HTTP::Entity::Parser~0.25
 HTTP::Headers::Fast~0.22
+HTTP::Headers::Util~6.44
 HTTP::Message~6.44
 HTTP::MultiPartParser~0.02
 HTTP::Negotiate~6.01
-HTTP::Request::Common~6.44
+HTTP::Request~6.44
 HTTP::Status~6.44
 Hash::MultiValue~0.16
 IO::HTML~1.004
@@ -58,7 +59,6 @@ IPC::Signal~1.00
 JSON::MaybeXS~1.004005
 JSON::XS~4.03
 LWP::MediaTypes~6.04
-LWP::Protocol::http~6.72
 LWP::Protocol::https~6.11
 LWP::UserAgent~6.72
 List::MoreUtils~0.430
@@ -111,6 +111,7 @@ Try::Tiny~0.31
 Twiggy~0.1026
 Types::Serialiser~1.01
 URI~5.19
+URI::Escape~5.19
 Variable::Magic~0.63
 WWW::Form::UrlEncoded~0.26
 WWW::RobotRules~6.02
